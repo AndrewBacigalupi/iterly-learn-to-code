@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { puzzleSubmissions } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -8,12 +9,10 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const body = await request.json();
     const {
       title,
       description,
@@ -23,7 +22,8 @@ export async function POST(request: NextRequest) {
       expectedOutput,
       hint,
       explanation,
-    } = await request.json();
+      resubmitId,
+    } = body;
 
     // Validate required fields
     if (!title || !description || !difficulty || !input || !expectedOutput) {
@@ -33,30 +33,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert the submission
-    const submission = await db
-      .insert(puzzleSubmissions)
-      .values({
-        userId: session.user.id,
-        title,
-        description,
-        difficulty,
-        tags: tags || [],
-        input,
-        expectedOutput,
-        hint: hint || null,
-        explanation: explanation || null,
-      })
-      .returning();
+    // If this is a resubmission, delete the old rejected submission
+    if (resubmitId) {
+      await db
+        .delete(puzzleSubmissions)
+        .where(
+          and(
+            eq(puzzleSubmissions.id, resubmitId),
+            eq(puzzleSubmissions.userId, session.user.id),
+            eq(puzzleSubmissions.status, "rejected")
+          )
+        );
+    }
 
-    return NextResponse.json({
-      message: "Puzzle submitted successfully",
-      submissionId: submission[0].id,
+    // Create new submission
+    await db.insert(puzzleSubmissions).values({
+      userId: session.user.id,
+      title,
+      description,
+      difficulty,
+      tags: tags || [],
+      input,
+      expectedOutput,
+      hint: hint || null,
+      explanation: explanation || null,
+      status: "pending",
     });
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error submitting puzzle:", error);
     return NextResponse.json(
-      { error: "Failed to submit puzzle" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

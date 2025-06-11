@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { problemSubmissions_contrib } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -8,12 +9,10 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const body = await request.json();
     const {
       title,
       description,
@@ -22,55 +21,55 @@ export async function POST(request: NextRequest) {
       functionName,
       testCases,
       solution,
-    } = await request.json();
+      resubmitId,
+    } = body;
 
     // Validate required fields
-    if (
-      !title ||
-      !description ||
-      !difficulty ||
-      !functionName ||
-      !testCases?.length
-    ) {
+    if (!title || !description || !difficulty || !functionName) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Validate test cases
-    for (const testCase of testCases) {
-      if (!testCase.input || !testCase.expectedOutput) {
-        return NextResponse.json(
-          { error: "All test cases must have input and expected output" },
-          { status: 400 }
-        );
-      }
+    if (!testCases || !Array.isArray(testCases) || testCases.length === 0) {
+      return NextResponse.json(
+        { error: "At least one test case is required" },
+        { status: 400 }
+      );
     }
 
-    // Insert the submission
-    const submission = await db
-      .insert(problemSubmissions_contrib)
-      .values({
-        userId: session.user.id,
-        title,
-        description,
-        difficulty,
-        tags: tags || [],
-        functionName,
-        testCases,
-        solution: solution || null,
-      })
-      .returning();
+    // If this is a resubmission, delete the old rejected submission
+    if (resubmitId) {
+      await db
+        .delete(problemSubmissions_contrib)
+        .where(
+          and(
+            eq(problemSubmissions_contrib.id, resubmitId),
+            eq(problemSubmissions_contrib.userId, session.user.id),
+            eq(problemSubmissions_contrib.status, "rejected")
+          )
+        );
+    }
 
-    return NextResponse.json({
-      message: "Problem submitted successfully",
-      submissionId: submission[0].id,
+    // Create new submission
+    await db.insert(problemSubmissions_contrib).values({
+      userId: session.user.id,
+      title,
+      description,
+      difficulty,
+      tags: tags || [],
+      functionName,
+      testCases,
+      solution: solution || null,
+      status: "pending",
     });
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error submitting problem:", error);
     return NextResponse.json(
-      { error: "Failed to submit problem" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

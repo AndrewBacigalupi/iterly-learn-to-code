@@ -133,6 +133,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
             .map((tag) => tag.trim())
             .filter(Boolean),
           testCases: validTestCases,
+          resubmitId: resubmitId || undefined,
         }),
       });
 

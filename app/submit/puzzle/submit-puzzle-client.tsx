@@ -119,6 +119,7 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
             .split(",")
             .map((tag) => tag.trim())
             .filter(Boolean),
+          resubmitId: resubmitId || undefined,
         }),
       });
 

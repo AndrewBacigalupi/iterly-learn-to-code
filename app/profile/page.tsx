@@ -18,6 +18,7 @@ import {
 } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import {
+  AlertCircle,
   Calendar,
   CheckCircle,
   Clock,
@@ -456,17 +457,18 @@ export default async function ProfilePage() {
                     Puzzle Submissions ({userPuzzleSubmissions.length})
                   </h3>
                   <div className="space-y-3">
-                    {userPuzzleSubmissions.slice(0, 3).map((submission) => (
+                    {userPuzzleSubmissions.map((submission) => (
                       <div
                         key={submission.id}
-                        className="border rounded-lg p-3 space-y-2"
+                        className="border rounded-lg p-4 space-y-3"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-sm">
-                              {submission.title}
-                            </h4>
-                            <div className="flex items-center gap-2 mt-1">
+                            <h4 className="font-medium">{submission.title}</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {submission.description.substring(0, 100)}...
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
                               <Badge
                                 className={getDifficultyColor(
                                   submission.difficulty
@@ -481,7 +483,7 @@ export default async function ProfilePage() {
                               </Badge>
                             </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-sm text-muted-foreground">
                             {new Date(
                               submission.submittedAt
                             ).toLocaleDateString()}
@@ -490,50 +492,54 @@ export default async function ProfilePage() {
 
                         {submission.status === "approved" &&
                           submission.publishedPuzzleId && (
-                            <Button
-                              asChild
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                            >
-                              <Link
-                                href={`/puzzles/${submission.publishedPuzzleId}`}
-                              >
-                                <ExternalLink className="h-3 w-3 mr-1" />
-                                View Live
-                              </Link>
-                            </Button>
+                            <div className="flex items-center gap-2 text-sm text-green-600">
+                              <CheckCircle className="h-4 w-4" />
+                              <span>Published successfully!</span>
+                              <Button asChild size="sm" variant="outline">
+                                <Link
+                                  href={`/puzzles/${submission.publishedPuzzleId}`}
+                                >
+                                  <ExternalLink className="h-3 w-3 mr-1" />
+                                  View Live
+                                </Link>
+                              </Button>
+                            </div>
                           )}
 
                         {submission.status === "rejected" && (
-                          <Button
-                            asChild
-                            size="sm"
-                            variant="outline"
-                            className="w-full"
-                          >
-                            <Link
-                              href={`/submit/puzzle?resubmit=${submission.id}`}
-                            >
-                              <RefreshCw className="h-3 w-3 mr-1" />
-                              Resubmit
-                            </Link>
-                          </Button>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2 text-sm text-red-600">
+                              <AlertCircle className="h-4 w-4" />
+                              <span>Submission rejected</span>
+                            </div>
+                            {submission.adminNotes && (
+                              <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded p-3">
+                                <p className="text-sm text-red-800 dark:text-red-200">
+                                  <strong>Admin feedback:</strong>{" "}
+                                  {submission.adminNotes}
+                                </p>
+                              </div>
+                            )}
+                            <Button asChild size="sm" variant="outline">
+                              <Link
+                                href={`/submit/puzzle?resubmit=${submission.id}`}
+                                className="flex items-center gap-1"
+                              >
+                                <RefreshCw className="h-3 w-3" />
+                                Resubmit
+                              </Link>
+                            </Button>
+                          </div>
                         )}
 
                         {submission.status === "pending" && (
-                          <div className="flex items-center gap-2 text-xs text-yellow-600">
-                            <Clock className="h-3 w-3" />
+                          <div className="flex items-center gap-2 text-sm text-yellow-600">
+                            <Clock className="h-4 w-4" />
                             <span>Under review</span>
                           </div>
                         )}
                       </div>
                     ))}
-                    {userPuzzleSubmissions.length > 3 && (
-                      <p className="text-xs text-muted-foreground text-center">
-                        +{userPuzzleSubmissions.length - 3} more submissions
-                      </p>
-                    )}
                   </div>
                 </div>
               )}
@@ -546,17 +552,18 @@ export default async function ProfilePage() {
                     Problem Submissions ({userProblemSubmissions.length})
                   </h3>
                   <div className="space-y-3">
-                    {userProblemSubmissions.slice(0, 3).map((submission) => (
+                    {userProblemSubmissions.map((submission) => (
                       <div
                         key={submission.id}
-                        className="border rounded-lg p-3 space-y-2"
+                        className="border rounded-lg p-4 space-y-3"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-sm">
-                              {submission.title}
-                            </h4>
-                            <div className="flex items-center gap-2 mt-1">
+                            <h4 className="font-medium">{submission.title}</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {submission.description.substring(0, 100)}...
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
                               <Badge
                                 className={getDifficultyColor(
                                   submission.difficulty
@@ -571,7 +578,7 @@ export default async function ProfilePage() {
                               </Badge>
                             </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-sm text-muted-foreground">
                             {new Date(
                               submission.submittedAt
                             ).toLocaleDateString()}
@@ -580,50 +587,54 @@ export default async function ProfilePage() {
 
                         {submission.status === "approved" &&
                           submission.publishedProblemId && (
-                            <Button
-                              asChild
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                            >
-                              <Link
-                                href={`/problems/${submission.publishedProblemId}`}
-                              >
-                                <ExternalLink className="h-3 w-3 mr-1" />
-                                View Live
-                              </Link>
-                            </Button>
+                            <div className="flex items-center gap-2 text-sm text-green-600">
+                              <CheckCircle className="h-4 w-4" />
+                              <span>Published successfully!</span>
+                              <Button asChild size="sm" variant="outline">
+                                <Link
+                                  href={`/problems/${submission.publishedProblemId}`}
+                                >
+                                  <ExternalLink className="h-3 w-3 mr-1" />
+                                  View Live
+                                </Link>
+                              </Button>
+                            </div>
                           )}
 
                         {submission.status === "rejected" && (
-                          <Button
-                            asChild
-                            size="sm"
-                            variant="outline"
-                            className="w-full"
-                          >
-                            <Link
-                              href={`/submit/problem?resubmit=${submission.id}`}
-                            >
-                              <RefreshCw className="h-3 w-3 mr-1" />
-                              Resubmit
-                            </Link>
-                          </Button>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2 text-sm text-red-600">
+                              <AlertCircle className="h-4 w-4" />
+                              <span>Submission rejected</span>
+                            </div>
+                            {submission.adminNotes && (
+                              <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded p-3">
+                                <p className="text-sm text-red-800 dark:text-red-200">
+                                  <strong>Admin feedback:</strong>{" "}
+                                  {submission.adminNotes}
+                                </p>
+                              </div>
+                            )}
+                            <Button asChild size="sm" variant="outline">
+                              <Link
+                                href={`/submit/problem?resubmit=${submission.id}`}
+                                className="flex items-center gap-1"
+                              >
+                                <RefreshCw className="h-3 w-3" />
+                                Resubmit
+                              </Link>
+                            </Button>
+                          </div>
                         )}
 
                         {submission.status === "pending" && (
-                          <div className="flex items-center gap-2 text-xs text-yellow-600">
-                            <Clock className="h-3 w-3" />
+                          <div className="flex items-center gap-2 text-sm text-yellow-600">
+                            <Clock className="h-4 w-4" />
                             <span>Under review</span>
                           </div>
                         )}
                       </div>
                     ))}
-                    {userProblemSubmissions.length > 3 && (
-                      <p className="text-xs text-muted-foreground text-center">
-                        +{userProblemSubmissions.length - 3} more submissions
-                      </p>
-                    )}
                   </div>
                 </div>
               )}
