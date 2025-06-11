@@ -30,7 +30,7 @@ interface PuzzleSubmission {
   title: string;
   description: string;
   difficulty: string;
-  tags: string[];
+  tags: string[] | null;
   input: string;
   expectedOutput: string;
   hint: string | null;
@@ -44,9 +44,9 @@ interface ProblemSubmission {
   title: string;
   description: string;
   difficulty: string;
-  tags: string[];
-  functionName: string;
-  testCases: Array<{ input: string; expectedOutput: string }>;
+  tags: string[] | null;
+  functionName: string | null;
+  testCases: any; // JSONB field from database
   solution: string | null;
   submittedAt: Date;
   status: string;
@@ -213,7 +213,7 @@ export default function AdminSubmissionReview({
                                 <p className="mt-1">{submission.explanation}</p>
                               </div>
                             )}
-                            {submission.tags.length > 0 && (
+                            {submission.tags && submission.tags.length > 0 && (
                               <div>
                                 <strong>Tags:</strong>
                                 <div className="flex flex-wrap gap-1 mt-1">
@@ -306,40 +306,53 @@ export default function AdminSubmissionReview({
                             <div>
                               <strong>Function Name:</strong>
                               <code className="ml-2">
-                                {submission.functionName}
+                                {submission.functionName || "Not specified"}
                               </code>
                             </div>
                             <div>
                               <strong>Test Cases:</strong>
                               <div className="space-y-2 mt-2">
-                                {submission.testCases.map((testCase, index) => (
-                                  <div
-                                    key={index}
-                                    className="p-2 border rounded"
-                                  >
-                                    <div className="text-sm font-medium">
-                                      Test Case {index + 1}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2 mt-1">
-                                      <div>
-                                        <span className="text-xs text-muted-foreground">
-                                          Input:
-                                        </span>
-                                        <code className="block text-xs p-1 bg-muted rounded">
-                                          {testCase.input}
-                                        </code>
+                                {(
+                                  submission.testCases as Array<{
+                                    input: string;
+                                    expectedOutput: string;
+                                  }>
+                                )?.map(
+                                  (
+                                    testCase: {
+                                      input: string;
+                                      expectedOutput: string;
+                                    },
+                                    index: number
+                                  ) => (
+                                    <div
+                                      key={index}
+                                      className="p-2 border rounded"
+                                    >
+                                      <div className="text-sm font-medium">
+                                        Test Case {index + 1}
                                       </div>
-                                      <div>
-                                        <span className="text-xs text-muted-foreground">
-                                          Output:
-                                        </span>
-                                        <code className="block text-xs p-1 bg-muted rounded">
-                                          {testCase.expectedOutput}
-                                        </code>
+                                      <div className="grid grid-cols-2 gap-2 mt-1">
+                                        <div>
+                                          <span className="text-xs text-muted-foreground">
+                                            Input:
+                                          </span>
+                                          <code className="block text-xs p-1 bg-muted rounded">
+                                            {testCase.input}
+                                          </code>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-muted-foreground">
+                                            Output:
+                                          </span>
+                                          <code className="block text-xs p-1 bg-muted rounded">
+                                            {testCase.expectedOutput}
+                                          </code>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  )
+                                )}
                               </div>
                             </div>
                             {submission.solution && (
@@ -350,7 +363,7 @@ export default function AdminSubmissionReview({
                                 </p>
                               </div>
                             )}
-                            {submission.tags.length > 0 && (
+                            {submission.tags && submission.tags.length > 0 && (
                               <div>
                                 <strong>Tags:</strong>
                                 <div className="flex flex-wrap gap-1 mt-1">
