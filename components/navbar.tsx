@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { HamburgerMenu } from "@/components/ui/hamburger-menu";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -16,16 +17,30 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Code, Github, LogOut, User } from "lucide-react";
+import { Code, LogOut, User } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export function Navbar() {
   const { data: session, status } = useSession();
 
+  const menuItems = [
+    { title: "Home", href: "/" },
+    { title: "Puzzles", href: "/puzzles" },
+    { title: "Problems", href: "/problems" },
+    { title: "Contribute", href: "/contribute" },
+    ...(session ? [{ title: "Profile", href: "/profile" }] : []),
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+      <div className="container flex h-14 items-center mx-auto">
+        {/* Mobile Hamburger Menu */}
+        <div className="md:hidden bg-red-100">
+          <HamburgerMenu menuItems={menuItems} />
+        </div>
+
+        {/* Desktop Navigation */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Code className="h-6 w-6" />
@@ -36,33 +51,43 @@ export function Navbar() {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/puzzles" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Puzzles
-                  </NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink
+                  href="/puzzles"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Puzzles
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/problems" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Problems
-                  </NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink
+                  href="/problems"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Problems
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/contribute" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Contribute
-                  </NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink
+                  href="/contribute"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Contribute
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
 
+        {/* Mobile Logo (centered when hamburger is present) */}
+        <div className="flex md:hidden flex-1 ml-2">
+          <Link href="/" className="flex items-center space-x-2">
+            <Code className="h-6 w-6" />
+          </Link>
+        </div>
+
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
-            {/* Mobile menu could go here */}
+            {/* This space is now used for mobile logo above */}
           </div>
           <nav className="flex items-center">
             {status === "loading" ? (
@@ -126,7 +151,6 @@ export function Navbar() {
                 onClick={() => signIn("github")}
                 className="flex items-center gap-2"
               >
-                <Github className="h-4 w-4" />
                 Sign in
               </Button>
             )}
