@@ -1,6 +1,5 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,17 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Code,
-  Play,
-  XCircle,
-} from "lucide-react";
-import { useSession } from "next-auth/react";
+import Editor from "@monaco-editor/react";
+import { CheckCircle, Clock, Code, Play, Send, User } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -48,6 +39,9 @@ interface TestResult {
   output?: string;
   error?: string;
   expected: string;
+  status?: string;
+  time?: string;
+  memory?: number;
 }
 
 interface SubmissionResult {
@@ -62,6 +56,12 @@ interface SubmissionResult {
   memory?: number;
 }
 
+// localStorage keys
+const STORAGE_KEYS = {
+  LANGUAGE: "learn-to-scode-language",
+  CODE_PREFIX: "learn-to-scode-code-",
+};
+
 function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
     case "easy":
@@ -73,6 +73,19 @@ function getDifficultyColor(difficulty: string) {
     default:
       return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
   }
+}
+
+// Get Monaco language mapping
+function getMonacoLanguage(language: string): string {
+  const languageMap: Record<string, string> = {
+    javascript: "javascript",
+    python: "python",
+    java: "java",
+    cpp: "cpp",
+    c: "c",
+    typescript: "typescript",
+  };
+  return languageMap[language] || "javascript";
 }
 
 export default function ProblemPage() {
@@ -87,15 +100,39 @@ export default function ProblemPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Load language preference from localStorage on mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+    if (savedLanguage) {
+      setSelectedLanguage(savedLanguage);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProblem();
   }, [params.id]);
 
   useEffect(() => {
-    if (problem && selectedLanguage && problem.starterCode[selectedLanguage]) {
-      setCode(problem.starterCode[selectedLanguage]);
+    if (problem && selectedLanguage) {
+      // Load saved code for this problem and language, or use starter code
+      const codeKey = `${STORAGE_KEYS.CODE_PREFIX}${problem.id}-${selectedLanguage}`;
+      const savedCode = localStorage.getItem(codeKey);
+
+      if (savedCode) {
+        setCode(savedCode);
+      } else if (problem.starterCode[selectedLanguage]) {
+        setCode(problem.starterCode[selectedLanguage]);
+      }
     }
   }, [problem, selectedLanguage]);
+
+  // Save code to localStorage whenever it changes
+  useEffect(() => {
+    if (problem && selectedLanguage && code) {
+      const codeKey = `${STORAGE_KEYS.CODE_PREFIX}${problem.id}-${selectedLanguage}`;
+      localStorage.setItem(codeKey, code);
+    }
+  }, [problem, selectedLanguage, code]);
 
   const fetchProblem = async () => {
     try {
@@ -104,8 +141,14 @@ export default function ProblemPage() {
         const data = await response.json();
         setProblem(data);
         const languages = Object.keys(data.starterCode);
-        if (languages.length > 0) {
+
+        // Use saved language if available and supported, otherwise use first available
+        const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+        if (savedLanguage && languages.includes(savedLanguage)) {
+          setSelectedLanguage(savedLanguage);
+        } else if (languages.length > 0) {
           setSelectedLanguage(languages[0]);
+          localStorage.setItem(STORAGE_KEYS.LANGUAGE, languages[0]);
         }
       }
     } catch (error) {
@@ -113,6 +156,11 @@ export default function ProblemPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLanguageChange = (newLanguage: string) => {
+    setSelectedLanguage(newLanguage);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, newLanguage);
   };
 
   const runCode = async () => {
@@ -259,19 +307,24 @@ export default function ProblemPage() {
                   <h3 className="font-semibold mb-3">Test Cases</h3>
                   <div className="space-y-3">
                     {problem.testCases.map((testCase, index) => (
-                      <div key={index} className="border rounded-lg p-3">
-                        <div className="grid grid-cols-1 gap-2">
+                      <div
+                        key={index}
+                        className="p-3 bg-muted/50 rounded-lg border"
+                      >
+                        <div className="grid md:grid-cols-2 gap-3">
                           <div>
-                            <span className="text-sm font-medium">Input:</span>
-                            <code className="block mt-1 p-2 bg-muted rounded text-sm">
+                            <span className="text-sm font-medium text-muted-foreground">
+                              Input:
+                            </span>
+                            <code className="block mt-1 p-2 bg-background rounded text-sm font-mono">
                               {testCase.input}
                             </code>
                           </div>
                           <div>
-                            <span className="text-sm font-medium">
+                            <span className="text-sm font-medium text-muted-foreground">
                               Expected Output:
                             </span>
-                            <code className="block mt-1 p-2 bg-muted rounded text-sm">
+                            <code className="block mt-1 p-2 bg-background rounded text-sm font-mono">
                               {testCase.expectedOutput}
                             </code>
                           </div>
@@ -288,13 +341,13 @@ export default function ProblemPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2">
                   <Code className="h-5 w-5" />
                   Code Editor
                 </CardTitle>
                 <Select
                   value={selectedLanguage}
-                  onValueChange={setSelectedLanguage}
+                  onValueChange={handleLanguageChange}
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
@@ -311,147 +364,138 @@ export default function ProblemPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Textarea
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Write your solution here..."
-                  className="font-mono text-sm min-h-[300px] resize-none"
-                />
+                <div className="border rounded-md overflow-hidden">
+                  <Editor
+                    height="400px"
+                    language={getMonacoLanguage(selectedLanguage)}
+                    value={code}
+                    onChange={(value) => setCode(value || "")}
+                    theme="vs-dark"
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      tabSize: 2,
+                      wordWrap: "on",
+                    }}
+                  />
+                </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Button
                     onClick={runCode}
                     disabled={isRunning || !code.trim()}
                     className="flex-1"
                     variant="outline"
                   >
-                    {isRunning ? (
-                      <>
-                        <Clock className="h-4 w-4 mr-2 animate-spin" />
-                        Running...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="h-4 w-4 mr-2" />
-                        Run Code
-                      </>
-                    )}
+                    <Play className="h-4 w-4 mr-2" />
+                    {isRunning ? "Running..." : "Run Code"}
                   </Button>
 
-                  {session && (
+                  {session ? (
                     <Button
                       onClick={submitSolution}
                       disabled={isSubmitting || !code.trim()}
                       className="flex-1"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <Clock className="h-4 w-4 mr-2 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Submit
-                        </>
-                      )}
+                      <Send className="h-4 w-4 mr-2" />
+                      {isSubmitting ? "Submitting..." : "Submit Solution"}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => signIn("github")}
+                      className="flex-1"
+                      variant="outline"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Sign in to Submit
                     </Button>
                   )}
                 </div>
 
-                {!session && (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Sign in to submit your solution and track your progress.
-                    </AlertDescription>
-                  </Alert>
+                {submissionResult && (
+                  <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
+                    <div className="flex items-center gap-2 mb-3">
+                      {submissionResult.status === "accepted" ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <Clock className="h-5 w-5 text-red-500" />
+                      )}
+                      <span className="font-semibold">
+                        {submissionResult.status === "accepted"
+                          ? "All Tests Passed!"
+                          : "Some Tests Failed"}
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {submissionResult.results.map((result, index) => (
+                        <div
+                          key={index}
+                          className={`p-3 rounded border text-sm ${
+                            result.passed
+                              ? "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800"
+                              : "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            {result.passed ? (
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <Clock className="h-4 w-4 text-red-500" />
+                            )}
+                            <span className="font-medium">
+                              Test Case {index + 1}
+                            </span>
+                            {result.status && (
+                              <span className="text-xs text-muted-foreground">
+                                ({result.status})
+                              </span>
+                            )}
+                          </div>
+                          {!result.passed && (
+                            <div className="space-y-1">
+                              {result.output && (
+                                <div>
+                                  <span className="text-muted-foreground">
+                                    Output:{" "}
+                                  </span>
+                                  <code className="text-xs">
+                                    {result.output}
+                                  </code>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-muted-foreground">
+                                  Expected:{" "}
+                                </span>
+                                <code className="text-xs">
+                                  {result.expected}
+                                </code>
+                              </div>
+                              {result.error && (
+                                <div>
+                                  <span className="text-muted-foreground">
+                                    Error:{" "}
+                                  </span>
+                                  <code className="text-xs text-red-600">
+                                    {result.error}
+                                  </code>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             </CardContent>
           </Card>
         </div>
-
-        {/* Results */}
-        {submissionResult && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {submissionResult.status === "accepted" ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-500" />
-                )}
-                {submissionResult.status === "accepted"
-                  ? "Accepted!"
-                  : "Failed"}
-              </CardTitle>
-              {submissionResult.runtime && submissionResult.memory && (
-                <CardDescription>
-                  Runtime: {submissionResult.runtime}ms | Memory:{" "}
-                  {submissionResult.memory}KB
-                </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="results">
-                <TabsList>
-                  <TabsTrigger value="results">Test Results</TabsTrigger>
-                </TabsList>
-                <TabsContent value="results" className="space-y-2">
-                  {submissionResult.results.map((result, index) => (
-                    <div
-                      key={index}
-                      className={`border rounded-lg p-3 ${
-                        result.passed
-                          ? "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950"
-                          : "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        {result.passed ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <XCircle className="h-4 w-4 text-red-500" />
-                        )}
-                        <span className="font-medium">
-                          Test Case {index + 1}
-                        </span>
-                      </div>
-
-                      {result.error && (
-                        <div>
-                          <span className="text-sm font-medium">Error:</span>
-                          <code className="block mt-1 p-2 bg-muted rounded text-sm text-red-600">
-                            {result.error}
-                          </code>
-                        </div>
-                      )}
-
-                      {result.output && (
-                        <div>
-                          <span className="text-sm font-medium">
-                            Your Output:
-                          </span>
-                          <code className="block mt-1 p-2 bg-muted rounded text-sm">
-                            {result.output}
-                          </code>
-                        </div>
-                      )}
-
-                      <div>
-                        <span className="text-sm font-medium">Expected:</span>
-                        <code className="block mt-1 p-2 bg-muted rounded text-sm">
-                          {result.expected}
-                        </code>
-                      </div>
-                    </div>
-                  ))}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
