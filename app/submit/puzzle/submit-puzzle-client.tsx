@@ -153,7 +153,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title" className="mb-2 block">
+                  Title *
+                </Label>
                 <Input
                   id="title"
                   value={form.title}
@@ -164,7 +166,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description" className="mb-2 block">
+                  Description *
+                </Label>
                 <Textarea
                   id="description"
                   value={form.description}
@@ -176,7 +180,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="difficulty">Difficulty *</Label>
+                <Label htmlFor="difficulty" className="mb-2 block">
+                  Difficulty *
+                </Label>
                 <Select
                   value={form.difficulty}
                   onValueChange={(value) => updateForm("difficulty", value)}
@@ -194,7 +200,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="tags">Tags</Label>
+                <Label htmlFor="tags" className="mb-2 block">
+                  Tags
+                </Label>
                 <Input
                   id="tags"
                   value={form.tags}
@@ -207,7 +215,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="input">Input Data *</Label>
+                <Label htmlFor="input" className="mb-2 block">
+                  Input Data *
+                </Label>
                 <Textarea
                   id="input"
                   value={form.input}
@@ -222,7 +232,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="expectedOutput">Expected Output *</Label>
+                <Label htmlFor="expectedOutput" className="mb-2 block">
+                  Expected Output *
+                </Label>
                 <Input
                   id="expectedOutput"
                   value={form.expectedOutput}
@@ -236,7 +248,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="hint">Hint</Label>
+                <Label htmlFor="hint" className="mb-2 block">
+                  Hint
+                </Label>
                 <Textarea
                   id="hint"
                   value={form.hint}
@@ -250,7 +264,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="explanation">Explanation</Label>
+                <Label htmlFor="explanation" className="mb-2 block">
+                  Explanation
+                </Label>
                 <Textarea
                   id="explanation"
                   value={form.explanation}

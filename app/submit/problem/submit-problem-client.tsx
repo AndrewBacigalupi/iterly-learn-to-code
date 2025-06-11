@@ -186,7 +186,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title" className="mb-2 block">
+                  Title *
+                </Label>
                 <Input
                   id="title"
                   value={form.title}
@@ -197,7 +199,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description" className="mb-2 block">
+                  Description *
+                </Label>
                 <Textarea
                   id="description"
                   value={form.description}
@@ -209,7 +213,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="difficulty">Difficulty *</Label>
+                <Label htmlFor="difficulty" className="mb-2 block">
+                  Difficulty *
+                </Label>
                 <Select
                   value={form.difficulty}
                   onValueChange={(value) => updateForm("difficulty", value)}
@@ -227,7 +233,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="tags">Tags</Label>
+                <Label htmlFor="tags" className="mb-2 block">
+                  Tags
+                </Label>
                 <Input
                   id="tags"
                   value={form.tags}
@@ -240,7 +248,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="functionName">Function Name *</Label>
+                <Label htmlFor="functionName" className="mb-2 block">
+                  Function Name *
+                </Label>
                 <Input
                   id="functionName"
                   value={form.functionName}
@@ -254,7 +264,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label>Test Cases *</Label>
+                <Label className="mb-2 block">Test Cases *</Label>
                 <div className="space-y-3 mt-2">
                   {form.testCases.map((testCase, index) => (
                     <div key={index} className="border rounded-lg p-4 relative">
@@ -276,7 +286,12 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
 
                       <div className="grid gap-3">
                         <div>
-                          <Label htmlFor={`input-${index}`}>Input</Label>
+                          <Label
+                            htmlFor={`input-${index}`}
+                            className="mb-2 block"
+                          >
+                            Input
+                          </Label>
                           <Textarea
                             id={`input-${index}`}
                             value={testCase.input}
@@ -289,7 +304,10 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`output-${index}`}>
+                          <Label
+                            htmlFor={`output-${index}`}
+                            className="mb-2 block"
+                          >
                             Expected Output
                           </Label>
                           <Input
@@ -325,7 +343,9 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="solution">Solution Explanation</Label>
+                <Label htmlFor="solution" className="mb-2 block">
+                  Solution Explanation
+                </Label>
                 <Textarea
                   id="solution"
                   value={form.solution}
