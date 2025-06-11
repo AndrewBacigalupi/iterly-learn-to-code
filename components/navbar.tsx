@@ -146,7 +146,7 @@ export function Navbar({ session }: { session: Session | null }) {
               <Button
                 variant="ghost"
                 onClick={() => signIn("github")}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
                 Sign in
               </Button>
