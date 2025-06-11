@@ -56,9 +56,10 @@ export const puzzles = pgTable("puzzles", {
   description: text("description").notNull(),
   difficulty: text("difficulty").notNull(), // easy, medium, hard
   tags: text("tags").array(),
-  sampleInput: text("sample_input"),
-  sampleOutput: text("sample_output"),
-  solution: text("solution"), // Optional solution explanation
+  input: text("input").notNull(), // The puzzle input data
+  expectedOutput: text("expected_output").notNull(), // The correct answer
+  hint: text("hint"), // Optional hint for users
+  explanation: text("explanation"), // Optional explanation after solving
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

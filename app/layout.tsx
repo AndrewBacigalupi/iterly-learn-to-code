@@ -3,6 +3,7 @@ import { Providers } from "@/components/providers";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default async function RootLayout({
         <Providers>
           <Navbar session={session} />
           <main className="min-h-[calc(100vh-14rem)]">{children}</main>
+          <Toaster />
         </Providers>
       </body>
     </html>

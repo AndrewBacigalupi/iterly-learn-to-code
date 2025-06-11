@@ -8,62 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { CheckCircle, Clock, Star } from "lucide-react";
+import { db } from "@/lib/db";
+import { puzzleCompletions, puzzles } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { CheckCircle, Clock, Play, Trophy } from "lucide-react";
 import Link from "next/link";
-
-// Mock data for now - in a real app, this would come from the database
-const mockPuzzles = [
-  {
-    id: "1",
-    title: "Two Sum Arrays",
-    description:
-      "Given an array of integers and a target sum, find two numbers that add up to the target.",
-    difficulty: "easy" as const,
-    tags: ["arrays", "hash-table"],
-    sampleInput: "[2, 7, 11, 15], target = 9",
-    sampleOutput: "[0, 1]",
-  },
-  {
-    id: "2",
-    title: "String Palindrome Checker",
-    description:
-      "Determine if a given string is a palindrome, ignoring spaces and case.",
-    difficulty: "easy" as const,
-    tags: ["strings", "two-pointers"],
-    sampleInput: '"A man a plan a canal Panama"',
-    sampleOutput: "true",
-  },
-  {
-    id: "3",
-    title: "Binary Tree Traversal",
-    description:
-      "Implement in-order, pre-order, and post-order traversal of a binary tree.",
-    difficulty: "medium" as const,
-    tags: ["trees", "recursion"],
-    sampleInput: "Tree: [1,null,2,3]",
-    sampleOutput: "Inorder: [1,3,2]",
-  },
-  {
-    id: "4",
-    title: "Graph Shortest Path",
-    description:
-      "Find the shortest path between two nodes in an unweighted graph using BFS.",
-    difficulty: "medium" as const,
-    tags: ["graphs", "bfs"],
-    sampleInput: "Graph edges: [[0,1],[1,2],[2,3]], start: 0, end: 3",
-    sampleOutput: "[0,1,2,3]",
-  },
-  {
-    id: "5",
-    title: "Dynamic Programming Fibonacci",
-    description:
-      "Calculate the nth Fibonacci number using dynamic programming optimization.",
-    difficulty: "hard" as const,
-    tags: ["dynamic-programming", "optimization"],
-    sampleInput: "n = 10",
-    sampleOutput: "55",
-  },
-];
 
 function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
@@ -81,37 +30,52 @@ function getDifficultyColor(difficulty: string) {
 export default async function PuzzlesPage() {
   const session = await auth();
 
-  // In a real app, you would fetch user completions from the database
-  // const userCompletions = session ? await db.query.puzzleCompletions.findMany({
-  //   where: eq(puzzleCompletions.userId, session.user.id),
-  // }) : [];
+  // Fetch all puzzles from database
+  const allPuzzles = await db.select().from(puzzles).orderBy(puzzles.createdAt);
 
-  const mockCompletedPuzzleIds = session ? ["1", "2"] : []; // Mock completed puzzles for demo
+  // Fetch user's completed puzzles if logged in
+  let completedPuzzleIds: string[] = [];
+  if (session?.user?.id) {
+    const userCompletions = await db
+      .select({ puzzleId: puzzleCompletions.puzzleId })
+      .from(puzzleCompletions)
+      .where(eq(puzzleCompletions.userId, session.user.id));
+
+    completedPuzzleIds = [...new Set(userCompletions.map((c) => c.puzzleId))];
+  }
+
+  // Calculate stats
+  const totalCompletions = session?.user?.id
+    ? await db
+        .select()
+        .from(puzzleCompletions)
+        .where(eq(puzzleCompletions.userId, session.user.id))
+    : [];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Programming Puzzles</h1>
+          <h1 className="text-3xl font-bold mb-4">Logic Puzzles</h1>
           <p className="text-muted-foreground mb-4">
-            Challenge yourself with these Advent of Code style puzzles. Each
-            puzzle tests different aspects of programming and problem-solving
-            skills.
+            Solve Advent of Code-style puzzles by analyzing the input and
+            providing the correct output. These puzzles test your
+            problem-solving skills and logical thinking.
           </p>
           {!session && (
             <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
               <p className="text-blue-800 dark:text-blue-200">
                 <strong>Sign in to track your progress!</strong> You can solve
                 puzzles without an account, but signing in allows you to save
-                your solutions and track completed puzzles.
+                your solutions and track your success rate.
               </p>
             </div>
           )}
         </div>
 
         <div className="grid gap-6">
-          {mockPuzzles.map((puzzle) => {
-            const isCompleted = mockCompletedPuzzleIds.includes(puzzle.id);
+          {allPuzzles.map((puzzle) => {
+            const isCompleted = completedPuzzleIds.includes(puzzle.id);
 
             return (
               <Card
@@ -140,30 +104,35 @@ export default async function PuzzlesPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      {puzzle.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <strong>Sample Input:</strong>
-                        <code className="block mt-1 p-2 bg-muted rounded text-xs">
-                          {puzzle.sampleInput}
-                        </code>
+                    {puzzle.tags && (
+                      <div className="flex flex-wrap gap-2">
+                        {puzzle.tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
                       </div>
-                      <div>
-                        <strong>Expected Output:</strong>
-                        <code className="block mt-1 p-2 bg-muted rounded text-xs">
-                          {puzzle.sampleOutput}
-                        </code>
+                    )}
+
+                    <div>
+                      <strong className="text-sm">Example:</strong>
+                      <div className="mt-2 grid md:grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Input:</span>
+                          <code className="block mt-1 p-2 bg-muted rounded">
+                            {puzzle.input}
+                          </code>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Output:</span>
+                          <code className="block mt-1 p-2 bg-muted rounded">
+                            [Hidden until solved]
+                          </code>
+                        </div>
                       </div>
                     </div>
 
@@ -172,17 +141,18 @@ export default async function PuzzlesPage() {
                         {isCompleted ? (
                           <span className="flex items-center gap-1 text-green-600">
                             <CheckCircle className="h-4 w-4" />
-                            Completed
+                            Solved
                           </span>
                         ) : (
                           <span className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
-                            Not started
+                            Not attempted
                           </span>
                         )}
                       </div>
                       <Button asChild>
                         <Link href={`/puzzles/${puzzle.id}`}>
+                          <Play className="h-4 w-4 mr-2" />
                           {isCompleted ? "View Solution" : "Solve Puzzle"}
                         </Link>
                       </Button>
@@ -197,34 +167,42 @@ export default async function PuzzlesPage() {
         {session && (
           <div className="mt-8 p-6 bg-muted/50 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Star className="h-5 w-5 text-yellow-500" />
-              Your Progress
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              Your Puzzle Stats
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-green-600">
-                  {mockCompletedPuzzleIds.length}
+                  {completedPuzzleIds.length}
                 </div>
-                <div className="text-sm text-muted-foreground">Completed</div>
+                <div className="text-sm text-muted-foreground">Solved</div>
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {mockPuzzles.length - mockCompletedPuzzleIds.length}
+                  {allPuzzles.length - completedPuzzleIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Remaining</div>
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {Math.round(
-                    (mockCompletedPuzzleIds.length / mockPuzzles.length) * 100
-                  )}
+                  {allPuzzles.length > 0
+                    ? Math.round(
+                        (completedPuzzleIds.length / allPuzzles.length) * 100
+                      )
+                    : 0}
                   %
                 </div>
-                <div className="text-sm text-muted-foreground">Progress</div>
+                <div className="text-sm text-muted-foreground">
+                  Success Rate
+                </div>
               </div>
               <div>
-                <div className="text-2xl font-bold">{mockPuzzles.length}</div>
-                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="text-2xl font-bold">
+                  {totalCompletions.length}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Attempts
+                </div>
               </div>
             </div>
           </div>
