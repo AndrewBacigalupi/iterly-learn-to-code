@@ -8,100 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { problems, problemSubmissions } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
 import { CheckCircle, Clock, Code, Play } from "lucide-react";
 import Link from "next/link";
-
-// Mock data for now - in a real app, this would come from the database
-const mockProblems = [
-  {
-    id: "1",
-    title: "Reverse String",
-    description:
-      "Write a function that reverses a string. The input string is given as an array of characters.",
-    difficulty: "easy" as const,
-    tags: ["strings", "two-pointers"],
-    testCases: [
-      {
-        input: '["h","e","l","l","o"]',
-        expectedOutput: '["o","l","l","e","h"]',
-      },
-      {
-        input: '["H","a","n","n","a","h"]',
-        expectedOutput: '["h","a","n","n","a","H"]',
-      },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-  {
-    id: "2",
-    title: "Valid Parentheses",
-    description:
-      "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
-    difficulty: "easy" as const,
-    tags: ["stack", "strings"],
-    testCases: [
-      { input: '"()"', expectedOutput: "true" },
-      { input: '"()[]{}"', expectedOutput: "true" },
-      { input: '"(]"', expectedOutput: "false" },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-  {
-    id: "3",
-    title: "Merge Two Sorted Lists",
-    description:
-      "You are given the heads of two sorted linked lists. Merge the two lists into one sorted list.",
-    difficulty: "easy" as const,
-    tags: ["linked-list", "recursion"],
-    testCases: [
-      {
-        input: "list1 = [1,2,4], list2 = [1,3,4]",
-        expectedOutput: "[1,1,2,3,4,4]",
-      },
-      { input: "list1 = [], list2 = []", expectedOutput: "[]" },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-  {
-    id: "4",
-    title: "Binary Tree Inorder Traversal",
-    description:
-      "Given the root of a binary tree, return the inorder traversal of its nodes' values.",
-    difficulty: "medium" as const,
-    tags: ["tree", "depth-first-search", "stack"],
-    testCases: [
-      { input: "root = [1,null,2,3]", expectedOutput: "[1,3,2]" },
-      { input: "root = []", expectedOutput: "[]" },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-  {
-    id: "5",
-    title: "Longest Palindromic Substring",
-    description:
-      "Given a string s, return the longest palindromic substring in s.",
-    difficulty: "medium" as const,
-    tags: ["string", "dynamic-programming"],
-    testCases: [
-      { input: '"babad"', expectedOutput: '"bab" or "aba"' },
-      { input: '"cbbd"', expectedOutput: '"bb"' },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-  {
-    id: "6",
-    title: "Median of Two Sorted Arrays",
-    description:
-      "Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.",
-    difficulty: "hard" as const,
-    tags: ["array", "binary-search", "divide-and-conquer"],
-    testCases: [
-      { input: "nums1 = [1,3], nums2 = [2]", expectedOutput: "2.0" },
-      { input: "nums1 = [1,2], nums2 = [3,4]", expectedOutput: "2.5" },
-    ],
-    languages: ["javascript", "python", "java", "cpp"],
-  },
-];
 
 function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
@@ -119,8 +30,35 @@ function getDifficultyColor(difficulty: string) {
 export default async function ProblemsPage() {
   const session = await auth();
 
-  // Mock completed problems for demo
-  const mockCompletedProblemIds = session ? ["1", "2", "4"] : [];
+  // Fetch all problems from database
+  const allProblems = await db
+    .select()
+    .from(problems)
+    .orderBy(problems.createdAt);
+
+  // Fetch user's successful submissions if logged in
+  let completedProblemIds: string[] = [];
+  if (session?.user?.id) {
+    const userSubmissions = await db
+      .select({ problemId: problemSubmissions.problemId })
+      .from(problemSubmissions)
+      .where(
+        and(
+          eq(problemSubmissions.userId, session.user.id),
+          eq(problemSubmissions.status, "accepted")
+        )
+      );
+
+    completedProblemIds = [...new Set(userSubmissions.map((s) => s.problemId))];
+  }
+
+  // Calculate stats
+  const totalSubmissions = session?.user?.id
+    ? await db
+        .select()
+        .from(problemSubmissions)
+        .where(eq(problemSubmissions.userId, session.user.id))
+    : [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -144,8 +82,14 @@ export default async function ProblemsPage() {
         </div>
 
         <div className="grid gap-6">
-          {mockProblems.map((problem) => {
-            const isCompleted = mockCompletedProblemIds.includes(problem.id);
+          {allProblems.map((problem) => {
+            const isCompleted = completedProblemIds.includes(problem.id);
+            const testCases = problem.testCases as Array<{
+              input: string;
+              expectedOutput: string;
+            }>;
+            const starterCode = problem.starterCode as Record<string, string>;
+            const supportedLanguages = Object.keys(starterCode);
 
             return (
               <Card
@@ -175,7 +119,7 @@ export default async function ProblemsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      {problem.tags.map((tag) => (
+                      {problem.tags?.map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
@@ -189,7 +133,7 @@ export default async function ProblemsPage() {
                     <div>
                       <strong className="text-sm">Supported Languages:</strong>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {problem.languages.map((lang) => (
+                        {supportedLanguages.map((lang) => (
                           <Badge
                             key={lang}
                             variant="outline"
@@ -205,34 +149,32 @@ export default async function ProblemsPage() {
                     <div>
                       <strong className="text-sm">Test Cases:</strong>
                       <div className="mt-2 space-y-2">
-                        {problem.testCases
-                          .slice(0, 2)
-                          .map((testCase, index) => (
-                            <div
-                              key={index}
-                              className="grid md:grid-cols-2 gap-4 text-xs"
-                            >
-                              <div>
-                                <span className="text-muted-foreground">
-                                  Input:
-                                </span>
-                                <code className="block mt-1 p-2 bg-muted rounded">
-                                  {testCase.input}
-                                </code>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">
-                                  Output:
-                                </span>
-                                <code className="block mt-1 p-2 bg-muted rounded">
-                                  {testCase.expectedOutput}
-                                </code>
-                              </div>
+                        {testCases.slice(0, 2).map((testCase, index) => (
+                          <div
+                            key={index}
+                            className="grid md:grid-cols-2 gap-4 text-xs"
+                          >
+                            <div>
+                              <span className="text-muted-foreground">
+                                Input:
+                              </span>
+                              <code className="block mt-1 p-2 bg-muted rounded">
+                                {testCase.input}
+                              </code>
                             </div>
-                          ))}
-                        {problem.testCases.length > 2 && (
+                            <div>
+                              <span className="text-muted-foreground">
+                                Output:
+                              </span>
+                              <code className="block mt-1 p-2 bg-muted rounded">
+                                {testCase.expectedOutput}
+                              </code>
+                            </div>
+                          </div>
+                        ))}
+                        {testCases.length > 2 && (
                           <p className="text-xs text-muted-foreground">
-                            +{problem.testCases.length - 2} more test cases...
+                            +{testCases.length - 2} more test cases...
                           </p>
                         )}
                       </div>
@@ -275,21 +217,23 @@ export default async function ProblemsPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-green-600">
-                  {mockCompletedProblemIds.length}
+                  {completedProblemIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Solved</div>
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {mockProblems.length - mockCompletedProblemIds.length}
+                  {allProblems.length - completedProblemIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Remaining</div>
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {Math.round(
-                    (mockCompletedProblemIds.length / mockProblems.length) * 100
-                  )}
+                  {allProblems.length > 0
+                    ? Math.round(
+                        (completedProblemIds.length / allProblems.length) * 100
+                      )
+                    : 0}
                   %
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -297,8 +241,12 @@ export default async function ProblemsPage() {
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-bold">{mockProblems.length}</div>
-                <div className="text-sm text-muted-foreground">Total</div>
+                <div className="text-2xl font-bold">
+                  {totalSubmissions.length}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Submissions
+                </div>
               </div>
             </div>
           </div>

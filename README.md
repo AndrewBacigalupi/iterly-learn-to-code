@@ -26,6 +26,7 @@ A modern platform for learning programming through hands-on puzzles and coding c
 ### Prerequisites
 
 - Node.js 18+ (Note: Neon requires Node.js 19+, but the app will work with warnings)
+- pnpm (preferred package manager)
 - A Neon PostgreSQL database
 - (Optional) GitHub OAuth app for authentication
 - (Optional) Judge0 API key for code execution
@@ -40,7 +41,7 @@ A modern platform for learning programming through hands-on puzzles and coding c
 
 2. **Install dependencies**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Set up environment variables**
@@ -65,15 +66,15 @@ A modern platform for learning programming through hands-on puzzles and coding c
 4. **Set up the database**
    ```bash
    # Generate migration files
-   npm run db:generate
+   pnpm db:generate
 
    # Push schema to database
-   npm run db:push
+   pnpm db:push
    ```
 
 5. **Run the development server**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -143,14 +144,15 @@ Without Judge0, the problems section will still work but won't execute code.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate database migrations
-- `npm run db:push` - Push schema to database
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Drizzle Studio
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm db:generate` - Generate database migrations
+- `pnpm db:push` - Push schema to database
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:studio` - Open Drizzle Studio
+- `pnpm db:seed` - Seed database with sample problems
 
 ## Contributing
 
