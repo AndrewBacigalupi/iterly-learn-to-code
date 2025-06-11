@@ -10,11 +10,13 @@ interface RunCodeRequest {
   code: string;
   language: SupportedLanguage;
   testCases: TestCase[];
+  functionName?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { code, language, testCases }: RunCodeRequest = await request.json();
+    const { code, language, testCases, functionName }: RunCodeRequest =
+      await request.json();
 
     if (!code || !language || !testCases) {
       return NextResponse.json(
@@ -24,7 +26,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Run the code against test cases using Judge0
-    const results = await judge0.runTestCases(code, language, testCases);
+    const results = await judge0.runTestCases(
+      code,
+      language,
+      testCases,
+      functionName
+    );
 
     return NextResponse.json({
       results,

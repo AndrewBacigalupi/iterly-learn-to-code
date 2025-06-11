@@ -10,6 +10,7 @@ const problemsData = [
       "Write a function that reverses a string. The input string is given as an array of characters.",
     difficulty: "easy",
     tags: ["strings", "two-pointers"],
+    functionName: "reverseString",
     testCases: [
       {
         input: '["h","e","l","l","o"]',
@@ -50,6 +51,7 @@ public:
       "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
     difficulty: "easy",
     tags: ["stack", "strings"],
+    functionName: "isValid",
     testCases: [
       { input: '"()"', expectedOutput: "true" },
       { input: '"()[]{}"', expectedOutput: "true" },
@@ -85,6 +87,7 @@ public:
       "You are given the heads of two sorted linked lists. Merge the two lists into one sorted list.",
     difficulty: "easy",
     tags: ["linked-list", "recursion"],
+    functionName: "mergeTwoLists",
     testCases: [
       {
         input: "list1 = [1,2,4], list2 = [1,3,4]",
@@ -122,6 +125,7 @@ public:
       "Given the root of a binary tree, return the inorder traversal of its nodes' values.",
     difficulty: "medium",
     tags: ["tree", "depth-first-search", "stack"],
+    functionName: "inorderTraversal",
     testCases: [
       { input: "root = [1,null,2,3]", expectedOutput: "[1,3,2]" },
       { input: "root = []", expectedOutput: "[]" },
@@ -156,6 +160,7 @@ public:
       "Given a string s, return the longest palindromic substring in s.",
     difficulty: "medium",
     tags: ["string", "dynamic-programming"],
+    functionName: "longestPalindrome",
     testCases: [
       { input: '"babad"', expectedOutput: '"bab" or "aba"' },
       { input: '"cbbd"', expectedOutput: '"bb"' },
@@ -190,6 +195,7 @@ public:
       "Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.",
     difficulty: "hard",
     tags: ["array", "binary-search", "divide-and-conquer"],
+    functionName: "findMedianSortedArrays",
     testCases: [
       { input: "nums1 = [1,3], nums2 = [2]", expectedOutput: "2.0" },
       { input: "nums1 = [1,2], nums2 = [3,4]", expectedOutput: "2.5" },
@@ -232,6 +238,7 @@ export async function seedProblems() {
           description: problem.description,
           difficulty: problem.difficulty,
           tags: problem.tags,
+          functionName: problem.functionName,
           testCases: problem.testCases,
           starterCode: problem.starterCode,
         })
@@ -242,6 +249,7 @@ export async function seedProblems() {
             description: problem.description,
             difficulty: problem.difficulty,
             tags: problem.tags,
+            functionName: problem.functionName,
             testCases: problem.testCases,
             starterCode: problem.starterCode,
             updatedAt: new Date(),

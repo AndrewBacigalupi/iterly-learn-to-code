@@ -14,6 +14,7 @@ interface SubmitCodeRequest {
   code: string;
   language: SupportedLanguage;
   testCases: TestCase[];
+  functionName?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -27,8 +28,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { problemId, code, language, testCases }: SubmitCodeRequest =
-      await request.json();
+    const {
+      problemId,
+      code,
+      language,
+      testCases,
+      functionName,
+    }: SubmitCodeRequest = await request.json();
 
     if (!problemId || !code || !language || !testCases) {
       return NextResponse.json(
@@ -38,7 +44,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Run the code against test cases using Judge0
-    const results = await judge0.runTestCases(code, language, testCases);
+    const results = await judge0.runTestCases(
+      code,
+      language,
+      testCases,
+      functionName
+    );
 
     // Determine the overall status
     const allPassed = results.every((result) => result.passed);

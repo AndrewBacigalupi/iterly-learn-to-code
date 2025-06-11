@@ -38,6 +38,7 @@ interface Problem {
   description: string;
   difficulty: string;
   tags: string[];
+  functionName?: string;
   testCases: Array<{ input: string; expectedOutput: string }>;
   starterCode: Record<string, string>;
 }
@@ -128,10 +129,13 @@ export default function ProblemPage() {
           code,
           language: selectedLanguage,
           testCases: problem.testCases,
+          functionName: problem.functionName,
         }),
       });
 
       const result = await response.json();
+
+      console.log("JUDGE0 RESULT", result);
 
       if (response.ok) {
         const allPassed = result.results.every((r: TestResult) => r.passed);
@@ -172,6 +176,7 @@ export default function ProblemPage() {
           code,
           language: selectedLanguage,
           testCases: problem.testCases,
+          functionName: problem.functionName,
         }),
       });
 

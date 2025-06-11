@@ -70,6 +70,7 @@ export const problems = pgTable("problems", {
   description: text("description").notNull(),
   difficulty: text("difficulty").notNull(), // easy, medium, hard
   tags: text("tags").array(),
+  functionName: text("function_name"), // Name of the main function to call
   testCases: jsonb("test_cases").notNull(), // Array of {input, expectedOutput}
   starterCode: jsonb("starter_code"), // Object with language as key, code as value
   solution: text("solution"), // Optional solution explanation
