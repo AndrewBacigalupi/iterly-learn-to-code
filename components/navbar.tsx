@@ -35,7 +35,7 @@ export function Navbar({ session }: { session: Session | null }) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center mx-auto">
         {/* Mobile Hamburger Menu */}
-        <div className="md:hidden bg-red-100">
+        <div className="md:hidden">
           <HamburgerMenu menuItems={menuItems} />
         </div>
 

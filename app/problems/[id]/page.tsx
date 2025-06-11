@@ -18,9 +18,19 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import Editor from "@monaco-editor/react";
-import { CheckCircle, Clock, Code, Play, Send, User } from "lucide-react";
+import confetti from "canvas-confetti";
+import {
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Code,
+  Play,
+  Send,
+  Trophy,
+  User,
+} from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Problem {
@@ -88,8 +98,43 @@ function getMonacoLanguage(language: string): string {
   return languageMap[language] || "javascript";
 }
 
+// Celebration function
+function triggerCelebration() {
+  // Burst of confetti from multiple angles
+  const count = 200;
+  const defaults = {
+    origin: { y: 0.7 },
+    startVelocity: 30,
+    spread: 360,
+    particleCount: Math.floor(count / 2),
+  };
+
+  // Left side
+  confetti({
+    ...defaults,
+    angle: 60,
+    origin: { x: 0.1, y: 0.7 },
+  });
+
+  // Right side
+  confetti({
+    ...defaults,
+    angle: 120,
+    origin: { x: 0.9, y: 0.7 },
+  });
+
+  // Center burst
+  confetti({
+    ...defaults,
+    angle: 90,
+    origin: { x: 0.5, y: 0.7 },
+    spread: 180,
+  });
+}
+
 export default function ProblemPage() {
   const params = useParams();
+  const router = useRouter();
   const { data: session } = useSession();
   const [problem, setProblem] = useState<Problem | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -99,6 +144,8 @@ export default function ProblemPage() {
     useState<SubmissionResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSolved, setIsSolved] = useState(false);
+  const [checkingSolvedStatus, setCheckingSolvedStatus] = useState(true);
 
   // Load language preference from localStorage on mount
   useEffect(() => {
@@ -111,6 +158,14 @@ export default function ProblemPage() {
   useEffect(() => {
     fetchProblem();
   }, [params.id]);
+
+  useEffect(() => {
+    if (session && params.id) {
+      checkSolvedStatus();
+    } else {
+      setCheckingSolvedStatus(false);
+    }
+  }, [session, params.id]);
 
   useEffect(() => {
     if (problem && selectedLanguage) {
@@ -158,9 +213,42 @@ export default function ProblemPage() {
     }
   };
 
+  const checkSolvedStatus = async () => {
+    try {
+      const response = await fetch(`/api/problems/${params.id}/status`);
+      if (response.ok) {
+        const data = await response.json();
+        setIsSolved(data.solved);
+      }
+    } catch (error) {
+      console.error("Error checking solved status:", error);
+    } finally {
+      setCheckingSolvedStatus(false);
+    }
+  };
+
   const handleLanguageChange = (newLanguage: string) => {
     setSelectedLanguage(newLanguage);
     localStorage.setItem(STORAGE_KEYS.LANGUAGE, newLanguage);
+  };
+
+  const goToNextProblem = async () => {
+    try {
+      const response = await fetch(`/api/problems/next?current=${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.nextProblem) {
+          router.push(`/problems/${data.nextProblem.id}`);
+        } else {
+          // No more problems, go back to problems list
+          router.push("/problems");
+        }
+      }
+    } catch (error) {
+      console.error("Error finding next problem:", error);
+      // Fallback to problems page
+      router.push("/problems");
+    }
   };
 
   const runCode = async () => {
@@ -232,6 +320,14 @@ export default function ProblemPage() {
 
       if (response.ok) {
         setSubmissionResult(result);
+
+        // If this is the first time solving the problem, celebrate!
+        if (result.status === "accepted" && !isSolved) {
+          setIsSolved(true);
+          setTimeout(() => {
+            triggerCelebration();
+          }, 500); // Delay celebration slightly for better UX
+        }
       }
     } catch (error) {
       console.error("Error submitting solution:", error);
@@ -240,7 +336,7 @@ export default function ProblemPage() {
     }
   };
 
-  if (loading) {
+  if (loading || checkingSolvedStatus) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -280,8 +376,16 @@ export default function ProblemPage() {
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-xl">{problem.title}</CardTitle>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CardTitle className="text-xl">{problem.title}</CardTitle>
+                    {isSolved && (
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 flex items-center gap-1">
+                        <Trophy className="h-3 w-3" />
+                        Solved
+                      </Badge>
+                    )}
+                  </div>
                   <CardDescription className="mt-2">
                     {problem.description}
                   </CardDescription>
@@ -344,6 +448,12 @@ export default function ProblemPage() {
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Code className="h-5 w-5" />
                   Code Editor
+                  {isSolved && (
+                    <span className="text-sm text-green-600 font-normal flex items-center gap-1">
+                      <CheckCircle className="h-4 w-4" />
+                      Problem Solved!
+                    </span>
+                  )}
                 </CardTitle>
                 <Select
                   value={selectedLanguage}
@@ -383,51 +493,74 @@ export default function ProblemPage() {
                   />
                 </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    onClick={runCode}
-                    disabled={isRunning || !code.trim()}
-                    className="flex-1"
-                    variant="outline"
-                  >
-                    <Play className="h-4 w-4 mr-2" />
-                    {isRunning ? "Running..." : "Run Code"}
-                  </Button>
-
-                  {session ? (
-                    <Button
-                      onClick={submitSolution}
-                      disabled={isSubmitting || !code.trim()}
-                      className="flex-1"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      {isSubmitting ? "Submitting..." : "Submit Solution"}
+                {isSolved ? (
+                  // Show Next Problem button for solved problems
+                  <div className="flex gap-3">
+                    <Button onClick={goToNextProblem} className="flex-1">
+                      <ArrowRight className="h-4 w-4 mr-2" />
+                      Next Problem
                     </Button>
-                  ) : (
+                  </div>
+                ) : (
+                  // Show Run/Submit buttons for unsolved problems
+                  <div className="flex gap-3">
                     <Button
-                      onClick={() => signIn("github")}
+                      onClick={runCode}
+                      disabled={isRunning || !code.trim()}
                       className="flex-1"
                       variant="outline"
                     >
-                      <User className="h-4 w-4 mr-2" />
-                      Sign in to Submit
+                      <Play className="h-4 w-4 mr-2" />
+                      {isRunning ? "Running..." : "Run Code"}
                     </Button>
-                  )}
-                </div>
+
+                    {session ? (
+                      <Button
+                        onClick={submitSolution}
+                        disabled={isSubmitting || !code.trim()}
+                        className="flex-1"
+                      >
+                        <Send className="h-4 w-4 mr-2" />
+                        {isSubmitting ? "Submitting..." : "Submit Solution"}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => signIn("github")}
+                        className="flex-1"
+                        variant="outline"
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Sign in to Submit
+                      </Button>
+                    )}
+                  </div>
+                )}
 
                 {submissionResult && (
-                  <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
+                  <div
+                    className={`mt-4 p-4 rounded-lg border ${
+                      submissionResult.status === "accepted"
+                        ? "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800"
+                        : "bg-muted/50 border-border"
+                    }`}
+                  >
                     <div className="flex items-center gap-2 mb-3">
                       {submissionResult.status === "accepted" ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <>
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                          <span className="font-semibold text-green-700 dark:text-green-300">
+                            🎉 All Tests Passed!{" "}
+                            {!isSolved && "Problem Solved!"}
+                          </span>
+                        </>
                       ) : (
-                        <Clock className="h-5 w-5 text-red-500" />
+                        <>
+                          <Clock className="h-5 w-5 text-red-500" />
+                          <span className="font-semibold">
+                            Some Tests Failed
+                          </span>
+                        </>
                       )}
-                      <span className="font-semibold">
-                        {submissionResult.status === "accepted"
-                          ? "All Tests Passed!"
-                          : "Some Tests Failed"}
-                      </span>
                     </div>
 
                     <div className="space-y-2">
