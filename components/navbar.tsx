@@ -23,12 +23,16 @@ import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 
 export function Navbar({ session }: { session: Session | null }) {
+  // @ts-ignore - session.user may have isAdmin from database
+  const isAdmin = session?.user?.isAdmin === true;
+
   const menuItems = [
     { title: "Home", href: "/" },
     { title: "Puzzles", href: "/puzzles" },
     { title: "Problems", href: "/problems" },
     { title: "Contribute", href: "/contribute" },
     ...(session ? [{ title: "Profile", href: "/profile" }] : []),
+    ...(isAdmin ? [{ title: "Admin", href: "/admin" }] : []),
   ];
 
   return (
@@ -73,6 +77,16 @@ export function Navbar({ session }: { session: Session | null }) {
                   Contribute
                 </NavigationMenuLink>
               </NavigationMenuItem>
+              {isAdmin && (
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    href="/admin"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Admin
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              )}
             </NavigationMenuList>
           </NavigationMenu>
         </div>

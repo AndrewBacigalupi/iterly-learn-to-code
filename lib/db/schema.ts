@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   integer,
   jsonb,
   pgTable,
@@ -15,6 +16,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified"),
   image: text("image"),
+  isAdmin: boolean("is_admin").default(false).notNull(), // Admin status
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -109,12 +111,59 @@ export const problemSubmissions = pgTable("problem_submissions", {
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
 });
 
+// Puzzle submissions (for community contributions)
+export const puzzleSubmissions = pgTable("puzzle_submissions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  difficulty: text("difficulty").notNull(),
+  tags: text("tags").array(),
+  input: text("input").notNull(),
+  expectedOutput: text("expected_output").notNull(),
+  hint: text("hint"),
+  explanation: text("explanation"),
+  status: text("status").default("pending").notNull(), // pending, approved, rejected
+  adminNotes: text("admin_notes"), // Admin feedback
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+});
+
+// Problem submissions (for community contributions)
+export const problemSubmissions_contrib = pgTable(
+  "problem_submissions_contrib",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    difficulty: text("difficulty").notNull(),
+    tags: text("tags").array(),
+    functionName: text("function_name"),
+    testCases: jsonb("test_cases").notNull(),
+    starterCode: jsonb("starter_code"),
+    solution: text("solution"),
+    status: text("status").default("pending").notNull(), // pending, approved, rejected
+    adminNotes: text("admin_notes"), // Admin feedback
+    submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+    reviewedAt: timestamp("reviewed_at"),
+    reviewedBy: uuid("reviewed_by").references(() => users.id),
+  }
+);
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   puzzleCompletions: many(puzzleCompletions),
   problemSubmissions: many(problemSubmissions),
+  puzzleSubmissions: many(puzzleSubmissions),
+  problemSubmissions_contrib: many(problemSubmissions_contrib),
 }));
 
 export const puzzlesRelations = relations(puzzles, ({ many }) => ({
@@ -149,6 +198,34 @@ export const problemSubmissionsRelations = relations(
     problem: one(problems, {
       fields: [problemSubmissions.problemId],
       references: [problems.id],
+    }),
+  })
+);
+
+export const puzzleSubmissionsRelations = relations(
+  puzzleSubmissions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [puzzleSubmissions.userId],
+      references: [users.id],
+    }),
+    reviewer: one(users, {
+      fields: [puzzleSubmissions.reviewedBy],
+      references: [users.id],
+    }),
+  })
+);
+
+export const problemSubmissionsContribRelations = relations(
+  problemSubmissions_contrib,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [problemSubmissions_contrib.userId],
+      references: [users.id],
+    }),
+    reviewer: one(users, {
+      fields: [problemSubmissions_contrib.reviewedBy],
+      references: [users.id],
     }),
   })
 );

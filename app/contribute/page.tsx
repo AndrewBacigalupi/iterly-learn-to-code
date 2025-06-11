@@ -131,15 +131,14 @@ export default function ContributePage() {
                   <li>• Write solution explanations</li>
                   <li>• Review and improve existing content</li>
                 </ul>
-                <Button asChild variant="outline" size="sm">
-                  <a
-                    href="https://github.com/your-username/learn-to-scode/blob/main/CONTENT_GUIDELINES.md"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Content Guidelines
-                  </a>
-                </Button>
+                <div className="flex gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <a href="/submit/puzzle">Submit Puzzle</a>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <a href="/submit/problem">Submit Problem</a>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
