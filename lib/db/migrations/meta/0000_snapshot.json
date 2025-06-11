@@ -1,5 +1,5 @@
 {
-  "id": "da690c6b-14ad-43fc-aa4b-3ef5703019b8",
+  "id": "b2c972f4-93c6-4e4d-b31d-0318536a4f3a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -235,6 +235,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "function_name": {
+          "name": "function_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "test_cases": {
           "name": "test_cases",
           "type": "jsonb",
@@ -383,20 +389,26 @@
           "primaryKey": false,
           "notNull": false
         },
-        "sample_input": {
-          "name": "sample_input",
+        "input": {
+          "name": "input",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_output": {
+          "name": "expected_output",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hint": {
+          "name": "hint",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "sample_output": {
-          "name": "sample_output",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "solution": {
-          "name": "solution",
+        "explanation": {
+          "name": "explanation",
           "type": "text",
           "primaryKey": false,
           "notNull": false

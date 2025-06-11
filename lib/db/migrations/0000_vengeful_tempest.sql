@@ -31,6 +31,7 @@ CREATE TABLE "problems" (
 	"description" text NOT NULL,
 	"difficulty" text NOT NULL,
 	"tags" text[],
+	"function_name" text,
 	"test_cases" jsonb NOT NULL,
 	"starter_code" jsonb,
 	"solution" text,
@@ -52,9 +53,10 @@ CREATE TABLE "puzzles" (
 	"description" text NOT NULL,
 	"difficulty" text NOT NULL,
 	"tags" text[],
-	"sample_input" text,
-	"sample_output" text,
-	"solution" text,
+	"input" text NOT NULL,
+	"expected_output" text NOT NULL,
+	"hint" text,
+	"explanation" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
