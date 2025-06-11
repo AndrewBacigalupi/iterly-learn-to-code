@@ -52,18 +52,21 @@ export async function POST(request: NextRequest) {
       };
 
       // Create the problem in the main problems table
-      await db.insert(problems).values({
-        title: problemSubmission.title,
-        description: problemSubmission.description,
-        difficulty: problemSubmission.difficulty,
-        tags: problemSubmission.tags,
-        functionName: problemSubmission.functionName,
-        testCases: problemSubmission.testCases,
-        starterCode: problemSubmission.starterCode || basicStarterCode,
-        solution: problemSubmission.solution,
-      });
+      const newProblem = await db
+        .insert(problems)
+        .values({
+          title: problemSubmission.title,
+          description: problemSubmission.description,
+          difficulty: problemSubmission.difficulty,
+          tags: problemSubmission.tags,
+          functionName: problemSubmission.functionName,
+          testCases: problemSubmission.testCases,
+          starterCode: problemSubmission.starterCode || basicStarterCode,
+          solution: problemSubmission.solution,
+        })
+        .returning();
 
-      // Update submission status to approved
+      // Update submission status to approved and link to published problem
       await db
         .update(problemSubmissions_contrib)
         .set({
@@ -71,6 +74,7 @@ export async function POST(request: NextRequest) {
           reviewedAt: new Date(),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
+          publishedProblemId: newProblem[0].id,
         })
         .where(eq(problemSubmissions_contrib.id, submissionId));
     } else if (action === "reject") {

@@ -1,0 +1,4 @@
+ALTER TABLE "problem_submissions_contrib" ADD COLUMN "published_problem_id" uuid;--> statement-breakpoint
+ALTER TABLE "puzzle_submissions" ADD COLUMN "published_puzzle_id" uuid;--> statement-breakpoint
+ALTER TABLE "problem_submissions_contrib" ADD CONSTRAINT "problem_submissions_contrib_published_problem_id_problems_id_fk" FOREIGN KEY ("published_problem_id") REFERENCES "public"."problems"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "puzzle_submissions" ADD CONSTRAINT "puzzle_submissions_published_puzzle_id_puzzles_id_fk" FOREIGN KEY ("published_puzzle_id") REFERENCES "public"."puzzles"("id") ON DELETE no action ON UPDATE no action;

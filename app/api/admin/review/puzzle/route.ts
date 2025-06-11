@@ -44,18 +44,21 @@ export async function POST(request: NextRequest) {
 
     if (action === "approve") {
       // Create the puzzle in the main puzzles table
-      await db.insert(puzzles).values({
-        title: puzzleSubmission.title,
-        description: puzzleSubmission.description,
-        difficulty: puzzleSubmission.difficulty,
-        tags: puzzleSubmission.tags,
-        input: puzzleSubmission.input,
-        expectedOutput: puzzleSubmission.expectedOutput,
-        hint: puzzleSubmission.hint,
-        explanation: puzzleSubmission.explanation,
-      });
+      const newPuzzle = await db
+        .insert(puzzles)
+        .values({
+          title: puzzleSubmission.title,
+          description: puzzleSubmission.description,
+          difficulty: puzzleSubmission.difficulty,
+          tags: puzzleSubmission.tags,
+          input: puzzleSubmission.input,
+          expectedOutput: puzzleSubmission.expectedOutput,
+          hint: puzzleSubmission.hint,
+          explanation: puzzleSubmission.explanation,
+        })
+        .returning();
 
-      // Update submission status to approved
+      // Update submission status to approved and link to published puzzle
       await db
         .update(puzzleSubmissions)
         .set({
@@ -63,6 +66,7 @@ export async function POST(request: NextRequest) {
           reviewedAt: new Date(),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
+          publishedPuzzleId: newPuzzle[0].id,
         })
         .where(eq(puzzleSubmissions.id, submissionId));
     } else if (action === "reject") {

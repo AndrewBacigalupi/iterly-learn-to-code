@@ -127,6 +127,7 @@ export const puzzleSubmissions = pgTable("puzzle_submissions", {
   explanation: text("explanation"),
   status: text("status").default("pending").notNull(), // pending, approved, rejected
   adminNotes: text("admin_notes"), // Admin feedback
+  publishedPuzzleId: uuid("published_puzzle_id").references(() => puzzles.id), // Link to published puzzle if approved
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   reviewedAt: timestamp("reviewed_at"),
   reviewedBy: uuid("reviewed_by").references(() => users.id),
@@ -150,6 +151,9 @@ export const problemSubmissions_contrib = pgTable(
     solution: text("solution"),
     status: text("status").default("pending").notNull(), // pending, approved, rejected
     adminNotes: text("admin_notes"), // Admin feedback
+    publishedProblemId: uuid("published_problem_id").references(
+      () => problems.id
+    ), // Link to published problem if approved
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),
     reviewedAt: timestamp("reviewed_at"),
     reviewedBy: uuid("reviewed_by").references(() => users.id),
@@ -213,6 +217,10 @@ export const puzzleSubmissionsRelations = relations(
       fields: [puzzleSubmissions.reviewedBy],
       references: [users.id],
     }),
+    publishedPuzzle: one(puzzles, {
+      fields: [puzzleSubmissions.publishedPuzzleId],
+      references: [puzzles.id],
+    }),
   })
 );
 
@@ -226,6 +234,10 @@ export const problemSubmissionsContribRelations = relations(
     reviewer: one(users, {
       fields: [problemSubmissions_contrib.reviewedBy],
       references: [users.id],
+    }),
+    publishedProblem: one(problems, {
+      fields: [problemSubmissions_contrib.publishedProblemId],
+      references: [problems.id],
     }),
   })
 );

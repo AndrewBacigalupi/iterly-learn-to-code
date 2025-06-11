@@ -18,11 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Send, Trash } from "lucide-react";
+import { ArrowLeft, Plus, Send, Trash2 } from "lucide-react";
 import { Session } from "next-auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface TestCase {
@@ -46,7 +46,10 @@ interface SubmitProblemClientProps {
 
 export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const resubmitId = searchParams.get("resubmit");
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<ProblemSubmissionForm>({
     title: "",
     description: "",
@@ -56,6 +59,36 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
     testCases: [{ input: "", expectedOutput: "" }],
     solution: "",
   });
+
+  // Load existing submission data if resubmitting
+  useEffect(() => {
+    if (resubmitId && session) {
+      setLoading(true);
+      fetch(`/api/submit/problem/${resubmitId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const submission = data.submission;
+            setForm({
+              title: submission.title,
+              description: submission.description,
+              difficulty: submission.difficulty,
+              tags: submission.tags?.join(", ") || "",
+              functionName: submission.functionName || "",
+              testCases: submission.testCases || [
+                { input: "", expectedOutput: "" },
+              ],
+              solution: submission.solution || "",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading submission:", error);
+          toast("Failed to load submission data");
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [resubmitId, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,8 +108,13 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
       return;
     }
 
-    if (form.testCases.some((tc) => !tc.input || !tc.expectedOutput)) {
-      toast("Please complete all test cases");
+    // Validate test cases
+    const validTestCases = form.testCases.filter(
+      (tc) => tc.input.trim() && tc.expectedOutput.trim()
+    );
+
+    if (validTestCases.length === 0) {
+      toast("Please add at least one test case");
       return;
     }
 
@@ -94,6 +132,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
             .split(",")
             .map((tag) => tag.trim())
             .filter(Boolean),
+          testCases: validTestCases,
         }),
       });
 
@@ -102,7 +141,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
       }
 
       toast("Problem submitted successfully! It will be reviewed by our team.");
-      router.push("/contribute");
+      router.push("/profile");
     } catch (error) {
       console.error("Error submitting problem:", error);
       toast("Failed to submit problem. Please try again.");
@@ -111,23 +150,24 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
     }
   };
 
-  const updateForm = (
-    field: keyof ProblemSubmissionForm,
-    value: string | TestCase[]
-  ) => {
+  const updateForm = (field: keyof ProblemSubmissionForm, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const addTestCase = () => {
-    updateForm("testCases", [
-      ...form.testCases,
-      { input: "", expectedOutput: "" },
-    ]);
+    setForm((prev) => ({
+      ...prev,
+      testCases: [...prev.testCases, { input: "", expectedOutput: "" }],
+    }));
   };
 
   const removeTestCase = (index: number) => {
-    const newTestCases = form.testCases.filter((_, i) => i !== index);
-    updateForm("testCases", newTestCases);
+    if (form.testCases.length > 1) {
+      setForm((prev) => ({
+        ...prev,
+        testCases: prev.testCases.filter((_, i) => i !== index),
+      }));
+    }
   };
 
   const updateTestCase = (
@@ -135,10 +175,12 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
     field: keyof TestCase,
     value: string
   ) => {
-    const newTestCases = form.testCases.map((testCase, i) =>
-      i === index ? { ...testCase, [field]: value } : testCase
-    );
-    updateForm("testCases", newTestCases);
+    setForm((prev) => ({
+      ...prev,
+      testCases: prev.testCases.map((tc, i) =>
+        i === index ? { ...tc, [field]: value } : tc
+      ),
+    }));
   };
 
   if (!session) {
@@ -158,20 +200,33 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <p>Loading submission data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button variant="ghost" asChild className="mb-4">
-            <Link href="/contribute">
+            <Link href="/profile">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Contribute
+              Back to Profile
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold mb-2">Submit a Problem</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {resubmitId ? "Resubmit Problem" : "Submit a Problem"}
+          </h1>
           <p className="text-muted-foreground">
-            Create a LeetCode-style coding problem for the community. Your
-            submission will be reviewed by our team.
+            {resubmitId
+              ? "Update your problem based on the admin feedback and resubmit for review."
+              : "Create a LeetCode-style problem for the community. Your submission will be reviewed by our team."}
           </p>
         </div>
 
@@ -179,8 +234,8 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
           <CardHeader>
             <CardTitle>Problem Details</CardTitle>
             <CardDescription>
-              Fill in the details for your coding problem. All fields marked
-              with * are required.
+              Fill in the details for your problem. All fields marked with * are
+              required.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -206,8 +261,8 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                   id="description"
                   value={form.description}
                   onChange={(e) => updateForm("description", e.target.value)}
-                  placeholder="Describe the problem clearly. Include examples and constraints."
-                  rows={6}
+                  placeholder="Describe the problem clearly. What should the function do?"
+                  rows={4}
                   required
                 />
               </div>
@@ -240,10 +295,10 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                   id="tags"
                   value={form.tags}
                   onChange={(e) => updateForm("tags", e.target.value)}
-                  placeholder="arrays, hash-table, two-pointers (comma-separated)"
+                  placeholder="e.g., arrays, hash-table, two-pointers (comma-separated)"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Add relevant algorithmic tags separated by commas
+                <p className="text-sm text-muted-foreground mt-1">
+                  Optional. Separate multiple tags with commas.
                 </p>
               </div>
 
@@ -258,33 +313,33 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                   placeholder="e.g., twoSum"
                   required
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  The name of the function users will implement
+                <p className="text-sm text-muted-foreground mt-1">
+                  The name of the main function users will implement.
                 </p>
               </div>
 
               <div>
                 <Label className="mb-2 block">Test Cases *</Label>
-                <div className="space-y-3 mt-2">
+                <div className="space-y-4">
                   {form.testCases.map((testCase, index) => (
-                    <div key={index} className="border rounded-lg p-4 relative">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium text-sm">
-                          Test Case {index + 1}
-                        </span>
+                    <div
+                      key={index}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">Test Case {index + 1}</h4>
                         {form.testCases.length > 1 && (
                           <Button
                             type="button"
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
                             onClick={() => removeTestCase(index)}
                           >
-                            <Trash className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </div>
-
-                      <div className="grid gap-3">
+                      <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label
                             htmlFor={`input-${index}`}
@@ -298,9 +353,8 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                             onChange={(e) =>
                               updateTestCase(index, "input", e.target.value)
                             }
-                            placeholder='{"nums": [2,7,11,15], "target": 9}'
+                            placeholder="[2,7,11,15], 9"
                             rows={2}
-                            required
                           />
                         </div>
                         <div>
@@ -310,7 +364,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                           >
                             Expected Output
                           </Label>
-                          <Input
+                          <Textarea
                             id={`output-${index}`}
                             value={testCase.expectedOutput}
                             onChange={(e) =>
@@ -321,7 +375,7 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                               )
                             }
                             placeholder="[0,1]"
-                            required
+                            rows={2}
                           />
                         </div>
                       </div>
@@ -337,9 +391,6 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                   <Plus className="h-4 w-4 mr-2" />
                   Add Test Case
                 </Button>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Provide test cases in JSON format for the function parameters
-                </p>
               </div>
 
               <div>
@@ -350,26 +401,18 @@ export function SubmitProblemClient({ session }: SubmitProblemClientProps) {
                   id="solution"
                   value={form.solution}
                   onChange={(e) => updateForm("solution", e.target.value)}
-                  placeholder="Explain the approach and solution..."
+                  placeholder="Optional explanation of the solution approach and algorithm"
                   rows={4}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Optional explanation of the solution approach
-                </p>
               </div>
 
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="w-full"
-                size="lg"
-              >
+              <Button type="submit" disabled={submitting} className="w-full">
                 {submitting ? (
                   "Submitting..."
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    Submit Problem for Review
+                    {resubmitId ? "Resubmit Problem" : "Submit Problem"}
                   </>
                 )}
               </Button>

@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,57 +9,231 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { Calendar, CheckCircle, Code, Trophy, User } from "lucide-react";
+import { db } from "@/lib/db";
+import {
+  problemSubmissions,
+  problemSubmissions_contrib,
+  puzzleCompletions,
+  puzzleSubmissions,
+} from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import {
+  Calendar,
+  CheckCircle,
+  Clock,
+  Code,
+  ExternalLink,
+  FileText,
+  Plus,
+  RefreshCw,
+  Trophy,
+  User,
+} from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+
+function getDifficultyColor(difficulty: string) {
+  switch (difficulty) {
+    case "easy":
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+    case "medium":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+    case "hard":
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+  }
+}
+
+function getStatusColor(status: string) {
+  switch (status) {
+    case "approved":
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+    case "rejected":
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+    case "pending":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+  }
+}
 
 export default async function ProfilePage() {
   const session = await auth();
 
-  if (!session) {
+  if (!session?.user?.id) {
     redirect("/");
   }
 
-  // Mock data for demo - in a real app, this would come from the database
-  const mockStats = {
-    puzzlesCompleted: 12,
-    problemsSolved: 8,
-    totalSubmissions: 45,
-    successRate: 73,
-    joinDate: "2024-01-15",
-    favoriteLanguage: "JavaScript",
-    streak: 7,
-  };
+  // Fetch user's puzzle completions
+  const userPuzzleCompletions = await db
+    .select()
+    .from(puzzleCompletions)
+    .where(eq(puzzleCompletions.userId, session.user.id));
 
-  const mockRecentActivity = [
-    {
-      type: "puzzle",
-      title: "Two Sum Arrays",
-      date: "2024-01-20",
-      status: "completed",
-    },
-    {
-      type: "problem",
-      title: "Valid Parentheses",
-      date: "2024-01-19",
-      status: "solved",
-    },
-    {
-      type: "puzzle",
-      title: "String Palindrome",
-      date: "2024-01-18",
-      status: "completed",
-    },
-    {
-      type: "problem",
-      title: "Merge Sorted Lists",
-      date: "2024-01-17",
-      status: "attempted",
-    },
-  ];
+  // Fetch user's problem submissions (solving attempts)
+  const userProblemSolveAttempts = await db
+    .select()
+    .from(problemSubmissions)
+    .where(eq(problemSubmissions.userId, session.user.id));
+
+  // Fetch user's puzzle submissions (contributions)
+  const userPuzzleSubmissions = await db
+    .select({
+      id: puzzleSubmissions.id,
+      title: puzzleSubmissions.title,
+      description: puzzleSubmissions.description,
+      difficulty: puzzleSubmissions.difficulty,
+      tags: puzzleSubmissions.tags,
+      input: puzzleSubmissions.input,
+      expectedOutput: puzzleSubmissions.expectedOutput,
+      hint: puzzleSubmissions.hint,
+      explanation: puzzleSubmissions.explanation,
+      status: puzzleSubmissions.status,
+      adminNotes: puzzleSubmissions.adminNotes,
+      submittedAt: puzzleSubmissions.submittedAt,
+      reviewedAt: puzzleSubmissions.reviewedAt,
+      publishedPuzzleId: puzzleSubmissions.publishedPuzzleId,
+    })
+    .from(puzzleSubmissions)
+    .where(eq(puzzleSubmissions.userId, session.user.id));
+
+  // Fetch user's problem submissions (contributions)
+  const userProblemSubmissions = await db
+    .select({
+      id: problemSubmissions_contrib.id,
+      title: problemSubmissions_contrib.title,
+      description: problemSubmissions_contrib.description,
+      difficulty: problemSubmissions_contrib.difficulty,
+      tags: problemSubmissions_contrib.tags,
+      functionName: problemSubmissions_contrib.functionName,
+      testCases: problemSubmissions_contrib.testCases,
+      starterCode: problemSubmissions_contrib.starterCode,
+      solution: problemSubmissions_contrib.solution,
+      status: problemSubmissions_contrib.status,
+      adminNotes: problemSubmissions_contrib.adminNotes,
+      submittedAt: problemSubmissions_contrib.submittedAt,
+      reviewedAt: problemSubmissions_contrib.reviewedAt,
+      publishedProblemId: problemSubmissions_contrib.publishedProblemId,
+    })
+    .from(problemSubmissions_contrib)
+    .where(eq(problemSubmissions_contrib.userId, session.user.id));
+
+  // Calculate stats
+  const puzzlesCompleted = userPuzzleCompletions.length;
+  const problemsSolved = [
+    ...new Set(
+      userProblemSolveAttempts
+        .filter((s) => s.status === "accepted")
+        .map((s) => s.problemId)
+    ),
+  ].length;
+  const totalSolveSubmissions = userProblemSolveAttempts.length;
+  const successRate =
+    totalSolveSubmissions > 0
+      ? Math.round(
+          (userProblemSolveAttempts.filter((s) => s.status === "accepted")
+            .length /
+            totalSolveSubmissions) *
+            100
+        )
+      : 0;
+
+  // Calculate additional stats
+  const totalContributions =
+    userPuzzleSubmissions.length + userProblemSubmissions.length;
+  const approvedContributions =
+    userPuzzleSubmissions.filter((s) => s.status === "approved").length +
+    userProblemSubmissions.filter((s) => s.status === "approved").length;
+  const contributionSuccessRate =
+    totalContributions > 0
+      ? Math.round((approvedContributions / totalContributions) * 100)
+      : 0;
+
+  // Calculate streak (consecutive days with activity)
+  const allActivityDates = [
+    ...userPuzzleCompletions.map((c) => c.completedAt),
+    ...userProblemSolveAttempts
+      .filter((s) => s.status === "accepted")
+      .map((s) => s.submittedAt),
+  ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+  let currentStreak = 0;
+  if (allActivityDates.length > 0) {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    let checkDate = new Date(today);
+    let hasActivityToday = false;
+
+    for (const activityDate of allActivityDates) {
+      const activityDay = new Date(activityDate);
+      activityDay.setHours(0, 0, 0, 0);
+      checkDate.setHours(0, 0, 0, 0);
+
+      if (activityDay.getTime() === checkDate.getTime()) {
+        currentStreak++;
+        hasActivityToday = true;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else if (activityDay.getTime() < checkDate.getTime()) {
+        break;
+      }
+    }
+
+    // If no activity today, check if streak should start from yesterday
+    if (!hasActivityToday && currentStreak === 0) {
+      checkDate = new Date(yesterday);
+      for (const activityDate of allActivityDates) {
+        const activityDay = new Date(activityDate);
+        activityDay.setHours(0, 0, 0, 0);
+        checkDate.setHours(0, 0, 0, 0);
+
+        if (activityDay.getTime() === checkDate.getTime()) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else if (activityDay.getTime() < checkDate.getTime()) {
+          break;
+        }
+      }
+    }
+  }
+
+  // Find favorite language (most used in successful problem submissions)
+  const languageCount: Record<string, number> = {};
+  userProblemSolveAttempts
+    .filter((s) => s.status === "accepted")
+    .forEach((s) => {
+      languageCount[s.language] = (languageCount[s.language] || 0) + 1;
+    });
+
+  const favoriteLanguage =
+    Object.entries(languageCount).sort(([, a], [, b]) => b - a)[0]?.[0] ||
+    "None";
+
+  // Get recent activity (last 10 completions/submissions)
+  const recentActivity = [
+    ...userPuzzleCompletions.map((completion) => ({
+      type: "puzzle_completion" as const,
+      title: "Puzzle Completed",
+      date: completion.completedAt,
+      status: "completed" as const,
+    })),
+    ...userProblemSolveAttempts
+      .filter((sub) => sub.status === "accepted")
+      .map((submission) => ({
+        type: "problem_solved" as const,
+        title: "Problem Solved",
+        date: submission.submittedAt,
+        status: "solved" as const,
+      })),
+  ]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 10);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Profile Header */}
         <div className="mb-8">
           <Card>
@@ -82,7 +257,7 @@ export default async function ProfilePage() {
                   <p className="text-muted-foreground">{session.user?.email}</p>
                   <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    Joined {new Date(mockStats.joinDate).toLocaleDateString()}
+                    Member since {new Date().toLocaleDateString()}
                   </div>
                 </div>
               </div>
@@ -95,7 +270,7 @@ export default async function ProfilePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-green-600">
-                {mockStats.puzzlesCompleted}
+                {puzzlesCompleted}
               </div>
               <div className="text-sm text-muted-foreground">
                 Puzzles Completed
@@ -105,7 +280,7 @@ export default async function ProfilePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {mockStats.problemsSolved}
+                {problemsSolved}
               </div>
               <div className="text-sm text-muted-foreground">
                 Problems Solved
@@ -115,7 +290,7 @@ export default async function ProfilePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {mockStats.totalSubmissions}
+                {totalSolveSubmissions}
               </div>
               <div className="text-sm text-muted-foreground">
                 Total Submissions
@@ -125,14 +300,14 @@ export default async function ProfilePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-orange-600">
-                {mockStats.successRate}%
+                {successRate}%
               </div>
               <div className="text-sm text-muted-foreground">Success Rate</div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Recent Activity */}
           <Card>
             <CardHeader>
@@ -140,57 +315,51 @@ export default async function ProfilePage() {
                 <Trophy className="h-5 w-5 text-yellow-500" />
                 Recent Activity
               </CardTitle>
-              <CardDescription>
-                Your latest puzzle and problem attempts
-              </CardDescription>
+              <CardDescription>Your latest achievements</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockRecentActivity.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      {activity.type === "puzzle" ? (
-                        <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        </div>
-                      ) : (
-                        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                          <Code className="h-4 w-4 text-blue-600" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-medium">{activity.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {new Date(activity.date).toLocaleDateString()}
+                {recentActivity.length > 0 ? (
+                  recentActivity.map((activity, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        {activity.type === "puzzle_completion" ? (
+                          <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          </div>
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                            <Code className="h-4 w-4 text-blue-600" />
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-medium">{activity.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(activity.date).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
+                      <Badge
+                        variant="default"
+                        className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                      >
+                        {activity.status}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant={
-                        activity.status === "completed" ||
-                        activity.status === "solved"
-                          ? "default"
-                          : "secondary"
-                      }
-                      className={
-                        activity.status === "completed" ||
-                        activity.status === "solved"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : ""
-                      }
-                    >
-                      {activity.status}
-                    </Badge>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No recent activity yet. Start solving puzzles and problems!
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Achievements */}
+          {/* Profile Stats */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -209,7 +378,7 @@ export default async function ProfilePage() {
                     </div>
                   </div>
                   <div className="text-2xl font-bold text-orange-600">
-                    {mockStats.streak}
+                    {currentStreak}
                   </div>
                 </div>
 
@@ -220,24 +389,261 @@ export default async function ProfilePage() {
                       Most used programming language
                     </div>
                   </div>
-                  <Badge variant="outline">{mockStats.favoriteLanguage}</Badge>
+                  <Badge variant="outline">{favoriteLanguage}</Badge>
                 </div>
 
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <div>
-                    <div className="font-medium">Total Progress</div>
+                    <div className="font-medium">Contributions</div>
                     <div className="text-sm text-muted-foreground">
-                      Puzzles + Problems completed
+                      Puzzles + Problems submitted
                     </div>
                   </div>
                   <div className="text-2xl font-bold text-primary">
-                    {mockStats.puzzlesCompleted + mockStats.problemsSolved}
+                    {totalContributions}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div>
+                    <div className="font-medium">Contribution Success</div>
+                    <div className="text-sm text-muted-foreground">
+                      Approval rate for submissions
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {contributionSuccessRate}%
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+        {/* Submissions Section */}
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-500" />
+              Your Submissions
+            </CardTitle>
+            <CardDescription>
+              Puzzles and problems you've contributed
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Quick Actions */}
+              <div className="flex gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/submit/puzzle">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Submit Puzzle
+                  </Link>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/submit/problem">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Submit Problem
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Puzzle Submissions */}
+              {userPuzzleSubmissions.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    Puzzle Submissions ({userPuzzleSubmissions.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {userPuzzleSubmissions.slice(0, 3).map((submission) => (
+                      <div
+                        key={submission.id}
+                        className="border rounded-lg p-3 space-y-2"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">
+                              {submission.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge
+                                className={getDifficultyColor(
+                                  submission.difficulty
+                                )}
+                              >
+                                {submission.difficulty}
+                              </Badge>
+                              <Badge
+                                className={getStatusColor(submission.status)}
+                              >
+                                {submission.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(
+                              submission.submittedAt
+                            ).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        {submission.status === "approved" &&
+                          submission.publishedPuzzleId && (
+                            <Button
+                              asChild
+                              size="sm"
+                              variant="outline"
+                              className="w-full"
+                            >
+                              <Link
+                                href={`/puzzles/${submission.publishedPuzzleId}`}
+                              >
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                View Live
+                              </Link>
+                            </Button>
+                          )}
+
+                        {submission.status === "rejected" && (
+                          <Button
+                            asChild
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                          >
+                            <Link
+                              href={`/submit/puzzle?resubmit=${submission.id}`}
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              Resubmit
+                            </Link>
+                          </Button>
+                        )}
+
+                        {submission.status === "pending" && (
+                          <div className="flex items-center gap-2 text-xs text-yellow-600">
+                            <Clock className="h-3 w-3" />
+                            <span>Under review</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {userPuzzleSubmissions.length > 3 && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        +{userPuzzleSubmissions.length - 3} more submissions
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Problem Submissions */}
+              {userProblemSubmissions.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Code className="h-4 w-4 text-blue-500" />
+                    Problem Submissions ({userProblemSubmissions.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {userProblemSubmissions.slice(0, 3).map((submission) => (
+                      <div
+                        key={submission.id}
+                        className="border rounded-lg p-3 space-y-2"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">
+                              {submission.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge
+                                className={getDifficultyColor(
+                                  submission.difficulty
+                                )}
+                              >
+                                {submission.difficulty}
+                              </Badge>
+                              <Badge
+                                className={getStatusColor(submission.status)}
+                              >
+                                {submission.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(
+                              submission.submittedAt
+                            ).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        {submission.status === "approved" &&
+                          submission.publishedProblemId && (
+                            <Button
+                              asChild
+                              size="sm"
+                              variant="outline"
+                              className="w-full"
+                            >
+                              <Link
+                                href={`/problems/${submission.publishedProblemId}`}
+                              >
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                View Live
+                              </Link>
+                            </Button>
+                          )}
+
+                        {submission.status === "rejected" && (
+                          <Button
+                            asChild
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                          >
+                            <Link
+                              href={`/submit/problem?resubmit=${submission.id}`}
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              Resubmit
+                            </Link>
+                          </Button>
+                        )}
+
+                        {submission.status === "pending" && (
+                          <div className="flex items-center gap-2 text-xs text-yellow-600">
+                            <Clock className="h-3 w-3" />
+                            <span>Under review</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {userProblemSubmissions.length > 3 && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        +{userProblemSubmissions.length - 3} more submissions
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* No submissions message */}
+              {userPuzzleSubmissions.length === 0 &&
+                userProblemSubmissions.length === 0 && (
+                  <div className="text-center py-4">
+                    <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                    <h3 className="font-medium mb-1 text-sm">
+                      No submissions yet
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Contribute to the community!
+                    </p>
+                  </div>
+                )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

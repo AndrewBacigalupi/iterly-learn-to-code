@@ -108,9 +108,9 @@ export function Navbar({ session }: { session: Session | null }) {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
+                    className="relative h-8 w-8 rounded-full cursor-pointer"
                   >
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-8 w-8 cursor-pointer">
                       <AvatarImage
                         src={session.user?.image || ""}
                         alt={session.user?.name || ""}
@@ -138,7 +138,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/profile">
+                    <Link href="/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>

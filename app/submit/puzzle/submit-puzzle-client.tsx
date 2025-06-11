@@ -21,8 +21,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send } from "lucide-react";
 import { Session } from "next-auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface PuzzleSubmissionForm {
@@ -42,7 +42,10 @@ interface SubmitPuzzleClientProps {
 
 export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const resubmitId = searchParams.get("resubmit");
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<PuzzleSubmissionForm>({
     title: "",
     description: "",
@@ -53,6 +56,35 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
     hint: "",
     explanation: "",
   });
+
+  // Load existing submission data if resubmitting
+  useEffect(() => {
+    if (resubmitId && session) {
+      setLoading(true);
+      fetch(`/api/submit/puzzle/${resubmitId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const submission = data.submission;
+            setForm({
+              title: submission.title,
+              description: submission.description,
+              difficulty: submission.difficulty,
+              tags: submission.tags?.join(", ") || "",
+              input: submission.input,
+              expectedOutput: submission.expectedOutput,
+              hint: submission.hint || "",
+              explanation: submission.explanation || "",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading submission:", error);
+          toast("Failed to load submission data");
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [resubmitId, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +127,7 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
       }
 
       toast("Puzzle submitted successfully! It will be reviewed by our team.");
-      router.push("/contribute");
+      router.push("/profile");
     } catch (error) {
       console.error("Error submitting puzzle:", error);
       toast("Failed to submit puzzle. Please try again.");
@@ -125,20 +157,33 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <p>Loading submission data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button variant="ghost" asChild className="mb-4">
-            <Link href="/contribute">
+            <Link href="/profile">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Contribute
+              Back to Profile
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold mb-2">Submit a Puzzle</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {resubmitId ? "Resubmit Puzzle" : "Submit a Puzzle"}
+          </h1>
           <p className="text-muted-foreground">
-            Create an Advent of Code-style puzzle for the community. Your
-            submission will be reviewed by our team.
+            {resubmitId
+              ? "Update your puzzle based on the admin feedback and resubmit for review."
+              : "Create an Advent of Code-style puzzle for the community. Your submission will be reviewed by our team."}
           </p>
         </div>
 
@@ -207,10 +252,10 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
                   id="tags"
                   value={form.tags}
                   onChange={(e) => updateForm("tags", e.target.value)}
-                  placeholder="math, arrays, strings (comma-separated)"
+                  placeholder="e.g., arrays, math, strings (comma-separated)"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Add relevant tags separated by commas
+                <p className="text-sm text-muted-foreground mt-1">
+                  Optional. Separate multiple tags with commas.
                 </p>
               </div>
 
@@ -222,29 +267,24 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
                   id="input"
                   value={form.input}
                   onChange={(e) => updateForm("input", e.target.value)}
-                  placeholder="1,2,3,4,5,6"
-                  rows={3}
+                  placeholder="The input data that users will work with"
+                  rows={4}
                   required
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  The input data that users will analyze
-                </p>
               </div>
 
               <div>
                 <Label htmlFor="expectedOutput" className="mb-2 block">
                   Expected Output *
                 </Label>
-                <Input
+                <Textarea
                   id="expectedOutput"
                   value={form.expectedOutput}
                   onChange={(e) => updateForm("expectedOutput", e.target.value)}
-                  placeholder="12"
+                  placeholder="The correct answer/output for the given input"
+                  rows={2}
                   required
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  The correct answer for the given input
-                </p>
               </div>
 
               <div>
@@ -255,12 +295,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
                   id="hint"
                   value={form.hint}
                   onChange={(e) => updateForm("hint", e.target.value)}
-                  placeholder="Try to identify which numbers are even..."
+                  placeholder="Optional hint to help users solve the puzzle"
                   rows={2}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Optional hint to help users who are stuck
-                </p>
               </div>
 
               <div>
@@ -271,26 +308,18 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
                   id="explanation"
                   value={form.explanation}
                   onChange={(e) => updateForm("explanation", e.target.value)}
-                  placeholder="The even numbers in the input are 2, 4, and 6. Their sum is 2 + 4 + 6 = 12."
+                  placeholder="Optional explanation of the solution approach"
                   rows={3}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Explanation shown to users after they solve the puzzle
-                </p>
               </div>
 
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="w-full"
-                size="lg"
-              >
+              <Button type="submit" disabled={submitting} className="w-full">
                 {submitting ? (
                   "Submitting..."
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    Submit Puzzle for Review
+                    {resubmitId ? "Resubmit Puzzle" : "Submit Puzzle"}
                   </>
                 )}
               </Button>
