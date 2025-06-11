@@ -33,7 +33,7 @@ export default async function RootLayout({
       >
         <Providers>
           <Navbar session={session} />
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-[calc(100vh-14rem)]">{children}</main>
         </Providers>
       </body>
     </html>
