@@ -18,12 +18,11 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Code, LogOut, User } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 
-export function Navbar() {
-  const { data: session, status } = useSession();
-
+export function Navbar({ session }: { session: Session | null }) {
   const menuItems = [
     { title: "Home", href: "/" },
     { title: "Puzzles", href: "/puzzles" },
@@ -90,9 +89,7 @@ export function Navbar() {
             {/* This space is now used for mobile logo above */}
           </div>
           <nav className="flex items-center">
-            {status === "loading" ? (
-              <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
-            ) : session ? (
+            {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

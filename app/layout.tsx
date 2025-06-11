@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -19,18 +20,19 @@ export const metadata: Metadata = {
   description: "Learn programming through puzzles and problems",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <Navbar />
+          <Navbar session={session} />
           <main className="min-h-screen">{children}</main>
         </Providers>
       </body>
