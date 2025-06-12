@@ -311,7 +311,6 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 
 # Judge0 API (Optional - for code execution)
 # Get API key from: https://rapidapi.com/judge0-official/api/judge0-ce
-JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
 JUDGE0_API_KEY=your-rapidapi-key
 ```
 
@@ -346,7 +345,7 @@ We use `.env` instead of `.env.local` because:
   - Create a GitHub OAuth app at [GitHub Developer Settings](https://github.com/settings/developers)
   - Set Authorization callback URL to: `http://localhost:3000/api/auth/callback/github`
 
-- **`JUDGE0_API_URL`** & **`JUDGE0_API_KEY`**: Code execution service
+- **`JUDGE0_API_KEY`**: Code execution service
   - Required only for running code in problems/puzzles
   - Sign up at [RapidAPI Judge0](https://rapidapi.com/judge0-official/api/judge0-ce)
   - Free tier available with rate limits
