@@ -116,19 +116,34 @@ create_env_file() {
     if [ ! -f .env.local ]; then
         echo -e "${BLUE}📝 Creating .env.local file...${NC}"
         cat > .env.local << EOF
-# Database
+# Database Configuration
 DATABASE_URL="${DATABASE_URL}"
 
-# Add your other environment variables here
-# NEXTAUTH_SECRET=your-secret-here
-# NEXTAUTH_URL=http://localhost:3000
+# Next.js Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key-here-change-this-in-production
+
+# GitHub OAuth (optional - for authentication)
+# Get these from: https://github.com/settings/developers
 # GITHUB_CLIENT_ID=your-github-client-id
 # GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Judge0 API (optional - for code execution)
+# JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
+# JUDGE0_API_KEY=your-rapidapi-key
 EOF
         echo -e "${GREEN}✅ .env.local file created${NC}"
+        echo -e "${BLUE}💡 Remember to update NEXTAUTH_SECRET and add your GitHub OAuth credentials${NC}"
     else
-        echo -e "${YELLOW}⚠️  .env.local already exists, skipping creation${NC}"
-        echo -e "${BLUE}💡 Make sure your .env.local contains: DATABASE_URL=\"${DATABASE_URL}\"${NC}"
+        echo -e "${YELLOW}⚠️  .env.local already exists${NC}"
+        
+        # Check if DATABASE_URL exists in the file
+        if grep -q "DATABASE_URL" .env.local; then
+            echo -e "${GREEN}✅ DATABASE_URL found in .env.local${NC}"
+        else
+            echo -e "${YELLOW}⚠️  DATABASE_URL not found in .env.local${NC}"
+            echo -e "${BLUE}💡 Add this line to your .env.local: DATABASE_URL=\"${DATABASE_URL}\"${NC}"
+        fi
     fi
 }
 
