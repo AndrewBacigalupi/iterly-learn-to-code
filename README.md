@@ -155,11 +155,20 @@ This script will:
 - 🐳 Create a Docker PostgreSQL container
 - 📊 Set up the database schema (tables, relationships)
 - 🌱 Add sample data (puzzles and problems to try)
-- 📝 Create your `.env.local` file with database connection info
+- 📝 Create your `.env` file with database connection info
 
 > 📖 **New to Docker?** Read [Docker's Getting Started Guide](https://docs.docker.com/get-started/)
 
-### 4. Start the Development Server
+### 4. Configure Environment Variables (Optional)
+
+The database script creates a `.env` file with basic configuration. You may want to customize it:
+
+```bash
+# Edit the .env file to add GitHub OAuth or Judge0 API credentials
+nano .env  # or use your preferred editor
+```
+
+### 5. Start the Development Server
 
 ```bash
 pnpm dev
@@ -184,7 +193,7 @@ The `start-database.sh` script automates several steps:
 3. **Waits for Ready**: Ensures the database is fully started
 4. **Runs Migrations**: Creates all the tables and relationships
 5. **Seeds Data**: Adds sample puzzles and problems
-6. **Creates Config**: Sets up your `.env.local` file
+6. **Creates Config**: Sets up your `.env` file
 
 ### Manual Database Commands
 
@@ -224,6 +233,125 @@ Our database has several main tables:
 - **`puzzleSubmissions`** - User solutions to puzzles
 - **`accounts`** - OAuth account connections (GitHub)
 - **`sessions`** - User login sessions
+
+### Database with Drizzle ORM
+
+**[Drizzle ORM](https://orm.drizzle.team/)** is a TypeScript-first database toolkit that makes working with databases much easier and safer.
+
+**What is an ORM?**
+An Object-Relational Mapping (ORM) tool lets you work with your database using your programming language instead of writing raw SQL. Think of it as a translator between your TypeScript code and your PostgreSQL database.
+
+**Why Drizzle is great:**
+- **Type Safety**: Catch database errors at compile time, not runtime
+- **Auto-completion**: Your editor knows your database schema
+- **Migration Management**: Track and apply database changes safely
+- **Performance**: Generates efficient SQL queries
+- **Developer Experience**: Write less code, make fewer mistakes
+
+```typescript
+// Define schema with full TypeScript support
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
+  name: text('name'),
+  email: text('email').unique(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Type-safe queries with auto-completion
+const allUsers = await db.select().from(users);
+const user = await db.select().from(users).where(eq(users.id, userId));
+```
+
+**Working with Drizzle:**
+
+```bash
+# Generate migration files when you change schema
+npx drizzle-kit generate
+
+# Apply migrations to your database
+npx drizzle-kit migrate
+
+# ⚠️ Don't use push in production - it can lose data!
+# npx drizzle-kit push  # Only for rapid prototyping
+```
+
+### Available Scripts
+
+```bash
+# Development
+pnpm dev              # Start development server
+pnpm build            # Build for production
+pnpm start            # Start production server
+pnpm lint             # Check code quality
+
+# Database
+pnpm db:generate      # Generate migration files
+pnpm db:migrate       # Apply migrations to database
+pnpm db:push          # Push schema changes (development)
+pnpm db:studio        # Open database visual interface
+pnpm db:seed          # Add sample data
+```
+
+### Environment Variables
+
+Your `.env` file contains all configuration needed for the application:
+
+```bash
+# Database Configuration (Required)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/learn_to_scode
+
+# Next.js Authentication (Required)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key-here-change-this-in-production
+
+# GitHub OAuth (Optional - for user authentication)
+# Get these from: https://github.com/settings/developers
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Judge0 API (Optional - for code execution)
+# Get API key from: https://rapidapi.com/judge0-official/api/judge0-ce
+JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
+JUDGE0_API_KEY=your-rapidapi-key
+```
+
+#### Why `.env` instead of `.env.local`?
+
+We use `.env` instead of `.env.local` because:
+- **Drizzle Kit Compatibility**: Drizzle's migration and studio tools read from `.env` by default
+- **Consistent Configuration**: All database tools (migrate, seed, studio) use the same environment
+- **Development Simplicity**: One file for all local development configuration
+
+#### Environment Variable Details
+
+**Required Variables:**
+
+- **`DATABASE_URL`**: PostgreSQL connection string for your database
+  - Automatically set by `start-database.sh` for local development
+  - Format: `postgresql://username:password@host:port/database`
+
+- **`NEXTAUTH_URL`**: Base URL for NextAuth.js authentication
+  - Set to `http://localhost:3000` for local development
+  - Must match your actual domain in production
+
+- **`NEXTAUTH_SECRET`**: Secret key for JWT token encryption
+  - Generate a secure random string (32+ characters)
+  - **Critical**: Change this in production!
+  - Generate one: `openssl rand -base64 32`
+
+**Optional Variables:**
+
+- **`GITHUB_CLIENT_ID`** & **`GITHUB_CLIENT_SECRET`**: GitHub OAuth credentials
+  - Required only if you want GitHub login functionality
+  - Create a GitHub OAuth app at [GitHub Developer Settings](https://github.com/settings/developers)
+  - Set Authorization callback URL to: `http://localhost:3000/api/auth/callback/github`
+
+- **`JUDGE0_API_URL`** & **`JUDGE0_API_KEY`**: Code execution service
+  - Required only for running code in problems/puzzles
+  - Sign up at [RapidAPI Judge0](https://rapidapi.com/judge0-official/api/judge0-ce)
+  - Free tier available with rate limits
+
+> ⚠️ **Important**: Never commit `.env` to Git! It contains secrets and is already in `.gitignore`.
 
 ---
 
@@ -274,54 +402,45 @@ export default function ClientPage() {
 ```
 
 #### Database with Drizzle ORM
+
+**[Drizzle ORM](https://orm.drizzle.team/)** is a TypeScript-first database toolkit that makes working with databases much easier and safer.
+
+**What is an ORM?**
+An Object-Relational Mapping (ORM) tool lets you work with your database using your programming language instead of writing raw SQL. Think of it as a translator between your TypeScript code and your PostgreSQL database.
+
+**Why Drizzle is great:**
+- **Type Safety**: Catch database errors at compile time, not runtime
+- **Auto-completion**: Your editor knows your database schema
+- **Migration Management**: Track and apply database changes safely
+- **Performance**: Generates efficient SQL queries
+- **Developer Experience**: Write less code, make fewer mistakes
+
 ```typescript
-// Define schema
+// Define schema with full TypeScript support
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name'),
   email: text('email').unique(),
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
-// Query database
+// Type-safe queries with auto-completion
 const allUsers = await db.select().from(users);
 const user = await db.select().from(users).where(eq(users.id, userId));
 ```
 
-### Available Scripts
+**Working with Drizzle:**
 
 ```bash
-# Development
-pnpm dev              # Start development server
-pnpm build            # Build for production
-pnpm start            # Start production server
-pnpm lint             # Check code quality
+# Generate migration files when you change schema
+npx drizzle-kit generate
 
-# Database
-pnpm db:generate      # Generate migration files
-pnpm db:migrate       # Apply migrations to database
-pnpm db:push          # Push schema changes (development)
-pnpm db:studio        # Open database visual interface
-pnpm db:seed          # Add sample data
+# Apply migrations to your database
+npx drizzle-kit migrate
+
+# ⚠️ Don't use push in production - it can lose data!
+# npx drizzle-kit push  # Only for rapid prototyping
 ```
-
-### Environment Variables
-
-Your `.env.local` file contains sensitive configuration:
-
-```bash
-# Database - automatically set by start-database.sh
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/learn_to_scode
-
-# Authentication - required for login
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
-
-# GitHub OAuth - optional, for GitHub login
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
-```
-
-> ⚠️ **Important**: Never commit `.env.local` to Git! It contains secrets.
 
 ---
 
@@ -481,6 +600,14 @@ docker rm -f learn-to-scode-db  # Remove container
 rm -rf node_modules
 rm pnpm-lock.yaml
 pnpm install
+```
+
+**Problem**: `Environment variables not loading`
+```bash
+# Solution: Make sure you're using .env (not .env.local)
+# Drizzle tools read from .env by default
+ls -la .env  # Check if file exists
+cat .env     # Verify DATABASE_URL is set
 ```
 
 ### Getting Help

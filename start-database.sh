@@ -111,11 +111,15 @@ seed_database() {
     fi
 }
 
-# Function to create .env.local file
+# Function to create .env file
 create_env_file() {
-    if [ ! -f .env.local ]; then
-        echo -e "${BLUE}📝 Creating .env.local file...${NC}"
-        cat > .env.local << EOF
+    echo -e "${BLUE}📊 Database Connection String:${NC}"
+    echo -e "${GREEN}DATABASE_URL=\"${DATABASE_URL}\"${NC}"
+    echo ""
+    
+    if [ ! -f .env ]; then
+        echo -e "${BLUE}📝 Creating .env file...${NC}"
+        cat > .env << EOF
 # Database Configuration
 DATABASE_URL="${DATABASE_URL}"
 
@@ -132,17 +136,19 @@ NEXTAUTH_SECRET=your-secret-key-here-change-this-in-production
 # JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
 # JUDGE0_API_KEY=your-rapidapi-key
 EOF
-        echo -e "${GREEN}✅ .env.local file created${NC}"
+        echo -e "${GREEN}✅ .env file created${NC}"
         echo -e "${BLUE}💡 Remember to update NEXTAUTH_SECRET and add your GitHub OAuth credentials${NC}"
     else
-        echo -e "${YELLOW}⚠️  .env.local already exists${NC}"
+        echo -e "${YELLOW}⚠️  .env already exists${NC}"
         
         # Check if DATABASE_URL exists in the file
-        if grep -q "DATABASE_URL" .env.local; then
-            echo -e "${GREEN}✅ DATABASE_URL found in .env.local${NC}"
+        if grep -q "DATABASE_URL.*localhost" .env; then
+            echo -e "${GREEN}✅ Local DATABASE_URL found in .env${NC}"
         else
-            echo -e "${YELLOW}⚠️  DATABASE_URL not found in .env.local${NC}"
-            echo -e "${BLUE}💡 Add this line to your .env.local: DATABASE_URL=\"${DATABASE_URL}\"${NC}"
+            echo -e "${YELLOW}⚠️  Local DATABASE_URL not found in .env${NC}"
+            echo -e "${BLUE}💡 Add this line to your .env for local development:${NC}"
+            echo -e "${GREEN}DATABASE_URL=\"${DATABASE_URL}\"${NC}"
+            echo -e "${BLUE}💡 You can comment out your production DATABASE_URL or use a different name${NC}"
         fi
     fi
 }
