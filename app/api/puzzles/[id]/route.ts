@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const result = await db.query.puzzles.findFirst({
+    const result = await dbExport.query.puzzles.findFirst({
       where: (puzzles, { eq }) => eq(puzzles.id, id),
     });
 

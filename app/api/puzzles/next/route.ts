@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleCompletions, puzzles } from "@/lib/db/schema";
 import { eq, notInArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       // For unauthenticated users, return the first puzzle
-      const firstPuzzle = await db
+      const firstPuzzle = await dbExport
         .select({ id: puzzles.id })
         .from(puzzles)
         .orderBy(puzzles.createdAt)
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all puzzles the user has completed
-    const completedPuzzles = await db
+    const completedPuzzles = await dbExport
       .select({ puzzleId: puzzleCompletions.puzzleId })
       .from(puzzleCompletions)
       .where(eq(puzzleCompletions.userId, session.user.id));
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // Find the first puzzle that isn't completed
     let nextPuzzle;
     if (completedPuzzleIds.length > 0) {
-      nextPuzzle = await db
+      nextPuzzle = await dbExport
         .select({ id: puzzles.id })
         .from(puzzles)
         .where(notInArray(puzzles.id, completedPuzzleIds))
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         .limit(1);
     } else {
       // No puzzles completed, get the first one
-      nextPuzzle = await db
+      nextPuzzle = await dbExport
         .select({ id: puzzles.id })
         .from(puzzles)
         .orderBy(puzzles.createdAt)

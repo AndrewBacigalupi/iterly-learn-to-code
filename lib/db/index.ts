@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
@@ -23,7 +23,9 @@ if (databaseUrl.includes("localhost") || databaseUrl.includes("127.0.0.1")) {
 } else {
   // Remote Neon connection using neon driver
   const sql = neon(databaseUrl);
-  db = drizzleNeon(sql, { schema });
+  db = drizzle(sql, { schema });
 }
 
-export { db };
+const dbExport = db;
+
+export { dbExport };

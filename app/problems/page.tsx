@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { problems, problemSubmissions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { CheckCircle, Clock, Code, Play } from "lucide-react";
@@ -31,7 +31,7 @@ export default async function ProblemsPage() {
   const session = await auth();
 
   // Fetch all problems from database
-  const allProblems = await db
+  const allProblems = await dbExport
     .select()
     .from(problems)
     .orderBy(problems.createdAt);
@@ -39,7 +39,7 @@ export default async function ProblemsPage() {
   // Fetch user's successful submissions if logged in
   let completedProblemIds: string[] = [];
   if (session?.user?.id) {
-    const userSubmissions = await db
+    const userSubmissions = await dbExport
       .select({ problemId: problemSubmissions.problemId })
       .from(problemSubmissions)
       .where(
@@ -54,7 +54,7 @@ export default async function ProblemsPage() {
 
   // Calculate stats
   const totalSubmissions = session?.user?.id
-    ? await db
+    ? await dbExport
         .select()
         .from(problemSubmissions)
         .where(eq(problemSubmissions.userId, session.user.id))

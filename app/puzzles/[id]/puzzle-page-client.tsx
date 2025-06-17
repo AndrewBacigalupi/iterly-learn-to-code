@@ -16,20 +16,21 @@ import { Session } from "next-auth";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { Puzzle } from "@/lib/db/schema";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
 
-interface Puzzle {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: string;
-  tags: string[];
-  input: string;
-  expectedOutput: string;
-  hint?: string;
-  explanation?: string;
-}
+// interface Puzzle {
+//   id: string;
+//   title: string;
+//   description: string;
+//   difficulty: string;
+//   tags: string[];
+//   input: string;
+//   expectedOutput: string;
+//   hint?: string;
+//   explanation?: string;
+// }
 
 interface PuzzleStatus {
   solved: boolean;
@@ -258,7 +259,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               <div>
                 <strong className="text-sm">Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
-                  {puzzle.input}
+                  {puzzle.exampleInput}
                 </code>
               </div>
 

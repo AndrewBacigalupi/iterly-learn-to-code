@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleCompletions, puzzles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { CheckCircle, Clock, Play, Trophy } from "lucide-react";
@@ -31,12 +31,12 @@ export default async function PuzzlesPage() {
   const session = await auth();
 
   // Fetch all puzzles from database
-  const allPuzzles = await db.select().from(puzzles).orderBy(puzzles.createdAt);
+  const allPuzzles = await dbExport.select().from(puzzles).orderBy(puzzles.number);
 
   // Fetch user's completed puzzles if logged in
   let completedPuzzleIds: string[] = [];
   if (session?.user?.id) {
-    const userCompletions = await db
+    const userCompletions = await dbExport
       .select({ puzzleId: puzzleCompletions.puzzleId })
       .from(puzzleCompletions)
       .where(eq(puzzleCompletions.userId, session.user.id));
@@ -46,7 +46,7 @@ export default async function PuzzlesPage() {
 
   // Calculate stats
   const totalCompletions = session?.user?.id
-    ? await db
+    ? await dbExport
         .select()
         .from(puzzleCompletions)
         .where(eq(puzzleCompletions.userId, session.user.id))
@@ -124,7 +124,7 @@ export default async function PuzzlesPage() {
                         <div>
                           <span className="text-muted-foreground">Input:</span>
                           <code className="block mt-1 p-2 bg-muted rounded">
-                            {puzzle.input}
+                            {puzzle.exampleInput}
                           </code>
                         </div>
                         <div>
