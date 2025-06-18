@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# Ignore all files in public/puzzleInputs
+/public/puzzleData/*
+
 # testing
 /coverage
 
