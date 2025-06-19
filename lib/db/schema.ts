@@ -7,7 +7,7 @@ import { InferSelectModel } from "drizzle-orm";
 export const verificationTokens = pgTable("verification_tokens", {
 	identifier: text().notNull(),
 	token: text().notNull(),
-	expires: timestamp({ mode: 'string' }).notNull(),
+	expires: timestamp().notNull(),
 }, (table) => [
 	unique("verification_tokens_token_unique").on(table.token),
 ]);
@@ -16,7 +16,7 @@ export const users = pgTable("users", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	name: text(),
 	email: text().notNull(),
-	emailVerified: timestamp({ mode: 'string' }),
+	emailVerified: timestamp(),
 	image: text(),
 	isAdmin: boolean("is_admin").default(false).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
@@ -24,20 +24,23 @@ export const users = pgTable("users", {
 	unique("users_email_unique").on(table.email),
 ]);
 
-export const accounts = pgTable("accounts", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	userId: uuid("user_id").notNull(),
-	type: text().notNull(),
-	provider: text().notNull(),
-	providerAccountId: text("provider_account_id").notNull(),
-	refreshToken: text("refresh_token"),
-	accessToken: text("access_token"),
-	expiresAt: integer("expires_at"),
-	tokenType: text("token_type"),
-	scope: text(),
-	idToken: text("id_token"),
-	sessionState: text("session_state"),
-}, (table) => [
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  }, (table) => [
 	foreignKey({
 			columns: [table.userId],
 			foreignColumns: [users.id],
@@ -104,7 +107,7 @@ export const puzzleCompletions = pgTable("puzzle_completions", {
 export const sessions = pgTable("sessions", {
 	sessionToken: text("session_token").primaryKey().notNull(),
 	userId: uuid("user_id").notNull(),
-	expires: timestamp({ mode: 'string' }).notNull(),
+	expires: timestamp().notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.userId],

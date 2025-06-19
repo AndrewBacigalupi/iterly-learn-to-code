@@ -9,10 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import {
   problemSubmissions,
-  problemSubmissions_contrib,
+  problemSubmissionsContrib,
   puzzleCompletions,
   puzzleSubmissions,
 } from "@/lib/db/schema";
@@ -67,19 +67,19 @@ export default async function ProfilePage() {
   }
 
   // Fetch user's puzzle completions
-  const userPuzzleCompletions = await db
+  const userPuzzleCompletions = await dbExport
     .select()
     .from(puzzleCompletions)
     .where(eq(puzzleCompletions.userId, session.user.id));
 
   // Fetch user's problem submissions (solving attempts)
-  const userProblemSolveAttempts = await db
+  const userProblemSolveAttempts = await dbExport
     .select()
     .from(problemSubmissions)
     .where(eq(problemSubmissions.userId, session.user.id));
 
   // Fetch user's puzzle submissions (contributions)
-  const userPuzzleSubmissions = await db
+  const userPuzzleSubmissions = await dbExport
     .select({
       id: puzzleSubmissions.id,
       title: puzzleSubmissions.title,
@@ -100,25 +100,25 @@ export default async function ProfilePage() {
     .where(eq(puzzleSubmissions.userId, session.user.id));
 
   // Fetch user's problem submissions (contributions)
-  const userProblemSubmissions = await db
+  const userProblemSubmissions = await dbExport
     .select({
-      id: problemSubmissions_contrib.id,
-      title: problemSubmissions_contrib.title,
-      description: problemSubmissions_contrib.description,
-      difficulty: problemSubmissions_contrib.difficulty,
-      tags: problemSubmissions_contrib.tags,
-      functionName: problemSubmissions_contrib.functionName,
-      testCases: problemSubmissions_contrib.testCases,
-      starterCode: problemSubmissions_contrib.starterCode,
-      solution: problemSubmissions_contrib.solution,
-      status: problemSubmissions_contrib.status,
-      adminNotes: problemSubmissions_contrib.adminNotes,
-      submittedAt: problemSubmissions_contrib.submittedAt,
-      reviewedAt: problemSubmissions_contrib.reviewedAt,
-      publishedProblemId: problemSubmissions_contrib.publishedProblemId,
+      id: problemSubmissionsContrib.id,
+      title: problemSubmissionsContrib.title,
+      description: problemSubmissionsContrib.description,
+      difficulty: problemSubmissionsContrib.difficulty,
+      tags: problemSubmissionsContrib.tags,
+      functionName: problemSubmissionsContrib.functionName,
+      testCases: problemSubmissionsContrib.testCases,
+      starterCode: problemSubmissionsContrib.starterCode,
+      solution: problemSubmissionsContrib.solution,
+      status: problemSubmissionsContrib.status,
+      adminNotes: problemSubmissionsContrib.adminNotes,
+      submittedAt: problemSubmissionsContrib.submittedAt,
+      reviewedAt: problemSubmissionsContrib.reviewedAt,
+      publishedProblemId: problemSubmissionsContrib.publishedProblemId,
     })
-    .from(problemSubmissions_contrib)
-    .where(eq(problemSubmissions_contrib.userId, session.user.id));
+    .from(problemSubmissionsContrib)
+    .where(eq(problemSubmissionsContrib.userId, session.user.id));
 
   // Calculate stats
   const puzzlesCompleted = userPuzzleCompletions.length;

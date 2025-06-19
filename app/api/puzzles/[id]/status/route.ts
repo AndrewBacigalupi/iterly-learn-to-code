@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleCompletions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ solved: false });
     }
 
-    const completion = await db
+    const completion = await dbExport
       .select()
       .from(puzzleCompletions)
       .where(

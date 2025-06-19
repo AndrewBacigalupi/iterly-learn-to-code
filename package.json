@@ -80,7 +80,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.18.1",
+    "drizzle-kit": "^0.31.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.1",

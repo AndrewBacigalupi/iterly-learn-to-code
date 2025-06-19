@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { problemSubmissions } from "@/lib/db/schema";
 import { judge0, SupportedLanguage } from "@/lib/judge0";
 import { NextRequest, NextResponse } from "next/server";
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     const status = allPassed ? "accepted" : "wrong_answer";
 
     // Save submission to database
-    await db.insert(problemSubmissions).values({
+    await dbExport.insert(problemSubmissions).values({
       userId: session.user.id,
       problemId,
       code,

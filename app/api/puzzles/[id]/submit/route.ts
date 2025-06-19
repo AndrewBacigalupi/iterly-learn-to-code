@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleCompletions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -35,7 +35,7 @@ export async function POST(
     }
 
     // Get the puzzle with the expected output (server-side only)
-    const puzzle = await db.query.puzzles.findFirst({
+    const puzzle = await dbExport.query.puzzles.findFirst({
       where: (puzzles, { eq }) => eq(puzzles.id, id),
     });
 
@@ -50,7 +50,7 @@ export async function POST(
 
     if (isCorrect) {
       // Check if user has already solved this puzzle
-      const existingCompletion = await db
+      const existingCompletion = await dbExport
         .select()
         .from(puzzleCompletions)
         .where(
@@ -63,7 +63,7 @@ export async function POST(
 
       // If not already completed, save the completion
       if (existingCompletion.length === 0) {
-        await db.insert(puzzleCompletions).values({
+        await dbExport.insert(puzzleCompletions).values({
           userId: session.user.id,
           puzzleId: id,
           solution: answer.trim(),

@@ -1,13 +1,10 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { problemSubmissions_contrib } from "@/lib/db/schema";
+import { dbExport } from "@/lib/db";
+import { problemSubmissionsContrib } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
@@ -15,16 +12,20 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const submissionId = params.id;
+    // Extract the `id` param from the URL
+    const submissionId = request.nextUrl.pathname.split("/").pop();
 
-    // Fetch the submission, but only if it belongs to the current user
-    const submission = await db
+    if (!submissionId) {
+      return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+    }
+
+    const submission = await dbExport
       .select()
-      .from(problemSubmissions_contrib)
+      .from(problemSubmissionsContrib)
       .where(
         and(
-          eq(problemSubmissions_contrib.id, submissionId),
-          eq(problemSubmissions_contrib.userId, session.user.id)
+          eq(problemSubmissionsContrib.id, submissionId),
+          eq(problemSubmissionsContrib.userId, session.user.id)
         )
       )
       .limit(1);

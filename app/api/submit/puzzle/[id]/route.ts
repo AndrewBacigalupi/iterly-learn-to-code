@@ -1,13 +1,10 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleSubmissions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
@@ -15,10 +12,15 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const submissionId = params.id;
+    // Extract the ID from the URL path
+    const urlSegments = request.nextUrl.pathname.split("/");
+    const submissionId = urlSegments[urlSegments.length - 1];
 
-    // Fetch the submission, but only if it belongs to the current user
-    const submission = await db
+    if (!submissionId) {
+      return NextResponse.json({ error: "Missing submission ID" }, { status: 400 });
+    }
+
+    const submission = await dbExport
       .select()
       .from(puzzleSubmissions)
       .where(

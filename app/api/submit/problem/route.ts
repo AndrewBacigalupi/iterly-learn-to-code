@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { problemSubmissions_contrib } from "@/lib/db/schema";
+import { dbExport } from "@/lib/db";
+import { problemSubmissionsContrib } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -41,19 +41,19 @@ export async function POST(request: NextRequest) {
 
     // If this is a resubmission, delete the old rejected submission
     if (resubmitId) {
-      await db
-        .delete(problemSubmissions_contrib)
+      await dbExport
+        .delete(problemSubmissionsContrib)
         .where(
           and(
-            eq(problemSubmissions_contrib.id, resubmitId),
-            eq(problemSubmissions_contrib.userId, session.user.id),
-            eq(problemSubmissions_contrib.status, "rejected")
+            eq(problemSubmissionsContrib.id, resubmitId),
+            eq(problemSubmissionsContrib.userId, session.user.id),
+            eq(problemSubmissionsContrib.status, "rejected")
           )
         );
     }
 
     // Create new submission
-    await db.insert(problemSubmissions_contrib).values({
+    await dbExport.insert(problemSubmissionsContrib).values({
       userId: session.user.id,
       title,
       description,

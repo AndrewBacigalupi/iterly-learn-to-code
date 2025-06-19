@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { problemSubmissions_contrib, problems } from "@/lib/db/schema";
+import { dbExport } from "@/lib/db";
+import { problemSubmissionsContrib, problems } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,10 +27,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the submission
-    const submission = await db
+    const submission = await dbExport
       .select()
-      .from(problemSubmissions_contrib)
-      .where(eq(problemSubmissions_contrib.id, submissionId))
+      .from(problemSubmissionsContrib)
+      .where(eq(problemSubmissionsContrib.id, submissionId))
       .limit(1);
 
     if (submission.length === 0) {
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       };
 
       // Create the problem in the main problems table
-      const newProblem = await db
+      const newProblem = await dbExport
         .insert(problems)
         .values({
           title: problemSubmission.title,
@@ -67,27 +67,27 @@ export async function POST(request: NextRequest) {
         .returning();
 
       // Update submission status to approved and link to published problem
-      await db
-        .update(problemSubmissions_contrib)
+      await dbExport
+        .update(problemSubmissionsContrib)
         .set({
           status: "approved",
-          reviewedAt: new Date(),
+          reviewedAt: String(new Date()),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
           publishedProblemId: newProblem[0].id,
         })
-        .where(eq(problemSubmissions_contrib.id, submissionId));
+        .where(eq(problemSubmissionsContrib.id, submissionId));
     } else if (action === "reject") {
       // Update submission status to rejected
-      await db
-        .update(problemSubmissions_contrib)
+      await dbExport
+        .update(problemSubmissionsContrib)
         .set({
           status: "rejected",
-          reviewedAt: new Date(),
+          reviewedAt: String(new Date()),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
         })
-        .where(eq(problemSubmissions_contrib.id, submissionId));
+        .where(eq(problemSubmissionsContrib.id, submissionId));
     }
 
     return NextResponse.json({

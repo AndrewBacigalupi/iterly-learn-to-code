@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { problems, problemSubmissions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       // If not logged in, just get the first problem or next after current
-      const allProblems = await db
+      const allProblems = await dbExport
         .select()
         .from(problems)
         .orderBy(problems.createdAt);
@@ -36,13 +36,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all problems
-    const allProblems = await db
+    const allProblems = await dbExport
       .select()
       .from(problems)
       .orderBy(problems.createdAt);
 
     // Get user's solved problems
-    const solvedSubmissions = await db
+    const solvedSubmissions = await dbExport
       .select({ problemId: problemSubmissions.problemId })
       .from(problemSubmissions)
       .where(

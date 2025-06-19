@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { problemSubmissions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     // Check if user has any accepted submissions for this problem
-    const acceptedSubmission = await db
+    const acceptedSubmission = await dbExport
       .select()
       .from(problemSubmissions)
       .where(

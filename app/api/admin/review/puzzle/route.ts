@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbExport } from "@/lib/db";
 import { puzzleSubmissions, puzzles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the submission
-    const submission = await db
+    const submission = await dbExport
       .select()
       .from(puzzleSubmissions)
       .where(eq(puzzleSubmissions.id, submissionId))
@@ -44,14 +44,14 @@ export async function POST(request: NextRequest) {
 
     if (action === "approve") {
       // Create the puzzle in the main puzzles table
-      const newPuzzle = await db
+      const newPuzzle = await dbExport
         .insert(puzzles)
         .values({
           title: puzzleSubmission.title,
           description: puzzleSubmission.description,
           difficulty: puzzleSubmission.difficulty,
           tags: puzzleSubmission.tags,
-          input: puzzleSubmission.input,
+          exampleInput: puzzleSubmission.input,
           expectedOutput: puzzleSubmission.expectedOutput,
           hint: puzzleSubmission.hint,
           explanation: puzzleSubmission.explanation,
@@ -59,11 +59,11 @@ export async function POST(request: NextRequest) {
         .returning();
 
       // Update submission status to approved and link to published puzzle
-      await db
+      await dbExport
         .update(puzzleSubmissions)
         .set({
           status: "approved",
-          reviewedAt: new Date(),
+          reviewedAt: String(new Date()),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
           publishedPuzzleId: newPuzzle[0].id,
@@ -71,11 +71,11 @@ export async function POST(request: NextRequest) {
         .where(eq(puzzleSubmissions.id, submissionId));
     } else if (action === "reject") {
       // Update submission status to rejected
-      await db
+      await dbExport
         .update(puzzleSubmissions)
         .set({
           status: "rejected",
-          reviewedAt: new Date(),
+          reviewedAt: String(new Date()),
           reviewedBy: session.user.id,
           adminNotes: adminNotes || null,
         })

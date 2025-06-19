@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { problemSubmissions_contrib, puzzleSubmissions } from "@/lib/db/schema";
+import { dbExport } from "@/lib/db";
+import { problemSubmissionsContrib, puzzleSubmissions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AdminSubmissionReview from "./AdminSubmissionReview";
@@ -15,18 +15,26 @@ export default async function AdminPage() {
   }
 
   // Fetch pending puzzle submissions
-  const pendingPuzzles = await db
+  const pendingPuzzles = (await dbExport
     .select()
     .from(puzzleSubmissions)
     .where(eq(puzzleSubmissions.status, "pending"))
-    .orderBy(puzzleSubmissions.submittedAt);
+    .orderBy(puzzleSubmissions.submittedAt)).map(puzzle => ({
+      ...puzzle,
+      submittedAt: new Date(puzzle.submittedAt),
+      reviewedAt: puzzle.reviewedAt ? new Date(puzzle.reviewedAt) : null
+    }));
 
   // Fetch pending problem submissions
-  const pendingProblems = await db
+  const pendingProblems = (await dbExport
     .select()
-    .from(problemSubmissions_contrib)
-    .where(eq(problemSubmissions_contrib.status, "pending"))
-    .orderBy(problemSubmissions_contrib.submittedAt);
+    .from(problemSubmissionsContrib)
+    .where(eq(problemSubmissionsContrib.status, "pending"))
+    .orderBy(problemSubmissionsContrib.submittedAt)).map(problem => ({
+      ...problem,
+      submittedAt: new Date(problem.submittedAt),
+      reviewedAt: problem.reviewedAt ? new Date(problem.reviewedAt) : null
+    }));
 
   return (
     <div className="container mx-auto px-4 py-8">
