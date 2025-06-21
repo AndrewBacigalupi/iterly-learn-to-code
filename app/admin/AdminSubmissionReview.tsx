@@ -25,19 +25,7 @@ import { Check, Eye, MessageSquare, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-interface PuzzleSubmission {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: string;
-  tags: string[] | null;
-  input: string;
-  expectedOutput: string;
-  hint: string | null;
-  explanation: string | null;
-  submittedAt: Date;
-  status: string;
-}
+import type { PuzzleSubmission } from "@/lib/db/schema";
 
 interface ProblemSubmission {
   id: string;
@@ -57,11 +45,15 @@ interface AdminSubmissionReviewProps {
   problemSubmissions: ProblemSubmission[];
 }
 
+type SelectedSubmission = (PuzzleSubmission | ProblemSubmission) & {
+  type: "puzzle" | "problem";
+};
+
 export default function AdminSubmissionReview({
   puzzleSubmissions,
   problemSubmissions,
 }: AdminSubmissionReviewProps) {
-  const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<SelectedSubmission | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -110,7 +102,7 @@ export default function AdminSubmissionReview({
     }
   };
 
-  const openReviewDialog = (submission: any, type: "puzzle" | "problem") => {
+  const openReviewDialog = (submission: PuzzleSubmission | ProblemSubmission, type: "puzzle" | "problem") => {
     setSelectedSubmission({ ...submission, type });
     setReviewDialogOpen(true);
     setAdminNotes("");
@@ -192,13 +184,13 @@ export default function AdminSubmissionReview({
                             <div>
                               <strong>Input:</strong>
                               <code className="block mt-1 p-2 bg-muted rounded text-sm">
-                                {submission.input}
+                                {submission.example_input}
                               </code>
                             </div>
                             <div>
                               <strong>Expected Output:</strong>
                               <code className="block mt-1 p-2 bg-muted rounded text-sm">
-                                {submission.expectedOutput}
+                                {submission.answer}
                               </code>
                             </div>
                             {submission.hint && (
@@ -436,26 +428,30 @@ export default function AdminSubmissionReview({
             </Button>
             <Button
               variant="destructive"
-              onClick={() =>
-                handleReview(
-                  selectedSubmission?.id,
-                  "reject",
-                  selectedSubmission?.type
-                )
-              }
+              onClick={() => {
+                if (selectedSubmission?.id && selectedSubmission?.type) {
+                  handleReview(
+                    selectedSubmission.id,
+                    "reject",
+                    selectedSubmission.type
+                  );
+                }
+              }}
               disabled={processing}
             >
               <X className="h-4 w-4 mr-1" />
               Reject
             </Button>
             <Button
-              onClick={() =>
-                handleReview(
-                  selectedSubmission?.id,
-                  "approve",
-                  selectedSubmission?.type
-                )
-              }
+              onClick={() => {
+                if (selectedSubmission?.id && selectedSubmission?.type) {
+                  handleReview(
+                    selectedSubmission.id,
+                    "approve",
+                    selectedSubmission.type
+                  );
+                }
+              }}
               disabled={processing}
             >
               <Check className="h-4 w-4 mr-1" />

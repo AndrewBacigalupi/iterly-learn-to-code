@@ -18,15 +18,16 @@ export async function POST(request: NextRequest) {
       description,
       difficulty,
       tags,
-      input,
-      expectedOutput,
+      example_input,
+      answer,
       hint,
       explanation,
+      real_input,
       resubmitId,
     } = body;
 
     // Validate required fields
-    if (!title || !description || !difficulty || !input || !expectedOutput) {
+    if (!title || !description || !difficulty || !example_input || !answer) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -53,10 +54,11 @@ export async function POST(request: NextRequest) {
       description,
       difficulty,
       tags: tags || [],
-      input,
-      expectedOutput,
+      example_input,
+      answer,
       hint: hint || null,
       explanation: explanation || null,
+      real_input,
       status: "pending",
     });
 

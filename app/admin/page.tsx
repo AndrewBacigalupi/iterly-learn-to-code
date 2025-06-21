@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import AdminSubmissionReview from "./AdminSubmissionReview";
 
+
 export default async function AdminPage() {
   const session = await auth();
 
@@ -46,10 +47,10 @@ export default async function AdminPage() {
           </p>
         </div>
 
-        <AdminSubmissionReview
-          puzzleSubmissions={pendingPuzzles}
-          problemSubmissions={pendingProblems}
-        />
+        {/* <AdminSubmissionReview
+          // puzzleSubmissions={pendingPuzzles}
+          // problemSubmissions={pendingProblems}
+        /> */}
       </div>
     </div>
   );

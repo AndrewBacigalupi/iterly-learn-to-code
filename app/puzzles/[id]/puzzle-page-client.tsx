@@ -259,7 +259,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               <div>
                 <strong className="text-sm">Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
-                  {puzzle.exampleInput}
+                  {puzzle.example_input}
                 </code>
               </div>
 

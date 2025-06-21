@@ -16,7 +16,7 @@ export async function GET(
     }
 
     // Don't send the expected output to the client for security
-    const { expectedOutput, ...puzzleData } = result;
+    const { answer, ...puzzleData } = result;
 
     return NextResponse.json(puzzleData);
   } catch (error) {

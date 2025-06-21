@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
           description: puzzleSubmission.description,
           difficulty: puzzleSubmission.difficulty,
           tags: puzzleSubmission.tags,
-          exampleInput: puzzleSubmission.input,
-          expectedOutput: puzzleSubmission.expectedOutput,
+          example_input: puzzleSubmission.example_input,
+          answer: puzzleSubmission.answer,
           hint: puzzleSubmission.hint,
           explanation: puzzleSubmission.explanation,
         })

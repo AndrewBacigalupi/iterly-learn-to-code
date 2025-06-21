@@ -1,15 +1,26 @@
 import { relations } from "drizzle-orm/relations";
-import { users, accounts, problemSubmissions, problems, puzzleCompletions, puzzles, sessions, problemSubmissionsContrib, puzzleSubmissions } from "./schema";
+import { users, accounts, problemSubmissions, problems, puzzleCompletions, puzzles, sessions, problemSubmissionsContrib, puzzleSubmissions } from "@/lib/db/schema";
 
 export const accountsRelations = relations(accounts, ({one}) => ({
-	user: one(users, {
+	user_userId: one(users, {
 		fields: [accounts.userId],
-		references: [users.id]
+		references: [users.id],
+		relationName: "accounts_userId_users_id"
+	}),
+	user_user_id: one(users, {
+		fields: [accounts.userId],
+		references: [users.id],
+		relationName: "accounts_userId_users_id"
 	}),
 }));
 
 export const usersRelations = relations(users, ({many}) => ({
-	accounts: many(accounts),
+	accounts_userId: many(accounts, {
+		relationName: "accounts_userId_users_id"
+	}),
+	accounts_user_id: many(accounts, {
+		relationName: "accounts_userId_users_id"
+	}),
 	problemSubmissions: many(problemSubmissions),
 	puzzleCompletions: many(puzzleCompletions),
 	sessions: many(sessions),

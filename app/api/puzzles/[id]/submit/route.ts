@@ -45,7 +45,7 @@ export async function POST(
 
     // Check if the answer is correct (case-insensitive, trimmed)
     const userAnswer = answer.trim().toLowerCase();
-    const correctAnswer = puzzle.expectedOutput.trim().toLowerCase();
+    const correctAnswer = puzzle.answer.trim().toLowerCase();
     const isCorrect = userAnswer === correctAnswer;
 
     if (isCorrect) {

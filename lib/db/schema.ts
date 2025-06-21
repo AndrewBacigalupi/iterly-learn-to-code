@@ -24,23 +24,24 @@ export const users = pgTable("users", {
 	unique("users_email_unique").on(table.email),
 ]);
 
-export const accounts = pgTable(
-  "accounts",
-  {
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
-    id_token: text("id_token"),
-    session_state: text("session_state"),
-  }, (table) => [
+export const accounts = pgTable("accounts", {
+	userId: uuid("user_id").notNull(),
+	type: text().notNull(),
+	provider: text().notNull(),
+	providerAccountId: text("provider_account_id").notNull(),
+	refresh_token: text("refresh_token"),
+	access_token: text("access_token"),
+	expires_at: integer("expires_at"),
+	token_type: text("token_type"),
+	scope: text(),
+	id_token: text("id_token"),
+	session_state: text("session_state"),
+}, (table) => [
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "accounts_userId_users_id_fk"
+		}).onDelete("cascade"),
 	foreignKey({
 			columns: [table.userId],
 			foreignColumns: [users.id],
@@ -157,18 +158,15 @@ export const puzzles = pgTable("puzzles", {
 	description: text().notNull(),
 	difficulty: text().notNull(),
 	tags: text().array(),
-	exampleInput: text("example_input").notNull(),
-	expectedOutput: text("expected_output").notNull(),
+	example_input: text("example_input").notNull(),
+	answer: text().notNull(),
 	hint: text(),
 	explanation: text(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-	realInput: varchar("real_input", { length: 100 }),
+	real_input: varchar("real_input", { length: 100 }),
 	number: integer(),
-	exampleEx: text("example_ex"),
 });
-
-export type Puzzle = InferSelectModel<typeof puzzles>;
 
 export const puzzleSubmissions = pgTable("puzzle_submissions", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -177,10 +175,11 @@ export const puzzleSubmissions = pgTable("puzzle_submissions", {
 	description: text().notNull(),
 	difficulty: text().notNull(),
 	tags: text().array(),
-	input: text().notNull(),
-	expectedOutput: text("expected_output").notNull(),
+	example_input: text("example_input").notNull(),
+	answer: text("answer").notNull(),
 	hint: text(),
 	explanation: text(),
+  real_input: text("real_input").notNull(),
 	status: text().default('pending').notNull(),
 	adminNotes: text("admin_notes"),
 	submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull(),
@@ -204,3 +203,6 @@ export const puzzleSubmissions = pgTable("puzzle_submissions", {
 			name: "puzzle_submissions_published_puzzle_id_puzzles_id_fk"
 		}),
 ]);
+
+export type PuzzleSubmission = InferSelectModel<typeof puzzleSubmissions>;
+export type Puzzle = InferSelectModel<typeof puzzles>;

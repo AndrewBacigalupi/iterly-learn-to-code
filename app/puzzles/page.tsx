@@ -124,7 +124,7 @@ export default async function PuzzlesPage() {
                         <div>
                           <span className="text-muted-foreground">Input:</span>
                           <code className="block mt-1 p-2 bg-muted rounded">
-                            {puzzle.exampleInput}
+                            {puzzle.example_input}
                           </code>
                         </div>
                         <div>
