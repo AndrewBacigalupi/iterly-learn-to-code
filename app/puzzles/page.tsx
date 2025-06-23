@@ -27,6 +27,7 @@ function getDifficultyColor(difficulty: string) {
   }
 }
 
+
 export default async function PuzzlesPage() {
   const session = await auth();
 

@@ -47,9 +47,10 @@ export default async function AdminPage() {
           </p>
         </div>
 
+      {/* COULDN'T FIX THIS PROBLEM, SOMEHWERE A DB COLUMN ISN'T MATCHING */}
         {/* <AdminSubmissionReview
-          // puzzleSubmissions={pendingPuzzles}
-          // problemSubmissions={pendingProblems}
+          puzzleSubmissions={pendingPuzzles}
+          problemSubmissions={pendingProblems}
         /> */}
       </div>
     </div>

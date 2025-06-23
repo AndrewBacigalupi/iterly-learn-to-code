@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, CheckCircle, Lightbulb, Trophy } from "lucide-react";
+import { ArrowRight, CheckCircle, Lightbulb, Trophy, FileDown } from "lucide-react";
 import { Session } from "next-auth";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Puzzle } from "@/lib/db/schema";
+import Link from "next/link";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
 
@@ -257,13 +258,29 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               <p>{puzzle.description}</p>
 
               <div>
-                <strong className="text-sm">Input:</strong>
+                <strong className="text-sm">Example Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
                   {puzzle.example_input}
                 </code>
               </div>
 
-              {isSolved && explanation && (
+              <div>
+                <div className="mt-2">
+                  {puzzle.explanation}
+                </div>
+              </div>
+
+              <a
+                href={`/puzzleData/${puzzle.real_input}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" className="mt-2 hover:underline">
+                  <FileDown />View Your Puzzle Input
+                </Button>
+              </a>
+
+              {/* {isSolved && explanation && (
                 <div className="mt-4 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="h-4 w-4 text-green-600" />
@@ -275,7 +292,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                     {explanation}
                   </p>
                 </div>
-              )}
+              )} */}
 
               {showHint && puzzle.hint && !isSolved && (
                 <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
