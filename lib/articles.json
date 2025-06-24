@@ -1,0 +1,62 @@
+[
+  {
+    "number": 1,
+    "id": "intro-to-programming",
+    "title": "Introduction to Programming",
+    "description": "Learn what programming is, why it's valuable, and how to get started on your coding journey.",
+    "icon": "BookOpen",
+    "color": "text-blue-600",
+    "bgColor": "bg-blue-50",
+    "duration": "15 minutes",
+    "difficulty": "Beginner",
+    "content": "<h2>What is Programming?</h2><p>Programming is the art of giving instructions to a computer to perform specific tasks. Think of it as writing a recipe that a computer can follow step by step.</p><h3>Why Learn Programming?</h3><p>Programming skills are valuable because they:</p><ul><li>Enhance problem-solving abilities</li><li>Open up career opportunities</li><li>Enable you to build useful tools</li><li>Improve logical thinking</li><li>Help you understand how technology works</li></ul><h3>What Can You Build?</h3><p>With programming, you can create:</p><ul><li>Websites and web applications</li><li>Mobile apps</li><li>Games</li><li>Data analysis tools</li><li>Automation scripts</li><li>And much more!</li></ul><h3>Getting Started</h3><p>The best way to learn programming is to start with a beginner-friendly language like Python. Python is known for its simple syntax and readability, making it perfect for newcomers.</p><div class=\"bg-blue-50 p-4 rounded-lg my-4\"><h4>💡 Pro Tip</h4><p>Don't worry if you don't understand everything at first. Programming is learned through practice and experimentation!</p></div><h3>Next Steps</h3><p>In the next article, we'll learn about variables and data types - the building blocks of any program.</p>"
+  },
+  {
+    "number": 2,
+    "id": "variables-and-data-types",
+    "title": "Variables and Data Types",
+    "description": "Understand how to store and work with different types of data in your programs.",
+    "icon": "Code",
+    "color": "text-green-600",
+    "bgColor": "bg-green-50",
+    "duration": "20 minutes",
+    "difficulty": "Beginner",
+    "content": "<h2>What are Variables?</h2><p>Variables are like containers that store information in your program. They have names and can hold different types of data.</p><h3>Creating Variables</h3><p>In Python, you create a variable by giving it a name and assigning a value:</p><pre><code>name = \"Alice\"\nage = 25\nis_student = True</code></pre><h3>Basic Data Types</h3><p>Python has several basic data types:</p><h4>Numbers</h4><p>Integers (whole numbers) and decimals:</p><pre><code>age = 25          # integer\nheight = 5.8       # decimal (float)\ntemperature = -5   # negative number</code></pre><h4>Strings</h4><p>Text enclosed in quotes:</p><pre><code>name = \"Alice\"\nmessage = 'Hello, World!'\nfavorite_color = \"blue\"</code></pre><h4>Booleans</h4><p>True or false values:</p><pre><code>is_student = True\nis_working = False\nhas_car = True</code></pre><h3>Working with Variables</h3><p>You can use variables in calculations and combine them:</p><pre><code># Math with numbers\nx = 10\ny = 5\nsum = x + y        # 15\nproduct = x * y    # 50\n\n# Combining strings\nfirst_name = \"John\"\nlast_name = \"Doe\"\nfull_name = first_name + \" \" + last_name  # \"John Doe\"</code></pre><div class=\"bg-green-50 p-4 rounded-lg my-4\"><h4>🎯 Practice Exercise</h4><p>Try creating variables for your name, age, and favorite programming language. Then print them out!</p></div><h3>Variable Naming Rules</h3><ul><li>Use descriptive names (e.g., <code>user_age</code> instead of <code>a</code>)</li><li>Use lowercase letters and underscores</li><li>Don't start with numbers</li><li>Avoid Python keywords (like <code>if</code>, <code>for</code>, <code>while</code>)</li></ul>"
+  },
+  {
+    "number": 3,
+    "id": "control-flow",
+    "title": "Control Flow: Making Decisions",
+    "description": "Learn how to make your programs respond to different conditions using if statements and loops.",
+    "icon": "Target",
+    "color": "text-purple-600",
+    "bgColor": "bg-purple-50",
+    "duration": "25 minutes",
+    "difficulty": "Beginner",
+    "content": "<h2>Making Decisions with If Statements</h2><p>Control flow allows your program to make decisions and execute different code based on conditions.</p><h3>Basic If Statement</h3><p>An if statement checks if a condition is true and executes code accordingly:</p><pre><code>age = 18\n\nif age >= 18:\n    print(\"You are an adult\")\nelse:\n    print(\"You are a minor\")</code></pre><h3>Comparison Operators</h3><p>You can compare values using these operators:</p><ul><li><code>==</code> Equal to</li><li><code>!=</code> Not equal to</li><li><code>&gt;</code> Greater than</li><li><code>&lt;</code> Less than</li><li><code>&gt;=</code> Greater than or equal to</li><li><code>&lt;=</code> Less than or equal to</li></ul><h3>Multiple Conditions</h3><p>You can combine conditions using <code>and</code> and <code>or</code>:</p><pre><code>age = 20\nhas_license = True\n\nif age >= 18 and has_license:\n    print(\"You can drive!\")\nelse:\n    print(\"You cannot drive.\")</code></pre><h3>Loops: Repeating Actions</h3><p>Loops allow you to repeat code multiple times:</p><h4>For Loops</h4><p>Use for loops when you know how many times to repeat:</p><pre><code># Count from 1 to 5\nfor i in range(1, 6):\n    print(i)\n\n# Loop through a list\nfruits = [\"apple\", \"banana\", \"orange\"]\nfor fruit in fruits:\n    print(fruit)</code></pre><h4>While Loops</h4><p>Use while loops when you want to repeat until a condition is met:</p><pre><code>count = 0\nwhile count < 5:\n    print(count)\n    count += 1</code></pre><div class=\"bg-purple-50 p-4 rounded-lg my-4\"><h4>🎯 Practice Exercise</h4><p>Write a program that counts from 1 to 10 and prints \"even\" for even numbers and \"odd\" for odd numbers.</p></div><h3>Nested Control Flow</h3><p>You can combine if statements and loops:</p><pre><code>for i in range(1, 11):\n    if i % 2 == 0:\n        print(f\"{i} is even\")\n    else:\n        print(f\"{i} is odd\")</code></pre>"
+  },
+  {
+    "number": 4,
+    "id": "functions",
+    "title": "Functions: Reusable Code Blocks",
+    "description": "Learn how to create and use functions to organize your code and make it reusable.",
+    "icon": "Zap",
+    "color": "text-orange-600",
+    "bgColor": "bg-orange-50",
+    "duration": "30 minutes",
+    "difficulty": "Beginner",
+    "content": "<h2>What are Functions?</h2><p>Functions are reusable blocks of code that perform specific tasks. They help you organize your code and avoid repetition.</p><h3>Creating Functions</h3><p>In Python, you define a function using the <code>def</code> keyword:</p><pre><code>def greet(name):\n    print(f\"Hello, {name}!\")\n\n# Call the function\ngreet(\"Alice\")  # Output: Hello, Alice!</code></pre><h3>Function Parameters</h3><p>Functions can accept input values called parameters:</p><pre><code>def add_numbers(a, b):\n    return a + b\n\nresult = add_numbers(5, 3)  # result = 8</code></pre><h3>Return Values</h3><p>Functions can return values using the <code>return</code> statement:</p><pre><code>def calculate_area(length, width):\n    area = length * width\n    return area\n\nrectangle_area = calculate_area(10, 5)  # 50</code></pre><h3>Default Parameters</h3><p>You can provide default values for parameters:</p><pre><code>def greet(name, greeting=\"Hello\"):\n    print(f\"{greeting}, {name}!\")\n\ngreet(\"Alice\")           # Hello, Alice!\ngreet(\"Bob\", \"Hi\")       # Hi, Bob!</code></pre><h3>Multiple Return Values</h3><p>Functions can return multiple values:</p><pre><code>def get_name_and_age():\n    return \"Alice\", 25\n\nname, age = get_name_and_age()\nprint(name)  # Alice\nprint(age)   # 25</code></pre><h3>Scope and Variables</h3><p>Variables created inside a function are local to that function:</p><pre><code>def my_function():\n    local_var = \"I'm local\"\n    print(local_var)\n\nmy_function()  # I'm local\n# print(local_var)  # This would cause an error</code></pre><div class=\"bg-orange-50 p-4 rounded-lg my-4\"><h4>🎯 Practice Exercise</h4><p>Create a function that takes a list of numbers and returns the sum and average of those numbers.</p></div><h3>Built-in Functions</h3><p>Python comes with many useful built-in functions:</p><ul><li><code>len()</code> - Get the length of a sequence</li><li><code>max()</code> - Find the maximum value</li><li><code>min()</code> - Find the minimum value</li><li><code>sum()</code> - Sum all values in a sequence</li><li><code>type()</code> - Get the type of an object</li></ul><h3>Lambda Functions</h3><p>Lambda functions are small, anonymous functions:</p><pre><code># Regular function\ndef square(x):\n    return x ** 2\n\n# Lambda function\nsquare_lambda = lambda x: x ** 2\n\n# Both do the same thing\nprint(square(5))        # 25\nprint(square_lambda(5)) # 25</code></pre>"
+  },
+  {
+    "number": 5,
+    "id": "problem-solving",
+    "title": "Problem Solving Strategies",
+    "description": "Develop a systematic approach to solving programming problems and debugging your code.",
+    "icon": "Brain",
+    "color": "text-indigo-600",
+    "bgColor": "bg-indigo-50",
+    "duration": "35 minutes",
+    "difficulty": "Intermediate",
+    "content": "<h2>The Problem Solving Framework</h2><p>Effective problem solving follows a structured approach. Here's a framework that works for most programming problems.</p><h3>The 5-Step Process</h3><ol><li><strong>Understand the Problem:</strong> Read carefully, identify inputs/outputs, clarify requirements</li><li><strong>Plan Your Approach:</strong> Break down the problem, choose algorithms/data structures</li><li><strong>Write the Code:</strong> Implement your solution step by step</li><li><strong>Test Your Solution:</strong> Check with examples, edge cases, and different inputs</li><li><strong>Optimize:</strong> Look for ways to improve efficiency or readability</li></ol><h3>Example: Reverse a String</h3><p>Let's apply this framework to reverse a string:</p><h4>1. Understand</h4><p>Input: \"hello\" → Output: \"olleh\"</p><p>We need to take a string and return it backwards.</p><h4>2. Plan</h4><ul><li>Start from the end of the string</li><li>Build a new string character by character</li><li>Or use built-in reverse methods</li></ul><h4>3. Implement</h4><pre><code>def reverse_string(s):\n    return s[::-1]  # Python slice notation\n\n# Alternative approach\ndef reverse_string_manual(s):\n    result = \"\"\n    for i in range(len(s) - 1, -1, -1):\n        result += s[i]\n    return result</code></pre><h4>4. Test</h4><pre><code>print(reverse_string(\"hello\"))  # \"olleh\"\nprint(reverse_string(\"\"))       # \"\"\nprint(reverse_string(\"a\"))      # \"a\"\nprint(reverse_string(\"123\"))    # \"321\"</code></pre><h4>5. Optimize</h4><p>The slice approach is already optimal for Python. The manual approach could be improved using a list and join.</p><h3>Common Problem Types</h3><p>Here are some common types of programming problems:</p><h4>Array/String Problems</h4><ul><li>Finding elements (search, filter)</li><li>Modifying elements (sort, reverse, transform)</li><li>Counting elements</li><li>Finding patterns</li></ul><h4>Mathematical Problems</h4><ul><li>Number operations</li><li>Prime numbers</li><li>Factorials</li><li>Fibonacci sequence</li></ul><h4>Logic Problems</h4><ul><li>Conditional statements</li><li>Boolean logic</li><li>Decision trees</li></ul><h3>Practice Problem</h3><p>Try solving this problem using the 5-step framework:</p><div class=\"bg-indigo-50 p-4 rounded-lg my-4\"><h4>🎯 Challenge</h4><p>Write a function that counts the number of vowels in a string. Vowels are a, e, i, o, u (both uppercase and lowercase).</p><p>Example: count_vowels(\"Hello World\") should return 3.</p></div><h3>Solution</h3><pre><code>def count_vowels(s):\n    vowels = \"aeiouAEIOU\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count += 1\n    return count\n\n# Test\nprint(count_vowels(\"Hello World\"))  # 3\nprint(count_vowels(\"Python\"))       # 1\nprint(count_vowels(\"AEIOU\"))        # 5</code></pre><h3>Tips for Success</h3><ul><li>Start with simple examples</li><li>Draw diagrams or write pseudocode</li><li>Test with edge cases (empty input, single element, etc.)</li><li>Don't be afraid to start with a simple solution and improve it</li><li>Practice regularly with different types of problems</li></ul>"
+  }
+] 

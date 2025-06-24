@@ -46,9 +46,9 @@ function getDifficultyColor(difficulty: string) {
 export default async function CategoryPuzzlesPage({ 
   params 
 }: { 
-  params: { category: string } 
+  params: Promise<{ category: string }> 
 }) {
-  const { category } = params;
+  const { category } = await params;
   const session = await auth();
   
   const categoryData = categories[category as keyof typeof categories];
