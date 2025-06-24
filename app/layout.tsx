@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import MyFooter from "@/components/ui/myFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,9 @@ export default async function RootLayout({
           <main className="min-h-[calc(100vh-14rem)]">{children}</main>
           <Toaster />
         </Providers>
+        <MyFooter />
       </body>
+
     </html>
   );
 }

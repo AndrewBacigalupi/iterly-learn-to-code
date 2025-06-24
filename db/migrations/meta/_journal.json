@@ -15,6 +15,20 @@
       "when": 1750537491032,
       "tag": "0001_free_tusk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750706316665,
+      "tag": "0002_goofy_titania",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750706678070,
+      "tag": "0003_grey_preak",
+      "breakpoints": true
     }
   ]
 }
