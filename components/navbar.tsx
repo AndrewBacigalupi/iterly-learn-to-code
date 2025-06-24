@@ -28,8 +28,8 @@ export function Navbar({ session }: { session: Session | null }) {
 
   const menuItems = [
     { title: "Home", href: "/" },
-    { title: "Puzzles", href: "/puzzles" },
-    { title: "Problems", href: "/problems" },
+    { title: "Puzzles", href: "/puzzles/categories" },
+    { title: "Learn", href: "/learn" },
     { title: "Contribute", href: "/contribute" },
     ...(session ? [{ title: "Profile", href: "/profile" }] : []),
     ...(isAdmin ? [{ title: "Admin", href: "/admin" }] : []),
@@ -55,7 +55,7 @@ export function Navbar({ session }: { session: Session | null }) {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/puzzles"
+                  href="/puzzles/categories"
                   className={navigationMenuTriggerStyle()}
                 >
                   Puzzles
@@ -63,10 +63,10 @@ export function Navbar({ session }: { session: Session | null }) {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/problems"
+                  href="/learn"
                   className={navigationMenuTriggerStyle()}
                 >
-                  Problems
+                  Learn
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>

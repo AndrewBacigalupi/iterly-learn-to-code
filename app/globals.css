@@ -120,3 +120,76 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Prose styling for lesson content */
+.prose {
+  @apply text-foreground;
+}
+
+.prose h2 {
+  @apply text-2xl font-bold mt-8 mb-4 text-foreground;
+}
+
+.prose h3 {
+  @apply text-xl font-semibold mt-6 mb-3 text-foreground;
+}
+
+.prose h4 {
+  @apply text-lg font-semibold mt-4 mb-2 text-foreground;
+}
+
+.prose p {
+  @apply mb-4 text-foreground leading-relaxed;
+}
+
+.prose ul {
+  @apply mb-4 pl-6 space-y-2;
+}
+
+.prose ol {
+  @apply mb-4 pl-6 space-y-2;
+}
+
+.prose li {
+  @apply text-foreground;
+}
+
+.prose pre {
+  @apply bg-muted border rounded-lg p-4 text-sm overflow-x-auto my-4;
+}
+
+.prose code {
+  @apply bg-muted px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary/20 pl-4 italic text-muted-foreground my-4;
+}
+
+.prose strong {
+  @apply font-semibold text-foreground;
+}
+
+.prose em {
+  @apply italic;
+}
+
+.prose a {
+  @apply text-primary hover:underline;
+}
+
+.prose table {
+  @apply w-full border-collapse border border-border my-4;
+}
+
+.prose th {
+  @apply border border-border bg-muted px-4 py-2 text-left font-semibold;
+}
+
+.prose td {
+  @apply border border-border px-4 py-2;
+}

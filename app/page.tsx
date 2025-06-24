@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Code, Puzzle, Trophy, Users } from "lucide-react";
+import { Code, Puzzle, Trophy, Users, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -14,26 +14,26 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
       <section className="text-center py-12 md:py-20">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            Learn to <span className="text-primary">Scode</span>
+            Challenges that grow <span className="text-blue-300 italic">with</span> you.
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-            Master programming through hands-on puzzles and coding challenges
+            Master programming through hands-on puzzles and structured learning
           </p>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Learn to Scode is a platform designed to help you improve your
-            programming skills through practical problem-solving. Whether you're
-            a beginner or an experienced developer, our collection of puzzles
-            and coding problems will challenge you to think critically and write
+            programming skills through practical problem-solving and guided learning.
+            Whether you're a beginner or an experienced developer, our puzzles
+            and educational content will challenge you to think critically and write
             better code.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
-              <Link href="/puzzles">Start with Puzzles</Link>
+              <Link href="/puzzles/categories">Start with Puzzles</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link href="/problems">Try Coding Problems</Link>
+              <Link href="/learn">Learn How to Code</Link>
             </Button>
           </div>
         </div>
@@ -69,19 +69,19 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-primary" />
-                  Interactive Coding Problems
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Structured Learning Path
                 </CardTitle>
                 <CardDescription>
-                  Practice with LeetCode-style problems with instant feedback
-                  and multiple language support.
+                  Follow our carefully crafted educational content designed to
+                  build your skills progressively.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2">
-                  <li>• Real-time code execution</li>
-                  <li>• Multiple programming languages</li>
-                  <li>• Automated test case validation</li>
+                  <li>• Beginner-friendly articles and tutorials</li>
+                  <li>• Progressive difficulty levels</li>
+                  <li>• Clear explanations and examples</li>
                 </ul>
               </CardContent>
             </Card>
@@ -99,7 +99,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2">
-                  <li>• Save completed puzzles and problems</li>
+                  <li>• Save completed puzzles</li>
                   <li>• View your solution history</li>
                   <li>• Track your learning journey</li>
                 </ul>
@@ -113,7 +113,7 @@ export default function Home() {
                   Community Driven
                 </CardTitle>
                 <CardDescription>
-                  Help grow the platform by contributing new problems and
+                  Help grow the platform by contributing new puzzles and
                   improvements.
                 </CardDescription>
               </CardHeader>
@@ -134,15 +134,15 @@ export default function Home() {
         <div className="max-w-2xl mx-auto text-center px-6">
           <h2 className="text-2xl font-bold mb-4">Ready to Start Learning?</h2>
           <p className="text-muted-foreground mb-6">
-            You can explore all puzzles and problems without signing in. Create
+            You can explore all puzzles and learning content without signing in. Create
             an account to track your progress and save your solutions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild>
-              <Link href="/puzzles">Browse Puzzles</Link>
+              <Link href="/puzzles/categories">Browse Puzzles</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/problems">View Problems</Link>
+              <Link href="/learn">Start Learning</Link>
             </Button>
           </div>
         </div>
