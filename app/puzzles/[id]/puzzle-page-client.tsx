@@ -252,13 +252,13 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
           {/* Problem Description */}
           <Card>
             <CardHeader>
-              <CardTitle>Problem Description</CardTitle>
+              <strong className="text-md">Puzzle Description</strong>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>{puzzle.description}</p>
 
               <div>
-                <strong className="text-sm">Example Input:</strong>
+                <strong className="text-md">Example Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
                   {puzzle.example_input}
                 </code>
@@ -270,15 +270,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                 </div>
               </div>
 
-              <a
-                href={`/puzzleData/${puzzle.real_input}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" className="mt-2 hover:underline">
-                  <FileDown />View Your Puzzle Input
-                </Button>
-              </a>
+          
 
               {/* {isSolved && explanation && (
                 <div className="mt-4 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
@@ -293,30 +285,25 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                   </p>
                 </div>
               )} */}
-
-              {showHint && puzzle.hint && !isSolved && (
-                <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="h-4 w-4 text-yellow-600" />
-                    <strong className="text-yellow-800 dark:text-yellow-200">
-                      Hint
-                    </strong>
-                  </div>
-                  <p className="text-yellow-700 dark:text-yellow-300 text-sm">
-                    {puzzle.hint}
-                  </p>
-                </div>
-              )}
             </CardContent>
           </Card>
 
           {/* Solution Input */}
           <Card>
             <CardHeader>
-              <CardTitle>Your Solution</CardTitle>
+              <CardTitle className="text-lg">Your Solution</CardTitle>
               <CardDescription>
                 Analyze the input and provide the correct output
               </CardDescription>
+              <a
+                href={`/puzzleData/${puzzle.real_input}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="link" className="mt-2 hover:underline justify-start px-0 ">
+                  <FileDown />View Your Puzzle Input
+                </Button>
+              </a>
             </CardHeader>
             <CardContent>
               {isSolved ? (
@@ -380,6 +367,19 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                   )}
                 </form>
               )}
+              {showHint && puzzle.hint && !isSolved && (
+                <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-600" />
+                    <strong className="text-yellow-800 dark:text-yellow-200">
+                      Hint
+                    </strong>
+                  </div>
+                  <p className="text-yellow-700 dark:text-yellow-300 text-sm">
+                    {puzzle.hint}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -387,3 +387,4 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
     </div>
   );
 }
+
