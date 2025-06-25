@@ -1,3 +1,5 @@
+
+
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
 import { auth } from "@/lib/auth";
@@ -6,6 +8,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import MyFooter from "@/components/ui/myFooter";
+import ThemeToggleButton from "@/components/ui/theme-toggle";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,18 +33,19 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
+        <Providers> 
           <Navbar session={session} />
           <main className="min-h-[calc(100vh-14rem)]">{children}</main>
           <Toaster />
-        </Providers>
+          <ThemeToggleButton />
+         </Providers>
         <MyFooter />
       </body>
-
     </html>
   );
 }

@@ -17,7 +17,7 @@ import Link from "next/link";
 function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
     case "easy":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      return "bg-green-100 text-green-800 dark:bg-green-10 dark:text-green-300";
     case "medium":
       return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
     case "hard":
@@ -98,27 +98,10 @@ export default async function PuzzlesPage() {
                         {puzzle.description}
                       </CardDescription>
                     </div>
-                    <Badge className={getDifficultyColor(puzzle.difficulty)}>
-                      {puzzle.difficulty}
-                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {puzzle.tags && (
-                      <div className="flex flex-wrap gap-2">
-                        {puzzle.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
                     <div>
                       <strong className="text-sm">Example:</strong>
                       <div className="mt-2 grid md:grid-cols-2 gap-4 text-xs">
@@ -140,7 +123,7 @@ export default async function PuzzlesPage() {
                     <div className="flex justify-between items-center pt-4">
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         {isCompleted ? (
-                          <span className="flex items-center gap-1 text-green-600">
+                          <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
                             <CheckCircle className="h-4 w-4" />
                             Solved
                           </span>
@@ -173,7 +156,7 @@ export default async function PuzzlesPage() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {completedPuzzleIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Solved</div>

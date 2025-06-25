@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { dbExport } from "@/lib/db";
 import { puzzles } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -30,10 +31,32 @@ export default async function PuzzleCategoriesPage() {
       title: "Basics",
       description: "Start your puzzle-solving journey with fundamental programming concepts. These puzzles focus on basic logic, variables, and simple algorithms.",
       icon: BookOpen,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-blue-600 dark:text-blue-400",
+      bgColor: "bg-blue-50 dark:bg-blue-950",
       puzzleCount: puzzleCount,
       difficulty: "Beginner"
+    },
+    {
+      id: "coming-soon-1",
+      title: "Coming Soon",
+      description: "New puzzle category in development. Stay tuned for more challenging problems!",
+      icon: BookOpen,
+      color: "text-gray-400 dark:text-gray-500",
+      bgColor: "bg-gray-50 dark:bg-gray-800",
+      puzzleCount: 0,
+      difficulty: "TBD",
+      underConstruction: true
+    },
+    {
+      id: "coming-soon-2", 
+      title: "Coming Soon",
+      description: "Another exciting puzzle category is being built. Check back later!",
+      icon: BookOpen,
+      color: "text-gray-400 dark:text-gray-500",
+      bgColor: "bg-gray-50 dark:bg-gray-800",
+      puzzleCount: 0,
+      difficulty: "TBD",
+      underConstruction: true
     }
   ];
 
@@ -43,9 +66,9 @@ export default async function PuzzleCategoriesPage() {
       <section className="text-center py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            Puzzles
+            P<span className="tracking-wide">u</span><span className=" text-blue-300 tracking-wide font-style: italic">zz</span>les
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-xl text-muted-foreground mb-1">
             Choose a category to start solving puzzles
           </p>
         </div>
@@ -53,10 +76,14 @@ export default async function PuzzleCategoriesPage() {
 
       {/* Categories Grid */}
       <section className="py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto mb-10">
           <div className="grid gap-6">
             {categories.map((category) => (
-              <Card key={category.id} className="group hover:shadow-lg transition-all duration-300">
+              <Card key={category.id} className={`group transition-all duration-300 ${
+                category.underConstruction 
+                  ? 'opacity-60 cursor-not-allowed hover:shadow-none' 
+                  : 'hover:shadow-lg'
+              }`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
@@ -64,28 +91,47 @@ export default async function PuzzleCategoriesPage() {
                         <category.icon className={`h-8 w-8 ${category.color}`} />
                       </div>
                       <div className="flex-1">
-                        <CardTitle className="text-2xl mb-2">{category.title}</CardTitle>
+                        <CardTitle className="text-2xl mb-2 flex items-center gap-2">
+                          {category.title}
+                          {category.underConstruction && (
+                            <Badge variant="outline" className="text-xs">
+                              Under Construction
+                            </Badge>
+                          )}
+                        </CardTitle>
                         <CardDescription className="text-base mb-3 mr-2">
                           {category.description}
                         </CardDescription>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>{category.puzzleCount} puzzles</span>
-                          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                          <Badge variant="secondary">
                             {category.difficulty}
-                          </span>
+                          </Badge>
                         </div>
                       </div>
                     </div>
-                    <Button 
-                      asChild 
-                      size="lg"
-                      className="group-hover:bg-primary group-hover:text-primary-foreground"
-                    >
-                      <Link href={`/puzzles/categories/${category.id}`}>
-                        Start {category.title}
-                        <ArrowRight className=" h-5 w-5" />
-                      </Link>
-                    </Button>
+                    {!category.underConstruction ? (
+                      <Button 
+                        asChild 
+                        size="lg"
+                        className="group-hover:bg-primary group-hover:text-primary-foreground"
+                      >
+                        <Link href={`/puzzles/categories/${category.id}`}>
+                          Start {category.title}
+                          <ArrowRight className=" h-5 w-5" />
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button 
+                        size="lg"
+                        variant="outline"
+                        disabled
+                        className="opacity-50"
+                      >
+                        Coming Soon
+                        <ArrowRight className="h-5 w-5 ml-2" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

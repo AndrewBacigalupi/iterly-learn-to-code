@@ -4,3 +4,12 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric except spaces and dashes
+    .replace(/\s+/g, "-")         // Replace spaces with dashes
+    .replace(/-+/g, "-");         // Collapse multiple dashes
+}

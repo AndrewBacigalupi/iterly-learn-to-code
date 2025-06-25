@@ -29,7 +29,8 @@ const MenuItemComponent: React.FC<{
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <button
+          <Button
+            variant="ghost"
             className={cn(
               "flex w-full items-center justify-between py-3 text-base font-medium transition-colors hover:text-primary",
               depth > 0 && "pl-4"
@@ -41,7 +42,7 @@ const MenuItemComponent: React.FC<{
             ) : (
               <ChevronRight className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </CollapsibleTrigger>
         <CollapsibleContent>
           {item.submenu.map((subItem) => (
@@ -58,16 +59,17 @@ const MenuItemComponent: React.FC<{
   }
 
   return (
-    <Link
-      href={item.href || "#"}
-      onClick={onItemClick}
-      className={cn(
-        "block py-3 text-base font-medium transition-colors hover:text-primary",
-        depth > 0 && "pl-4"
-      )}
-    >
-      {item.title}
-    </Link>
+    <Button asChild variant="ghost" className={cn(
+      "block w-full text-left py-3 text-base font-medium transition-colors hover:text-primary",
+      depth > 0 && "pl-4"
+    )}>
+      <Link
+        href={item.href || "#"}
+        onClick={onItemClick}
+      >
+        {item.title}
+      </Link>
+    </Button>
   );
 };
 

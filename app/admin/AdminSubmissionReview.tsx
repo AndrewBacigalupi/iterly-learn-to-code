@@ -150,11 +150,6 @@ export default function AdminSubmissionReview({
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {submission.title}
-                        <Badge
-                          className={getDifficultyColor(submission.difficulty)}
-                        >
-                          {submission.difficulty}
-                        </Badge>
                       </CardTitle>
                       <CardDescription>
                         Submitted on{" "}
@@ -205,22 +200,6 @@ export default function AdminSubmissionReview({
                                 <p className="mt-1">{submission.explanation}</p>
                               </div>
                             )}
-                            {submission.tags && submission.tags.length > 0 && (
-                              <div>
-                                <strong>Tags:</strong>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {submission.tags.map((tag) => (
-                                    <Badge
-                                      key={tag}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </DialogContent>
                       </Dialog>
@@ -262,11 +241,6 @@ export default function AdminSubmissionReview({
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {submission.title}
-                        <Badge
-                          className={getDifficultyColor(submission.difficulty)}
-                        >
-                          {submission.difficulty}
-                        </Badge>
                       </CardTitle>
                       <CardDescription>
                         Submitted on{" "}

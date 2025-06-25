@@ -270,7 +270,7 @@ export default async function ProfilePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {puzzlesCompleted}
               </div>
               <div className="text-sm text-muted-foreground">
@@ -280,7 +280,7 @@ export default async function ProfilePage() {
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {problemsSolved}
               </div>
               <div className="text-sm text-muted-foreground">
@@ -290,7 +290,7 @@ export default async function ProfilePage() {
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {totalSolveSubmissions}
               </div>
               <div className="text-sm text-muted-foreground">
@@ -300,7 +300,7 @@ export default async function ProfilePage() {
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-orange-600">
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 {successRate}%
               </div>
               <div className="text-sm text-muted-foreground">Success Rate</div>
@@ -329,11 +329,11 @@ export default async function ProfilePage() {
                       <div className="flex items-center gap-3">
                         {activity.type === "puzzle_completion" ? (
                           <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                           </div>
                         ) : (
                           <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                            <Code className="h-4 w-4 text-blue-600" />
+                            <Code className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                           </div>
                         )}
                         <div>
@@ -378,7 +378,7 @@ export default async function ProfilePage() {
                       Days of consecutive activity
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-orange-600">
+                  <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                     {currentStreak}
                   </div>
                 </div>
@@ -412,7 +412,7 @@ export default async function ProfilePage() {
                       Approval rate for submissions
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {contributionSuccessRate}%
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export default async function ProfilePage() {
               {userPuzzleSubmissions.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                     Puzzle Submissions ({userPuzzleSubmissions.length})
                   </h3>
                   <div className="space-y-3">
@@ -470,13 +470,6 @@ export default async function ProfilePage() {
                             </p>
                             <div className="flex items-center gap-2 mt-2">
                               <Badge
-                                className={getDifficultyColor(
-                                  submission.difficulty
-                                )}
-                              >
-                                {submission.difficulty}
-                              </Badge>
-                              <Badge
                                 className={getStatusColor(submission.status)}
                               >
                                 {submission.status}
@@ -492,7 +485,7 @@ export default async function ProfilePage() {
 
                         {submission.status === "approved" &&
                           submission.publishedPuzzleId && (
-                            <div className="flex items-center gap-2 text-sm text-green-600">
+                            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                               <CheckCircle className="h-4 w-4" />
                               <span>Published successfully!</span>
                               <Button asChild size="sm" variant="outline">
@@ -508,7 +501,7 @@ export default async function ProfilePage() {
 
                         {submission.status === "rejected" && (
                           <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-red-600">
+                            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                               <AlertCircle className="h-4 w-4" />
                               <span>Submission rejected</span>
                             </div>
@@ -533,7 +526,7 @@ export default async function ProfilePage() {
                         )}
 
                         {submission.status === "pending" && (
-                          <div className="flex items-center gap-2 text-sm text-yellow-600">
+                          <div className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
                             <Clock className="h-4 w-4" />
                             <span>Under review</span>
                           </div>
@@ -548,7 +541,7 @@ export default async function ProfilePage() {
               {userProblemSubmissions.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Code className="h-4 w-4 text-blue-500" />
+                    <Code className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     Problem Submissions ({userProblemSubmissions.length})
                   </h3>
                   <div className="space-y-3">
@@ -565,13 +558,6 @@ export default async function ProfilePage() {
                             </p>
                             <div className="flex items-center gap-2 mt-2">
                               <Badge
-                                className={getDifficultyColor(
-                                  submission.difficulty
-                                )}
-                              >
-                                {submission.difficulty}
-                              </Badge>
-                              <Badge
                                 className={getStatusColor(submission.status)}
                               >
                                 {submission.status}
@@ -587,7 +573,7 @@ export default async function ProfilePage() {
 
                         {submission.status === "approved" &&
                           submission.publishedProblemId && (
-                            <div className="flex items-center gap-2 text-sm text-green-600">
+                            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                               <CheckCircle className="h-4 w-4" />
                               <span>Published successfully!</span>
                               <Button asChild size="sm" variant="outline">
@@ -603,7 +589,7 @@ export default async function ProfilePage() {
 
                         {submission.status === "rejected" && (
                           <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-red-600">
+                            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
                               <AlertCircle className="h-4 w-4" />
                               <span>Submission rejected</span>
                             </div>
@@ -628,7 +614,7 @@ export default async function ProfilePage() {
                         )}
 
                         {submission.status === "pending" && (
-                          <div className="flex items-center gap-2 text-sm text-yellow-600">
+                          <div className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
                             <Clock className="h-4 w-4" />
                             <span>Under review</span>
                           </div>

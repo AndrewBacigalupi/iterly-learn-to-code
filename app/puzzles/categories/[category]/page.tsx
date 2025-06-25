@@ -25,8 +25,8 @@ const categories = {
     title: "Basics",
     description: "Fundamental programming concepts and simple algorithms",
     icon: BookOpen,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50"
+    color: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-blue-50 dark:bg-blue-950"
   }
 };
 
@@ -73,7 +73,7 @@ export default async function CategoryPuzzlesPage({
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="max-w-4xl mx-auto mb-8">
         <div className="flex items-center gap-4 mb-6">
           <Button asChild variant="ghost" size="sm">
             <Link href="/puzzles/categories">
@@ -112,7 +112,7 @@ export default async function CategoryPuzzlesPage({
       </div>
 
       {/* Puzzles List */}
-      <div className="space-y-4">
+      <div className="max-w-4xl mx-auto space-y-4">
         <h2 className="text-2xl font-bold">Puzzles</h2>
         {allPuzzles.map((puzzle) => {
           const isCompleted = completedPuzzleIds.includes(puzzle.id);
@@ -121,23 +121,20 @@ export default async function CategoryPuzzlesPage({
             <Card 
               key={puzzle.id} 
               className={`group hover:shadow-md transition-all duration-300 ${
-                isCompleted ? "ring-2 ring-green-500" : ""
+                isCompleted ? "ring-2 ring-green-500 dark:ring-green-600" : ""
               }`}
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
-                      <CardTitle className="text-lg flex items-center gap-2">
+                      <CardTitle className="text-2xl flex items-center gap-2">
                         {puzzle.title}
                       </CardTitle>
-                      <Badge className={getDifficultyColor(puzzle.difficulty)}>
-                        {puzzle.difficulty}
-                      </Badge>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
                       {isCompleted ? (
-                        <span className="flex items-center gap-1 text-green-600">
+                        <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
                           <CheckCircle className="h-4 w-4" />
                           Solved
                         </span>
@@ -170,7 +167,7 @@ export default async function CategoryPuzzlesPage({
       </div>
 
       {/* Navigation */}
-      <div className="mt-12 flex items-center justify-between">
+      <div className="max-w-4xl mx-auto mt-12 flex items-center justify-between">
         <Button asChild variant="outline">
           <Link href="/puzzles/categories">
             <ArrowLeft className="h-4 w-4 mr-2" />

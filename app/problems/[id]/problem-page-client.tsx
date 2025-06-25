@@ -380,9 +380,6 @@ export function ProblemPageClient({ session }: ProblemPageClientProps) {
               {isSolved && <CheckCircle className="h-8 w-8 text-green-500" />}
               {problem.title}
             </h1>
-            <Badge className={getDifficultyColor(problem.difficulty)}>
-              {problem.difficulty}
-            </Badge>
           </div>
 
           {problem.tags && (

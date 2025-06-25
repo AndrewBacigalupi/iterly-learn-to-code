@@ -48,7 +48,7 @@ export function Navbar({ session }: { session: Session | null }) {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Code className="h-6 w-6" />
             <span className="hidden font-bold sm:inline-block">
-              Learn to Scode
+              Learn to <span className="text-blue-300 font-style: italic">Scode</span>
             </span>
           </Link>
           <NavigationMenu>
@@ -110,7 +110,7 @@ export function Navbar({ session }: { session: Session | null }) {
                     variant="ghost"
                     className="relative h-8 w-8 rounded-full cursor-pointer"
                   >
-                    <Avatar className="h-8 w-8 cursor-pointer">
+                    <Avatar className="h-8 w-8 mr-2 cursor-pointer">
                       <AvatarImage
                         src={session.user?.image || ""}
                         alt={session.user?.name || ""}

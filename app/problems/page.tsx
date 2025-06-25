@@ -111,9 +111,6 @@ export default async function ProblemsPage() {
                         {problem.description}
                       </CardDescription>
                     </div>
-                    <Badge className={getDifficultyColor(problem.difficulty)}>
-                      {problem.difficulty}
-                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -183,7 +180,7 @@ export default async function ProblemsPage() {
                     <div className="flex justify-between items-center pt-4">
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         {isCompleted ? (
-                          <span className="flex items-center gap-1 text-green-600">
+                          <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
                             <CheckCircle className="h-4 w-4" />
                             Solved
                           </span>
@@ -216,7 +213,7 @@ export default async function ProblemsPage() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {completedProblemIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Solved</div>

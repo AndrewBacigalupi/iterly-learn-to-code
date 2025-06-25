@@ -72,6 +72,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
   const [isSolved, setIsSolved] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
 
   // Load puzzle data and check solve status
   useEffect(() => {
@@ -108,16 +109,19 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
   useEffect(() => {
     if (puzzleId) {
       const savedAnswer = localStorage.getItem(`puzzle-${puzzleId}-answer`);
-      if (savedAnswer) {
+      if (savedAnswer && savedAnswer.trim()) {
         setAnswer(savedAnswer);
       }
     }
   }, [puzzleId]);
 
-  // Save answer to localStorage when it changes
+  // Save answer to localStorage when it changes (only if not empty)
   useEffect(() => {
-    if (puzzleId && answer) {
+    if (puzzleId && answer && answer.trim()) {
       localStorage.setItem(`puzzle-${puzzleId}-answer`, answer);
+    } else if (puzzleId && !answer.trim()) {
+      // Remove the key if answer is empty
+      localStorage.removeItem(`puzzle-${puzzleId}-answer`);
     }
   }, [puzzleId, answer]);
 
@@ -169,6 +173,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
       } else {
         toast("That's not quite right. Try again!");
         setShowHint(true);
+        setHasIncorrectAttempt(true);
       }
     } catch (error) {
       console.error("Error submitting solution:", error);
@@ -200,9 +205,9 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+            <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -232,20 +237,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               {isSolved && <CheckCircle className="h-8 w-8 text-green-500" />}
               {puzzle.title}
             </h1>
-            <Badge className={getDifficultyColor(puzzle.difficulty)}>
-              {puzzle.difficulty}
-            </Badge>
           </div>
-
-          {puzzle.tags && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {puzzle.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -255,8 +247,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               <strong className="text-md">Puzzle Description</strong>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>{puzzle.description}</p>
-
+              <p className="mb-6">{puzzle.description}</p>
               <div>
                 <strong className="text-md">Example Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
@@ -354,15 +345,17 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                       : "Sign in to Submit"}
                   </Button>
 
-                  {!showHint && puzzle.hint && (
+                  {puzzle.hint && (
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => setShowHint(true)}
+                      disabled={!hasIncorrectAttempt}
                       className="w-full"
                     >
                       <Lightbulb className="h-4 w-4 mr-2" />
                       Show Hint
+                      {!hasIncorrectAttempt}
                     </Button>
                   )}
                 </form>
@@ -370,7 +363,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
               {showHint && puzzle.hint && !isSolved && (
                 <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="h-4 w-4 text-yellow-600" />
+                    <Lightbulb className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                     <strong className="text-yellow-800 dark:text-yellow-200">
                       Hint
                     </strong>

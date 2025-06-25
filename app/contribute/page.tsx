@@ -16,7 +16,7 @@ export default function ContributePage() {
         <section className="text-center py-12">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Help Build <span className="text-primary">Learn to Scode</span>
+              Help  <span className="text-blue-300 font-style: italic">Build</span> Learn to Scode
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
               Join our community of developers and help create the best platform
