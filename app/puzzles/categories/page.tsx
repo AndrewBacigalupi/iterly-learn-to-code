@@ -13,7 +13,8 @@ import { sql } from "drizzle-orm";
 import { 
   Puzzle,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Construction,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -40,7 +41,7 @@ export default async function PuzzleCategoriesPage() {
       id: "coming-soon-1",
       title: "Coming Soon",
       description: "New puzzle category in development. Stay tuned for more challenging problems!",
-      icon: BookOpen,
+      icon: Construction,
       color: "text-gray-400 dark:text-gray-500",
       bgColor: "bg-gray-50 dark:bg-gray-800",
       puzzleCount: 0,
@@ -50,8 +51,8 @@ export default async function PuzzleCategoriesPage() {
     {
       id: "coming-soon-2", 
       title: "Coming Soon",
-      description: "Another exciting puzzle category is being built. Check back later!",
-      icon: BookOpen,
+      description: "New puzzle category in development. Stay tuned for more challenging problems!",
+      icon: Construction,
       color: "text-gray-400 dark:text-gray-500",
       bgColor: "bg-gray-50 dark:bg-gray-800",
       puzzleCount: 0,
