@@ -60,12 +60,16 @@ const MenuItemComponent: React.FC<{
 
   return (
     <Button asChild variant="ghost" className={cn(
-      "block w-full text-left py-3 text-base font-medium transition-colors hover:text-primary",
+      "block w-full text-left py-3 text-base font-medium transition-colors hover:text-primary cursor-pointer",
       depth > 0 && "pl-4"
     )}>
       <Link
         href={item.href || "#"}
-        onClick={onItemClick}
+        onClick={(e) => {
+          console.log("Menu item clicked:", item.title, item.href);
+          onItemClick?.();
+        }}
+        className="cursor-pointer"
       >
         {item.title}
       </Link>
@@ -77,6 +81,7 @@ export function HamburgerMenu({ menuItems }: { menuItems: MenuItem[] }) {
   const [open, setOpen] = React.useState(false);
 
   const handleItemClick = () => {
+    console.log("Closing hamburger menu");
     setOpen(false);
   };
 
@@ -88,7 +93,7 @@ export function HamburgerMenu({ menuItems }: { menuItems: MenuItem[] }) {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[280px] sm:w-[350px]">
+      <SheetContent side="left" className="w-[280px] sm:w-[350px] z-[60]">
         <div className="py-6 pl-4">
           <h2 className="text-lg font-semibold mb-6">Navigation</h2>
           <nav className="flex flex-col space-y-2">

@@ -46,7 +46,7 @@ export function Navbar({ session }: { session: Session | null }) {
         {/* Desktop Navigation */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Code className="h-6 w-6" />
+              <img className="w-6 mr-4" src="/rocket2.svg"/>
             <span className="hidden font-bold sm:inline-block">
               Learn to <span className="text-blue-300 font-style: italic">Scode</span>
             </span>
@@ -94,7 +94,7 @@ export function Navbar({ session }: { session: Session | null }) {
         {/* Mobile Logo (centered when hamburger is present) */}
         <div className="flex md:hidden flex-1 ml-2">
           <Link href="/" className="flex items-center space-x-2">
-            <Code className="h-6 w-6" />
+            <img className="w-6" src="/rocket2.svg" alt="Learn to Scode" />
           </Link>
         </div>
 

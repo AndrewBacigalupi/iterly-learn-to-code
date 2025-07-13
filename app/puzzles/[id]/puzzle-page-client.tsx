@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, CheckCircle, Lightbulb, Trophy, FileDown } from "lucide-react";
+import { ArrowRight, CheckCircle, Lightbulb, Trophy, FileDown, ArrowLeft } from "lucide-react";
 import { Session } from "next-auth";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -43,8 +43,14 @@ interface SubmissionResult {
   hint?: string;
 }
 
+interface NavigationInfo {
+  previous: { id: string; title: string; number: number } | null;
+  next: { id: string; title: string; number: number } | null;
+}
+
 interface PuzzlePageClientProps {
   session: Session | null;
+  category: string;
 }
 
 function getDifficultyColor(difficulty: string) {
@@ -60,7 +66,7 @@ function getDifficultyColor(difficulty: string) {
   }
 }
 
-export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
+export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
   const params = useParams();
   const router = useRouter();
   const puzzleId = params.id as string;
@@ -73,6 +79,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
   const [showHint, setShowHint] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+  const [navigation, setNavigation] = useState<NavigationInfo | null>(null);
 
   // Load puzzle data and check solve status
   useEffect(() => {
@@ -85,6 +92,13 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
         }
         const puzzleData = await puzzleResponse.json();
         setPuzzle(puzzleData);
+
+        // Fetch navigation data
+        const navigationResponse = await fetch(`/api/puzzles/${puzzleId}/navigation`);
+        if (navigationResponse.ok) {
+          const navigationData: NavigationInfo = await navigationResponse.json();
+          setNavigation(navigationData);
+        }
 
         // Check if user has solved this puzzle
         if (session) {
@@ -165,6 +179,7 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
 
         setIsSolved(true);
         setExplanation(result.explanation || null);
+        setShowHint(false);
 
         toast("Congratulations! You solved the puzzle!");
 
@@ -172,7 +187,6 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
         localStorage.removeItem(`puzzle-${puzzleId}-answer`);
       } else {
         toast("That's not quite right. Try again!");
-        setShowHint(true);
         setHasIncorrectAttempt(true);
       }
     } catch (error) {
@@ -232,12 +246,20 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              {isSolved && <CheckCircle className="h-8 w-8 text-green-500" />}
-              {puzzle.title}
-            </h1>
-          </div>
+          <Card className="p-4 relative">
+            <Button asChild variant="ghost" size="sm" className="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <Link href={`/puzzles/categories/${category.toLowerCase()}`}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to {category}
+              </Link>
+            </Button>
+            <div className="flex items-center justify-center">
+              <h1 className="text-3xl font-bold flex items-center gap-2">
+                {isSolved && <CheckCircle className="h-8 w-8 text-green-500" />}
+                {puzzle.title}
+              </h1>
+            </div>
+          </Card>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -260,22 +282,6 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
                   {puzzle.explanation}
                 </div>
               </div>
-
-          
-
-              {/* {isSolved && explanation && (
-                <div className="mt-4 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Trophy className="h-4 w-4 text-green-600" />
-                    <strong className="text-green-800 dark:text-green-200">
-                      Explanation
-                    </strong>
-                  </div>
-                  <p className="text-green-700 dark:text-green-300 text-sm">
-                    {explanation}
-                  </p>
-                </div>
-              )} */}
             </CardContent>
           </Card>
 
@@ -377,6 +383,33 @@ export function PuzzlePageClient({ session }: PuzzlePageClientProps) {
           </Card>
         </div>
       </div>
+
+      {/* Navigation Buttons - Outside main content */}
+      {navigation && (
+        <div className="max-w-4xl mx-auto mt-8 flex items-center justify-between">
+          {navigation.previous ? (
+            <Button asChild variant="outline">
+              <Link href={`/puzzles/${navigation.previous.id}`}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Previous: {navigation.previous.title}
+              </Link>
+            </Button>
+          ) : (
+            <div></div>
+          )}
+          
+          {navigation.next ? (
+            <Button asChild variant="outline">
+              <Link href={`/puzzles/${navigation.next.id}`}>
+                Next: {navigation.next.title}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          ) : (
+            <div></div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
