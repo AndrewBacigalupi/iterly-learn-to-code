@@ -51,6 +51,14 @@ export default function Home() {
           >
             Challenges that grow <span className="text-blue-300 italic">with</span> you.
           </motion.h1>
+          <motion.h2
+            className="text-3l md:text-4xl  mb-4 md:mb-10 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Line by <span className="text-blue-300 italic">line</span>, puzzle by <span className="text-blue-300 italic">puzzle</span>.
+          </motion.h2>
           <motion.p 
             className="text-xl md:text-2xl text-muted-foreground mb-12 md:mb-16 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
@@ -65,11 +73,11 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Button asChild size="lg">
-              <Link href="/puzzles/categories">Start with Puzzles</Link>
+            <Button asChild size="xl">
+              <Link href="/puzzles/categories" className="text-xl">Start with Puzzles</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/learn">Learn How to Code</Link>
+            <Button asChild variant="outline" size="xl">
+              <Link href="/learn" className="text-xl">Learn How to Code</Link>
             </Button>
           </motion.div>
         </motion.div>
@@ -94,11 +102,12 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Learn to Scode is a platform designed to help you improve your
+            Iterly is a platform designed to help you improve your
             programming skills through practical problem-solving and guided learning.
-            Whether you're a beginner or an experienced developer, our puzzles
-            and educational content will challenge you to think critically and write
-            better code.
+            Our puzzles offer challenges with large-scale input data that give users  
+            experience with real-world scenarios. Just as your code iterates, your practice, 
+            learning, and growth is an iterative process that takes time and devotion. 
+            We hope you join us in learning <span className="italic">iterly.</span>
           </motion.p>
           <motion.div 
             className="grid md:grid-cols-2 gap-6"

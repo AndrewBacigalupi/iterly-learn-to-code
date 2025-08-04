@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function MyFooter() {
     return (
-      <div className="w-full">
+      <div className="w-full mb-15">
         <footer className="w-full py-8 px-6 sm:px-4 flex flex-col md:flex-row gap-6 sm:gap-4 md:gap-6 items-center justify-center text-sm sm:text-base">
           <a
             className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-center px-2"

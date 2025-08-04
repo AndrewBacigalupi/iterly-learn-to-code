@@ -16,7 +16,7 @@ export default function ContributePage() {
         <section className="text-center py-12">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Help  <span className="text-blue-300 font-style: italic">Build</span> Learn to Scode
+              Help  <span className="text-blue-300 font-style: italic">Build</span> Iterly
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
               Join our community of developers and help create the best platform
@@ -25,7 +25,7 @@ export default function ContributePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg">
                 <a
-                  href="https://github.com/your-username/learn-to-scode"
+                  href="https://github.com/your-username/iterly-learn-to-code"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -35,7 +35,7 @@ export default function ContributePage() {
               </Button>
               <Button asChild variant="outline" size="lg">
                 <a
-                  href="https://github.com/your-username/learn-to-scode/issues"
+                  href="https://github.com/your-username/iterly-learn-to-code/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -51,11 +51,11 @@ export default function ContributePage() {
         <section className="py-12">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-8">
-              What is Learn to Scode?
+              What is Iterly?
             </h2>
             <div className="prose prose-lg dark:prose-invert mx-auto">
               <p>
-                Learn to Scode is an open-source platform designed to help
+                Iterly is an open-source platform designed to help
                 developers of all skill levels improve their programming
                 abilities through hands-on practice. We believe that the best
                 way to learn programming is by solving real problems and getting
@@ -69,9 +69,8 @@ export default function ContributePage() {
               </p>
               <p>
                 Built with modern technologies including Next.js, TypeScript,
-                Tailwind CSS, and powered by Judge0 for code execution, Learn to
-                Scode is designed to be fast, reliable, and accessible to
-                everyone.
+                and Tailwind CSS, Iterly is designed to be fast, reliable, and 
+                accessible to everyone.
               </p>
             </div>
           </div>
@@ -103,7 +102,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/learn-to-scode/blob/main/CONTRIBUTING.md"
+                    href="https://github.com/your-username/iterly-learn-to-code/blob/main/CONTRIBUTING.md"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -133,11 +132,8 @@ export default function ContributePage() {
                 </ul>
                 <div className="flex gap-2">
                   <Button asChild variant="outline" size="sm">
-                    <a href="/submit/puzzle">Submit Puzzle</a>
-                  </Button>
-                  <Button asChild variant="outline" size="sm">
-                    <a href="/submit/problem">Submit Problem</a>
-                  </Button>
+                    <a href="/submit/puzzle">Submit Puzzle Idea</a>
+                  </Button>      
                 </div>
               </CardContent>
             </Card>
@@ -162,7 +158,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/learn-to-scode/issues/new"
+                    href="https://github.com/your-username/iterly-learn-to-code/issues/new"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -192,7 +188,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/learn-to-scode/discussions"
+                    href="https://github.com/your-username/iterly-learn-to-code/discussions"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -213,13 +209,13 @@ export default function ContributePage() {
             </h2>
             <p className="text-muted-foreground mb-6">
               Whether you're a seasoned developer or just starting out, there
-              are many ways to contribute to Learn to Scode. Every contribution,
+              are many ways to contribute to Iterly. Every contribution,
               no matter how small, helps make the platform better for everyone.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild>
                 <a
-                  href="https://github.com/your-username/learn-to-scode"
+                  href="https://github.com/your-username/iterly-learn-to-code"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -229,7 +225,7 @@ export default function ContributePage() {
               </Button>
               <Button asChild variant="outline">
                 <a
-                  href="https://github.com/your-username/learn-to-scode/blob/main/README.md"
+                  href="https://github.com/your-username/iterly-learn-to-codeblob/main/README.md"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

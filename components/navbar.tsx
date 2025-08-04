@@ -47,8 +47,8 @@ export function Navbar({ session }: { session: Session | null }) {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
               <img className="w-6 mr-4" src="/rocket2.svg"/>
-            <span className="hidden font-bold sm:inline-block">
-              Learn to <span className="text-blue-300 font-style: italic">Scode</span>
+            <span className="hidden text-xl font-bold sm:inline-block tracking-wide">
+              Iter<span className="text-blue-300 text-xl font-style: italic">ly</span>
             </span>
           </Link>
           <NavigationMenu>
