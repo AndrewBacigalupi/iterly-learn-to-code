@@ -125,8 +125,7 @@ export default function ContributePage() {
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2 mb-4">
-                  <li>• Create new programming puzzles</li>
-                  <li>• Design coding problems with test cases</li>
+                  <li>• Suggest new programming puzzles</li>
                   <li>• Write solution explanations</li>
                   <li>• Review and improve existing content</li>
                 </ul>

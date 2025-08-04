@@ -208,6 +208,7 @@ export default function Home() {
       </section>
 
       {/* Getting Started Section */}
+      <section className="w-full flex justify-center text-center">
       <motion.section 
         className="py-12 bg-muted/50 rounded-lg"
         initial={{ opacity: 0, y: 40 }}
@@ -251,6 +252,7 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+      </section>
     </div>
   );
 }
