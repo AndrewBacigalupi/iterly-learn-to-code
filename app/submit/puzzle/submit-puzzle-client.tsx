@@ -29,9 +29,8 @@ interface PuzzleSubmissionForm {
   title: string;
   description: string;
   difficulty: string;
-  tags: string;
   input: string;
-  expectedOutput: string;
+  answer: string;
   hint: string;
   explanation: string;
 }
@@ -50,9 +49,8 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
     title: "",
     description: "",
     difficulty: "",
-    tags: "",
     input: "",
-    expectedOutput: "",
+    answer: "",
     hint: "",
     explanation: "",
   });
@@ -70,9 +68,8 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               title: submission.title,
               description: submission.description,
               difficulty: submission.difficulty,
-              tags: submission.tags?.join(", ") || "",
               input: submission.input,
-              expectedOutput: submission.expectedOutput,
+              answer: submission.answer,
               hint: submission.hint || "",
               explanation: submission.explanation || "",
             });
@@ -99,7 +96,7 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
       !form.description ||
       !form.difficulty ||
       !form.input ||
-      !form.expectedOutput
+      !form.answer
     ) {
       toast("Please fill in all required fields");
       return;
@@ -115,16 +112,15 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
         },
         body: JSON.stringify({
           ...form,
-          tags: form.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean),
+          real_input: form.input,
           resubmitId: resubmitId || undefined,
         }),
       });
-
+      console.log("ANDREW PRINTS: " + response.status)
       if (!response.ok) {
-        throw new Error("Failed to submit puzzle");
+        const errorText = await response.text(); // capture the raw server message
+        console.error("Server error:", errorText);
+        throw new Error(`Failed to submit puzzle: ${errorText}`);
       }
 
       toast("Puzzle submitted successfully! It will be reviewed by our team.");
@@ -219,7 +215,9 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
                   id="description"
                   value={form.description}
                   onChange={(e) => updateForm("description", e.target.value)}
-                  placeholder="Describe the problem clearly. What should the user do with the input?"
+                  placeholder="Describe the problem clearly. What should the user do with the input? 
+                  Please include an example on very small-scale input and explain why the answer is
+                  what it is."
                   rows={4}
                   required
                 />
@@ -246,21 +244,6 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="tags" className="mb-2 block">
-                  Tags
-                </Label>
-                <Input
-                  id="tags"
-                  value={form.tags}
-                  onChange={(e) => updateForm("tags", e.target.value)}
-                  placeholder="e.g., arrays, math, strings (comma-separated)"
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Optional. Separate multiple tags with commas.
-                </p>
-              </div>
-
-              <div>
                 <Label htmlFor="input" className="mb-2 block">
                   Input Data *
                 </Label>
@@ -275,13 +258,13 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
               </div>
 
               <div>
-                <Label htmlFor="expectedOutput" className="mb-2 block">
-                  Expected Output *
+                <Label htmlFor="answer" className="mb-2 block">
+                  Answer *
                 </Label>
                 <Textarea
-                  id="expectedOutput"
-                  value={form.expectedOutput}
-                  onChange={(e) => updateForm("expectedOutput", e.target.value)}
+                  id="answer"
+                  value={form.answer}
+                  onChange={(e) => updateForm("answer", e.target.value)}
                   placeholder="The correct answer/output for the given input"
                   rows={2}
                   required

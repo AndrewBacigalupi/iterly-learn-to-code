@@ -21,17 +21,17 @@ import Link from "next/link";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
 
-// interface Puzzle {
-//   id: string;
-//   title: string;
-//   description: string;
-//   difficulty: string;
-//   tags: string[];
-//   input: string;
-//   expectedOutput: string;
-//   hint?: string;
-//   explanation?: string;
-// }
+interface Puzzle {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: string;
+  tags: string[];
+  input: string;
+  expectedOutput: string;
+  hint?: string;
+  explanation?: string;
+}
 
 interface PuzzleStatus {
   solved: boolean;
@@ -246,18 +246,42 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Card className="p-4 relative">
-            <Button asChild variant="ghost" size="sm" className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <Link href={`/puzzles/categories/${category.toLowerCase()}`}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to {category}
-              </Link>
-            </Button>
-            <div className="flex items-center justify-center">
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                {isSolved && <CheckCircle className="h-8 w-8 text-green-500" />}
-                {puzzle.title}
-              </h1>
+          <Card className="p-4">
+            <div className="flex items-center justify-between relative">
+              {/* Back Button - Fixed Left */}
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="flex-shrink-0"
+              >
+                <Link href={`/puzzles/categories/${category.toLowerCase()}`}>
+                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Back to</span>
+                  <span className="ml-1">{category}</span>
+                </Link>
+              </Button>
+
+              {/* Centered Title */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+                <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold flex items-center gap-2">
+                  {isSolved && (
+                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-green-500" />
+                  )}
+                  <span className="truncate max-w-[200px] sm:max-w-[300px] lg:max-w-none">
+                    {puzzle.title}
+                  </span>
+                </h1>
+              </div>
+
+              {/* Invisible spacer to balance the layout */}
+              <div className="flex-shrink-0 opacity-0 pointer-events-none">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden xs:inline">Back to</span>
+                  <span className="ml-1">{category}</span>
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
@@ -273,14 +297,12 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
               <div>
                 <strong className="text-md">Example Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
-                  {puzzle.example_input}
+                  {puzzle.input}
                 </code>
               </div>
 
               <div>
-                <div className="mt-2">
-                  {puzzle.explanation}
-                </div>
+                <div className="mt-2">{puzzle.explanation}</div>
               </div>
             </CardContent>
           </Card>
@@ -297,8 +319,12 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="link" className="mt-2 hover:underline justify-start px-0 ">
-                  <FileDown />View Your Puzzle Input
+                <Button
+                  variant="link"
+                  className="mt-2 hover:underline justify-start px-0 "
+                >
+                  <FileDown />
+                  View Your Puzzle Input
                 </Button>
               </a>
             </CardHeader>
@@ -397,7 +423,7 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
           ) : (
             <div></div>
           )}
-          
+
           {navigation.next ? (
             <Button asChild variant="outline">
               <Link href={`/puzzles/${navigation.next.id}`}>

@@ -25,7 +25,7 @@ export default function ContributePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg">
                 <a
-                  href="https://github.com/your-username/iterly-learn-to-code"
+                  href="https://github.com/AndrewBacigalupi/iterly-learn-to-code"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -35,7 +35,7 @@ export default function ContributePage() {
               </Button>
               <Button asChild variant="outline" size="lg">
                 <a
-                  href="https://github.com/your-username/iterly-learn-to-code/issues"
+                  href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/issues/new/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -62,10 +62,9 @@ export default function ContributePage() {
                 immediate feedback.
               </p>
               <p>
-                Our platform combines the puzzle-solving approach of Advent of
-                Code with the interactive coding environment of LeetCode,
-                creating a comprehensive learning experience that's both
-                challenging and rewarding.
+                Our platform brings entry-level puzzles the real-world input data 
+                they never had, allowing beginner devlopers to feel the power of their 
+                code from the start. 
               </p>
               <p>
                 Built with modern technologies including Next.js, TypeScript,
@@ -102,7 +101,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/iterly-learn-to-code/blob/main/CONTRIBUTING.md"
+                    href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/blob/main/README.md"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -128,6 +127,7 @@ export default function ContributePage() {
                   <li>• Suggest new programming puzzles</li>
                   <li>• Write solution explanations</li>
                   <li>• Review and improve existing content</li>
+                  <li>• Help us grow the educational value of Iterly!</li>
                 </ul>
                 <div className="flex gap-2">
                   <Button asChild variant="outline" size="sm">
@@ -157,7 +157,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/iterly-learn-to-code/issues/new"
+                    href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/issues/new"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -187,7 +187,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/your-username/iterly-learn-to-code/discussions"
+                    href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/discussions"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -214,7 +214,7 @@ export default function ContributePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild>
                 <a
-                  href="https://github.com/your-username/iterly-learn-to-code"
+                  href="https://github.com/AndrewBacigalupi/iterly-learn-to-code"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -224,7 +224,7 @@ export default function ContributePage() {
               </Button>
               <Button asChild variant="outline">
                 <a
-                  href="https://github.com/your-username/iterly-learn-to-codeblob/main/README.md"
+                  href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/blob/main/README.md"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -265,18 +265,16 @@ export default function ContributePage() {
                 </div>
               </div>
               <div className="p-4 rounded-lg bg-muted/50">
-                <div className="font-semibold">Judge0</div>
-                <div className="text-sm text-muted-foreground">
-                  Code Execution
-                </div>
-              </div>
-              <div className="p-4 rounded-lg bg-muted/50">
                 <div className="font-semibold">Neon</div>
                 <div className="text-sm text-muted-foreground">PostgreSQL</div>
               </div>
               <div className="p-4 rounded-lg bg-muted/50">
                 <div className="font-semibold">shadcn/ui</div>
                 <div className="text-sm text-muted-foreground">Components</div>
+              </div>
+              <div className="p-4 rounded-lg bg-muted/50">
+                <div className="font-semibold">Git/Github</div>
+                <div className="text-sm text-muted-foreground">Version Control</div>
               </div>
             </div>
           </div>

@@ -15,7 +15,8 @@ import {
   Zap, 
   Target,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Keyboard
 } from "lucide-react";
 import Link from "next/link";
 import { getArticles, getArticleIcon } from "@/lib/articles";
@@ -23,74 +24,92 @@ import { getArticles, getArticleIcon } from "@/lib/articles";
 export default function LearnPage() {
   const articles = getArticles();
 
+  interface Resource {
+    title: string,
+    link: string,
+    color: string
+  }
+
+  const resources: Resource[] = [
+    { 
+      title: "W3 Schools", 
+      link: "https://www.w3schools.com/",
+      color: "green"
+    },
+    { 
+      title: "Geeks for Geeks", 
+      link: "https://www.geeksforgeeks.org/",
+      color: "white"
+    },
+    { 
+      title: "Python For Everybody", 
+      link: "https://www.py4e.com/",
+      color: "blue"
+    },
+    {
+      title: "Jim's CS Topics", 
+      link: "https://users.cs.utah.edu/~germain/PPS/Topics/",
+      color: "red"
+    },
+    { 
+      title: "Khan Academy - Python", 
+      link: "https://www.khanacademy.org/computing/intro-to-python-fundamentals",
+      color: "blue"
+    }
+  ]
+
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-6 sm:py-8">
+    <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
-      <section className="text-center py-8 sm:py-12 md:py-20">
+      <section className="text-center py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
-            Let's <span className="text-blue-300 italic">Learn</span>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            Let's <span className="italic text-blue-300">Learn</span>
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 sm:mb-8">
-            Start your programming journey with our beginner-friendly articles
-          </p>
-          <p className="text-base sm:text-lg text-muted-foreground mb-2 max-w-3xl mx-auto">
-            Whether you're completely new to programming or looking to refresh your knowledge, 
-            these articles will guide you through essential concepts with clear explanations and examples.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Whether you're completely new to programming or looking to refresh
+            your knowledge, we're here to help you understand essential concepts
+            and build practical skills.
           </p>
         </div>
       </section>
 
       {/* Articles Grid */}
-      <section className="">
+      <section className="py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="grid gap-4 sm:gap-6">
+          <div className="grid gap-6">
             {articles.map((article) => {
               const IconComponent = getArticleIcon(article.icon);
-              
+
               return (
-                <Card key={article.id} className="group hover:shadow-lg transition-all duration-300">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
-                      <div className="flex flex-row sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full">
-                        <div className={`p-3 sm:p-4 rounded-lg ${
-                          article.bgColor === 'bg-blue-50' ? 'bg-blue-50 dark:bg-blue-950' :
-                          article.bgColor === 'bg-green-50' ? 'bg-green-50 dark:bg-green-950' :
-                          article.bgColor === 'bg-purple-50' ? 'bg-purple-50 dark:bg-purple-950' :
-                          article.bgColor === 'bg-orange-50' ? 'bg-orange-50 dark:bg-orange-950' :
-                          article.bgColor === 'bg-indigo-50' ? 'bg-indigo-50 dark:bg-indigo-950' :
-                          'bg-gray-50 dark:bg-gray-800'
-                        }`}>
-                          <IconComponent className={`h-7 w-7 sm:h-8 sm:w-8 ${
-                            article.color === 'text-blue-600' ? 'text-blue-600 dark:text-blue-400' :
-                            article.color === 'text-green-600' ? 'text-green-600 dark:text-green-400' :
-                            article.color === 'text-purple-600' ? 'text-purple-600 dark:text-purple-400' :
-                            article.color === 'text-orange-600' ? 'text-orange-600 dark:text-orange-400' :
-                            article.color === 'text-indigo-600' ? 'text-indigo-600 dark:text-indigo-400' :
-                            'text-gray-600 dark:text-gray-400'
-                          }`} />
+                <Card
+                  key={article.id}
+                  className="h-36 group transition-all duration-300"
+                >
+                  <CardContent className="">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-6">
+                        <div className="p-4 rounded-lg">
+                          <IconComponent
+                            className={`h-8 w-8 ${article.color}`}
+                          />
                         </div>
                         <div className="flex-1">
-                          <CardTitle className="text-lg sm:text-2xl mb-1 sm:mb-2 flex items-center gap-2">
-                            <span className="text-muted-foreground font-mono text-base sm:text-lg">{article.number}.</span>
+                          <CardTitle className="text-2xl mb-2 flex items-center gap-2">
+                            <span className="text-muted-foreground font-mono text-lg">
+                              {article.number}.
+                            </span>
                             {article.title}
                           </CardTitle>
-                          <CardDescription className="text-sm sm:text-base mb-2 sm:mb-3 mr-0 sm:mr-4 ">
+                          <CardDescription className="text-base mb-3">
                             {article.description}
                           </CardDescription>
-                          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1 sm:gap-2">
-                              <Clock className="h-4 w-4" />
-                              <span>{article.duration}</span>
-                            </div>
-                            <Badge variant="secondary">{article.difficulty}</Badge>
-                          </div>
                         </div>
                       </div>
-                      <Button 
-                        asChild 
+                      <Button
+                        asChild
                         size="lg"
-                        className="w-full sm:w-auto mt-3 sm:mt-0 group-hover:bg-primary group-hover:text-primary-foreground"
+                        className="group-hover:bg-primary group-hover:text-primary-foreground"
                       >
                         <Link href={`/learn/${article.id}`}>
                           Read Article
@@ -107,17 +126,27 @@ export default function LearnPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-8 sm:py-12 text-center bg-muted/30 rounded-lg mt-6">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Ready to Start Learning?</h2>
-          <p className="text-muted-foreground mb-4 sm:mb-6 text-base sm:text-lg">
-            Begin with the first article and work your way through the fundamentals!
+      <section className="py-12 ">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Looking for other resources?
+          </h2>
+          <p className="text-muted-foreground mb-6 text-center">
+            Our team recommends checking out these sites
           </p>
-          <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link href={`/learn/${articles[0]?.id}`}>
-              Start Learning
-            </Link>
-          </Button>
+          <div className="text-center  ">
+            <p className="mb-8">
+              {resources.map((resource) => {
+              return (
+                <Button variant="outline" key={resource.title} className="mr-1 ml-1">
+                  <a href={resource.link}>{resource.title}</a>
+                </Button>
+              );
+            })}
+            </p>
+            <h2> Wanting to ncrease your words per minute on the keyboard? 
+              We recommend <a href="https://monkeytype.com/" className="italic text-yellow-400 hover:text-yellow-500 hover:underline">Monkey<span className="italic hover:underline hover:text-gray-600 text-gray-400">Type</span></a></h2>
+          </div>
         </div>
       </section>
     </div>

@@ -16,7 +16,7 @@ export default function Home() {
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" }
+    transition: { duration: 0.9, ease: "easeOut" }
   };
 
   const staggerContainer = {
@@ -34,22 +34,25 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
+    <div className="container mx-auto px-4 py-8 justify-center max-w-4xl">
       {/* Hero Section */}
       <section className="text-center py-16 md:py-24 mb-16 md:mb-24">
-        <motion.div 
+        <motion.div
           className="max-w-4xl mx-auto px-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, amount: 0.2 }} 
         >
-          <motion.h1 
+          <motion.h1
             className="text-4xl md:text-6xl font-bold tracking-tight mb-8 md:mb-10"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Challenges that grow <span className="text-blue-300 italic">with</span> you.
+            Challenges that grow{" "}
+            <span className="text-blue-300 italic">with</span> you.
           </motion.h1>
           <motion.h2
             className="text-3l md:text-4xl  mb-4 md:mb-10 max-w-3xl mx-auto"
@@ -57,9 +60,10 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Line by <span className="text-blue-300 italic">line</span>, puzzle by <span className="text-blue-300 italic">puzzle</span>.
+            Line by <span className="text-blue-300 italic">line</span>, puzzle
+            by <span className="text-blue-300 italic">puzzle</span>.
           </motion.h2>
-          <motion.p 
+          <motion.p
             className="text-xl md:text-2xl text-muted-foreground mb-12 md:mb-16 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -67,49 +71,73 @@ export default function Home() {
           >
             Master programming through hands-on puzzles and structured learning
           </motion.p>
-          <motion.div 
+          <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Button asChild size="xl">
-              <Link href="/puzzles/categories" className="text-xl">Start with Puzzles</Link>
+              <Link href="/puzzles/categories" className="text-xl">
+                Start with Puzzles
+              </Link>
             </Button>
             <Button asChild variant="outline" size="xl">
-              <Link href="/learn" className="text-xl">Learn How to Code</Link>
+              <Link href="/learn" className="text-xl">
+                Learn How to Code
+              </Link>
             </Button>
           </motion.div>
         </motion.div>
       </section>
 
       {/* Features Section */}
+
       <section className="py-12">
-        <div className="max-w-4xl mx-auto">
-          <motion.h2 
-            className="text-3xl font-bold text-center mb-6"
+      <motion.div
+        className="max-w-4xl mx-auto px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+      >
+        <motion.h1
+         className="text-4xl tracking-tight font-bold text-center mb-8 md:mb-10"
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-          >
-            What You'll Find Here
-          </motion.h2>
-          <motion.p 
-            className="text-lg text-center text-muted-foreground mb-8 max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Iterly is a platform designed to help you improve your
-            programming skills through practical problem-solving and guided learning.
-            Our puzzles offer challenges with large-scale input data that give users  
-            experience with real-world scenarios. Just as your code iterates, your practice, 
-            learning, and growth is an iterative process that takes time and devotion. 
-            We hope you join us in learning <span className="italic">iterly.</span>
-          </motion.p>
-          <motion.div 
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0. }}
+        >
+          What You'll Find Here
+        </motion.h1>
+
+        <motion.p
+          className="text-xl leading-relaxed mb-8"
+          variants={fadeInUp}
+        >
+          <span className="font-bold">Iterly</span> is a beginner learn-to-code site
+          that features puzzles with large-scale input data, giving new coders
+          hands-on and real-world practice. Our puzzles focus on fundamental
+          computer science principles, logical reasoning, and pattern recognition —
+          skills that are critical for programmers.
+        </motion.p>
+
+        <motion.p
+          className="text-xl leading-relaxed mb-8"
+          variants={fadeInUp}
+        >
+          Learning to code can be a challenging process, but we hope you take it
+          step-by-step, line-by-line, puzzle-by-puzzle — giving yourself the chance
+          to make mistakes, practice, improve, and grow. Just as your code
+          iterates over repeated actions, your learning will be an iterative
+          process. Together, let's learn{" "}
+          <span className=" ml-0.5 text-blue-300 font-bold italic">iterly</span>.
+        </motion.p>
+      </motion.div>
+    </section>
+
+
+
+       <section className="mb-20 ml-6 mr-10">
+        <motion.div 
             className="grid md:grid-cols-2 gap-6"
             variants={staggerContainer}
             initial="initial"
@@ -203,56 +231,48 @@ export default function Home() {
                 </CardContent>
               </Card>
             </motion.div>
-          </motion.div>
-        </div>
+          </motion.div>  
       </section>
+    
 
-      {/* Getting Started Section */}
-      <section className="w-full flex justify-center text-center">
-      <motion.section 
-        className="py-12 bg-muted/50 rounded-lg"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-6xl text-center px-6">
-          <motion.h2 
-            className="text-2xl font-bold mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Ready to Start Learning?
-          </motion.h2>
-          <motion.p 
-            className="text-muted-foreground mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            You can explore all puzzles and learning content without signing in. Create
-            an account to track your progress and save your solutions.
-          </motion.p>
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <Button asChild>
-              <Link href="/puzzles/categories">Browse Puzzles</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/learn">Start Learning</Link>
-            </Button>
-          </motion.div>
-        </div>
-      </motion.section>
-      </section>
+    <section className="mb-20">
+          <div {...fadeInUp} className="mb-6">
+            <p className="text-xl leading-relaxed">
+              Iterly is about puzzles, not programming languages. That means it’s up to you which
+              language you want to learn. Your language, your goals, your learning.
+            </p>
+          </div>
+
+          <div {...fadeInUp} className="rounded-lg mb-6">
+            <p className="text-xl">
+              Don’t worry if you don’t understand everything at first. Programming is learned through
+              practice and experimentation!
+            </p>
+          </div>
+
+          <div {...fadeInUp} className="mb-4">
+            <p className="text-xl">
+              Our{" "}
+              <Link href="/learn/getting-started" className="underline">
+                first article
+              </Link>{" "}
+              explains how to get set up and start solving puzzles. 
+              <br />
+              <br />
+              Good luck, and thanks for being here!
+            </p>
+          </div>
+    </section>
+
+
+    
+
+
+
+
     </div>
+   
+    </div>
+
   );
 }

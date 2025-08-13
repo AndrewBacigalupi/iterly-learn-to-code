@@ -219,15 +219,7 @@ export default async function ProfilePage() {
       title: "Puzzle Completed",
       date: completion.completedAt,
       status: "completed" as const,
-    })),
-    ...userProblemSolveAttempts
-      .filter((sub) => sub.status === "accepted")
-      .map((submission) => ({
-        type: "problem_solved" as const,
-        title: "Problem Solved",
-        date: submission.submittedAt,
-        status: "solved" as const,
-      })),
+    }))
   ]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
@@ -267,7 +259,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -275,16 +267,6 @@ export default async function ProfilePage() {
               </div>
               <div className="text-sm text-muted-foreground">
                 Puzzles Completed
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {problemsSolved}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Problems Solved
               </div>
             </CardContent>
           </Card>
@@ -382,22 +364,11 @@ export default async function ProfilePage() {
                     {currentStreak}
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <div>
-                    <div className="font-medium">Favorite Language</div>
-                    <div className="text-sm text-muted-foreground">
-                      Most used programming language
-                    </div>
-                  </div>
-                  <Badge variant="outline">{favoriteLanguage}</Badge>
-                </div>
-
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <div>
                     <div className="font-medium">Contributions</div>
                     <div className="text-sm text-muted-foreground">
-                      Puzzles + Problems submitted
+                      Puzzles submitted
                     </div>
                   </div>
                   <div className="text-2xl font-bold text-primary">
@@ -428,7 +399,7 @@ export default async function ProfilePage() {
               Your Submissions
             </CardTitle>
             <CardDescription>
-              Puzzles and problems you've contributed
+              Puzzles you've contributed
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -439,12 +410,6 @@ export default async function ProfilePage() {
                   <Link href="/submit/puzzle">
                     <Plus className="h-3 w-3 mr-1" />
                     Submit Puzzle
-                  </Link>
-                </Button>
-                <Button asChild size="sm" variant="outline">
-                  <Link href="/submit/problem">
-                    <Plus className="h-3 w-3 mr-1" />
-                    Submit Problem
                   </Link>
                 </Button>
               </div>
@@ -516,94 +481,6 @@ export default async function ProfilePage() {
                             <Button asChild size="sm" variant="outline">
                               <Link
                                 href={`/submit/puzzle?resubmit=${submission.id}`}
-                                className="flex items-center gap-1"
-                              >
-                                <RefreshCw className="h-3 w-3" />
-                                Resubmit
-                              </Link>
-                            </Button>
-                          </div>
-                        )}
-
-                        {submission.status === "pending" && (
-                          <div className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
-                            <Clock className="h-4 w-4" />
-                            <span>Under review</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Problem Submissions */}
-              {userProblemSubmissions.length > 0 && (
-                <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Code className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                    Problem Submissions ({userProblemSubmissions.length})
-                  </h3>
-                  <div className="space-y-3">
-                    {userProblemSubmissions.map((submission) => (
-                      <div
-                        key={submission.id}
-                        className="border rounded-lg p-4 space-y-3"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-medium">{submission.title}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {submission.description.substring(0, 100)}...
-                            </p>
-                            <div className="flex items-center gap-2 mt-2">
-                              <Badge
-                                className={getStatusColor(submission.status)}
-                              >
-                                {submission.status}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(
-                              submission.submittedAt
-                            ).toLocaleDateString()}
-                          </div>
-                        </div>
-
-                        {submission.status === "approved" &&
-                          submission.publishedProblemId && (
-                            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                              <CheckCircle className="h-4 w-4" />
-                              <span>Published successfully!</span>
-                              <Button asChild size="sm" variant="outline">
-                                <Link
-                                  href={`/problems/${submission.publishedProblemId}`}
-                                >
-                                  <ExternalLink className="h-3 w-3 mr-1" />
-                                  View Live
-                                </Link>
-                              </Button>
-                            </div>
-                          )}
-
-                        {submission.status === "rejected" && (
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
-                              <AlertCircle className="h-4 w-4" />
-                              <span>Submission rejected</span>
-                            </div>
-                            {submission.adminNotes && (
-                              <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded p-3">
-                                <p className="text-sm text-red-800 dark:text-red-200">
-                                  <strong>Admin feedback:</strong>{" "}
-                                  {submission.adminNotes}
-                                </p>
-                              </div>
-                            )}
-                            <Button asChild size="sm" variant="outline">
-                              <Link
-                                href={`/submit/problem?resubmit=${submission.id}`}
                                 className="flex items-center gap-1"
                               >
                                 <RefreshCw className="h-3 w-3" />
