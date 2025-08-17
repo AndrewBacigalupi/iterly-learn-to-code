@@ -150,7 +150,7 @@ const recentActivity = userPuzzleCompletions
                     </Avatar>
                     <div className="ml-4">
                       <h1 className="text-2xl sm:text-4xl font-bold">
-                        {session?.user?.name || "Test User"}
+                        {session?.user?.name || "Anonymous User"}
                       </h1>
                       <p className="text-muted-foreground">{session?.user?.email || "test@example.com"}</p>
                     </div>

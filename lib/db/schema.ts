@@ -97,6 +97,7 @@ export const puzzles = pgTable("puzzles", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	real_input: varchar("real_input", { length: 100 }),
 	number: integer(),
+	category: text()
 });
 
 export const puzzleSubmissions = pgTable("puzzle_submissions", {

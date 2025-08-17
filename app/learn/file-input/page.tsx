@@ -37,7 +37,7 @@ export default function LearnPage() {
 
             <div className="ml-4">
                 <p className="text-xl leading-relaxed mb-4">
-                    The entire goal of computing, and even software development, 
+                    The entire goal of computing, or software development, 
                     can often be boiled down to taking some input, doing any necessary computing or 
                     processing, and producing some output, which is hopefully useful for whoever 
                     wants it. 
@@ -59,7 +59,7 @@ export default function LearnPage() {
                     directory (folder) as your code file (which could be .py for Python, .c/.cpp for C/C++,
                     or .java for Java). This way, when you give the file to whatever process your language
                     requires, the filename alone can be sent and the file opener will infer that the file 
-                    is in the same, or <span className="italic">current working directory</span>, as your code file. 
+                    is in the same, or <span className="italic">current working,</span> directory as your code file. 
                 </p>
 
                 <p className="text-xl leading-relaxed mb-4">
@@ -68,10 +68,7 @@ export default function LearnPage() {
                 <p className="text-xl leading-relaxed mb-4">
                     For Python, 
                     the open() function can be used and it's quite simple to 
-                    iterate over the lines in the file. Learn more about this process <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
-                        href="https://www.w3schools.com/python/python_file_open.asp" >
-                        here.
-                        </a>
+                    iterate over the lines in the file. Learn more about this process <a className="underline hover:text-gray-500" href="https://www.w3schools.com/python/python_file_open.asp">here.</a>
                 </p>
                 <p className="text-xl leading-relaxed mb-4">
                     For C++, you need to #include the ifstream class, which allows you to 
@@ -81,13 +78,13 @@ export default function LearnPage() {
                     These are used all the time in development and in this case, you are "including" the standard way of 
                     reading text file input in C++ into your program. It is most convenient to use the "&gt;&gt;" operator to bring the next
                     piece of input from the file (excluding whitespace). Learn more about C++'s slightly more complicated
-                    process for file input/output <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    process for file input/output <a className="underline hover:text-gray-500"
                         href="https://www.geeksforgeeks.org/cpp/file-handling-c-classes/" >
                         here
-                    </a> from GeeksForGeeks, <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    </a> from GeeksForGeeks, <a className="underline hover:text-gray-500"
                         href="https://www.w3schools.com/python/python_file_open.asp" >
                         here
-                    </a> from W3Schools, and even a video <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    </a> from W3Schools, and even a video <a className="underline hover:text-gray-500"
                         href="https://www.youtube.com/watch?v=wVhCnzFwxt4" >
                         here.
                     </a> 
@@ -97,7 +94,7 @@ export default function LearnPage() {
                     In Java, the file input process uses what are called Object Scanners, which are Java's
                     equivalent of an input stream. The Scanner, File, and FileNotFoundException classes must be 
                     imported into your program, and then text files can be iterated over and read using the nextLine()
-                    function. Learning Java as you take on these puzzles? Learn more about this process <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    function. Learning Java as you take on these puzzles? Learn more about this process <a className="underline hover:text-gray-500"
                         href="https://www.w3schools.com/java/java_files_read.asp" >
                         here.
                         </a>
@@ -109,13 +106,13 @@ export default function LearnPage() {
                     is also an important tool for working with file data. Most languages support processes
                     that are very similar to input for output and writing to files. For example, Python has 
                     a write() function like its read(), and C++ has ofstreams, which are Output File Streams 
-                    and work just like ifstreams, Input File Streams. Learn more about Python writing <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    and work just like ifstreams, Input File Streams. Learn more about Python writing <a className="underline hover:text-gray-500"
                         href="https://www.pythonmorsels.com/creating-and-writing-file-python/" >
                         here
-                    </a>, C++ ofstreams <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    </a>, C++ ofstreams <a className="underline hover:text-gray-500"
                         href="https://www.w3schools.com/cpp/ref_fstream_ofstream.asp" >
                         here
-                    </a>, and Java file output   <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+                    </a>, and Java file output   <a className="underline hover:text-gray-500"
                         href="https://www.w3schools.com/java/java_files_create.asp" >
                         here
                     </a>

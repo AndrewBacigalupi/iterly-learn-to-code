@@ -146,8 +146,8 @@ export default function LearnPage() {
               );
             })}
             </p>
-            <h2> Wanting to ncrease your words per minute on the keyboard? 
-              We recommend <a href="https://monkeytype.com/" className="italic text-yellow-400 hover:text-yellow-500 hover:underline">Monkey<span className="italic hover:underline hover:text-gray-600 text-gray-400">Type</span></a></h2>
+            <h2> Wanting to increase your words per minute on the keyboard? 
+              We recommend <a href="https://monkeytype.com/" className="underline hover:text-gray-500">MonkeyType</a></h2>
           </div>
         </div>
       </section>

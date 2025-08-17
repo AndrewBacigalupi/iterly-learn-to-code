@@ -9,57 +9,25 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { dbExport } from "@/lib/db";
 import { puzzles } from "@/lib/db/schema";
+import { getCategoriesWithCounts } from "@/lib/categories";
 import { sql } from "drizzle-orm";
 import { 
-  Puzzle,
   ArrowRight,
-  BookOpen,
-  Construction,
 } from "lucide-react";
 import Link from "next/link";
 
 export default async function PuzzleCategoriesPage() {
-  // Fetch the highest puzzle number from the database
-  const result = await dbExport
-    .select({ maxNumber: sql<number>`MAX(${puzzles.number})` })
-    .from(puzzles);
-  
-  const puzzleCount = result[0]?.maxNumber || 0;
+  // Fetch puzzle counts by category
+  const categoryStats = await dbExport
+    .select({
+      category: puzzles.category,
+      count: sql<number>`count(*)`.as('count')
+    })
+    .from(puzzles)
+    .groupBy(puzzles.category);
 
-  const categories = [
-    {
-      id: "basics",
-      title: "Basics",
-      description: "Start your puzzle-solving journey with fundamental programming concepts. These puzzles focus on basic logic, variables, and simple algorithms.",
-      icon: BookOpen,
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-50 dark:bg-blue-950",
-      puzzleCount: puzzleCount,
-      difficulty: "Beginner"
-    },
-    {
-      id: "coming-soon-1",
-      title: "Coming Soon",
-      description: "New puzzle category in development. Stay tuned for more challenging problems!",
-      icon: Construction,
-      color: "text-gray-400 dark:text-gray-500",
-      bgColor: "bg-gray-50 dark:bg-gray-800",
-      puzzleCount: 0,
-      difficulty: "TBD",
-      underConstruction: true
-    },
-    {
-      id: "coming-soon-2", 
-      title: "Coming Soon",
-      description: "New puzzle category in development. Stay tuned for more challenging problems!",
-      icon: Construction,
-      color: "text-gray-400 dark:text-gray-500",
-      bgColor: "bg-gray-50 dark:bg-gray-800",
-      puzzleCount: 0,
-      difficulty: "TBD",
-      underConstruction: true
-    }
-  ];
+  // Get categories with their puzzle counts
+  const categories = getCategoriesWithCounts(categoryStats);
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
@@ -80,11 +48,7 @@ export default async function PuzzleCategoriesPage() {
         <div className="max-w-4xl mx-auto mb-8 sm:mb-10">
           <div className="grid gap-4 sm:gap-6">
             {categories.map((category) => (
-              <Card key={category.id} className={`group transition-all duration-300 ${
-                category.underConstruction 
-                  ? 'opacity-60 cursor-not-allowed hover:shadow-none' 
-                  : 'hover:shadow-lg'
-              }`}>
+              <Card key={category.id} className="group transition-all duration-300 hover:shadow-lg">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                     <div className="flex items-start sm:items-center gap-4 sm:gap-6">
@@ -92,13 +56,8 @@ export default async function PuzzleCategoriesPage() {
                         <category.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${category.color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-xl sm:text-2xl mb-2 flex flex-col sm:flex-row sm:items-center gap-2">
+                        <CardTitle className="text-xl sm:text-2xl mb-2">
                           <span className="break-words">{category.title}</span>
-                          {category.underConstruction && (
-                            <Badge variant="outline" className="text-xs w-fit">
-                              Under Construction
-                            </Badge>
-                          )}
                         </CardTitle>
                         <CardDescription className="text-sm sm:text-base mb-3 mr-2">
                           {category.description}
@@ -112,30 +71,17 @@ export default async function PuzzleCategoriesPage() {
                       </div>
                     </div>
                     <div className="flex-shrink-0">
-                      {!category.underConstruction ? (
-                        <Button 
-                          asChild 
-                          size="lg"
-                          className="w-full sm:w-auto group-hover:bg-primary group-hover:text-primary-foreground"
-                        >
-                          <Link href={`/puzzles/categories/${category.id}`}>
-                            <span className="hidden sm:inline">Start {category.title}</span>
-                            <span className="sm:hidden">Start</span>
-                            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
-                          </Link>
-                        </Button>
-                      ) : (
-                        <Button 
-                          size="lg"
-                          variant="outline"
-                          disabled
-                          className="w-full sm:w-auto opacity-50"
-                        >
-                          <span className="hidden sm:inline">Coming Soon</span>
-                          <span className="sm:hidden">Soon</span>
+                      <Button 
+                        asChild 
+                        size="lg"
+                        className="w-full sm:w-auto group-hover:bg-primary group-hover:text-primary-foreground"
+                      >
+                        <Link href={`/puzzles/categories/${category.id}`}>
+                          <span className="hidden sm:inline">Start {category.title}</span>
+                          <span className="sm:hidden">Start</span>
                           <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
-                        </Button>
-                      )}
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

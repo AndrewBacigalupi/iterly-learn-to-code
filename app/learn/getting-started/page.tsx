@@ -57,35 +57,35 @@ export default function LearnPage() {
             essentially search "[your language of choice] online IDE" and one
             will pop up. Here are some good online IDEs for&nbsp;
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.online-python.com/"
             >
               Python
             </a>
             ,&nbsp;
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.jdoodle.com/online-java-compiler"
             >
               Java
             </a>
             ,&nbsp;
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.onlinegdb.com/online_c++_compiler"
             >
               C++
             </a>
             ,&nbsp;
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://playcode.io/javascript"
             >
               JavaScript
             </a>
             ,&nbsp;
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.jdoodle.com/compile-c-sharp-online"
             >
               C#
@@ -104,35 +104,35 @@ export default function LearnPage() {
             These files are then stored in your computer for later use. Some of
             the most popular are{" "}
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://code.visualstudio.com/download"
             >
               VSCode
             </a>{" "}
             (any language),{" "}
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.jetbrains.com/pycharm/"
             >
               PyCharm
             </a>{" "}
             (Python),{" "}
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.jetbrains.com/idea/download/"
             >
               IntelliJ
             </a>{" "}
             (Java),{" "}
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-600 underline text-gray-400 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://www.jetbrains.com/clion/"
             >
               CLion
             </a>{" "}
             (C/C++), and{" "}
             <a
-              className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
+              className="underline hover:text-gray-500"
               href="https://atom-editor.cc/"
             >
               Atom

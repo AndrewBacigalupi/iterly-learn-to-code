@@ -45,7 +45,7 @@ export default function LearnPage() {
                 </p>
                 <p className="text-xl leading-relaxed mb-4">
                     While we continue development of our own educational articles, 
-                    we recommend checking out <a className="underline"href="https://www.geeksforgeeks.org/dsa/conditional-statements-in-programming/">this article</a> on conditionals and control flow. 
+                    we recommend checking out <a className="underline hover:text-gray-500" href="https://www.geeksforgeeks.org/dsa/conditional-statements-in-programming/">this article</a> on conditionals and control flow. 
                 </p>
             </div>
             

@@ -45,7 +45,7 @@ export default function LearnPage() {
                     <br />
                     <br />
                     While we continue development of our own educational articles, 
-                    we recommend checking out <a className="underline hover:text-gray-500"href="https://www.w3schools.com/programming/prog_variables.php">this article</a> on variables more generally 
+                    we recommend checking out <a className="underline hover:text-gray-500" href="https://www.w3schools.com/programming/prog_variables.php">this article</a> on variables more generally 
                     and <a className="underline hover:text-gray-500" href="https://www.w3schools.com/programming/prog_data_types.php">this other article</a> by the same authors that explains data types, the categories into which different variables fall. 
                 </p>
                 

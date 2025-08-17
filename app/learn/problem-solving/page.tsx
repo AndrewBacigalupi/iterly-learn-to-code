@@ -36,7 +36,7 @@ export default function LearnPage() {
           </p>
 
           <div className="ml-4">
-            <p className="text-xl leading-relaxed mb-4">
+            <div className="text-xl leading-relaxed mb-4">
               <p className="mb-4">
                 Problem solving is at the core of computer science, and there
                 are a few key concepts to keep in mind and utilize when
@@ -84,7 +84,7 @@ export default function LearnPage() {
                 of articles that all cover related and important topics. 
                 
               </p>
-            </p>
+            </div>
           </div>
         </div>
       </div>

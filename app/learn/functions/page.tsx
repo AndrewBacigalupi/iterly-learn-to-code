@@ -52,8 +52,8 @@ export default function LearnPage() {
                     <br />
                     <br />
                     While we continue development of our own educational articles, 
-                    we recommend checking out <a className="underline"href="https://www.w3schools.com/programming/prog_variables.php">this article</a> on variables more generally 
-                    and <a className="underline" href="https://www.w3schools.com/programming/prog_data_types.php">this other article</a> by the same authors that explains data types, the categories into which different variables fall. 
+                    we recommend checking out <a className="underline hover:text-gray-500" href="https://www.geeksforgeeks.org/dsa/functions-programming/">this article</a> on functions
+                    and <a className="underline hover:text-gray-500" href="https://www.futurelearn.com/info/courses/introduction-to-programming-with-python-fourth-rev-/0/steps/265757">this other article</a> that also explains them and how to begin writing them. 
                 </p>
                 
             </div>

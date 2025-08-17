@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,35 +6,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/auth";
 import { dbExport } from "@/lib/db";
 import { puzzleCompletions, puzzles } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { CheckCircle, Clock, Play, Trophy } from "lucide-react";
+import { getCategoriesWithCounts } from "@/lib/categories";
+import { eq, sql } from "drizzle-orm";
+import { 
+  ArrowRight,
+  Trophy
+} from "lucide-react";
 import Link from "next/link";
-
-function getDifficultyColor(difficulty: string) {
-  switch (difficulty) {
-    case "easy":
-      return "bg-green-100 text-green-800 dark:bg-green-10 dark:text-green-300";
-    case "medium":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-    case "hard":
-      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-    default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-  }
-}
-
 
 export default async function PuzzlesPage() {
   const session = await auth();
 
-  // Fetch all puzzles from database
-  const allPuzzles = await dbExport.select().from(puzzles).orderBy(puzzles.number);
+  // Fetch puzzle counts by category
+  const categoryStats = await dbExport
+    .select({
+      category: puzzles.category,
+      count: sql<number>`count(*)`.as('count')
+    })
+    .from(puzzles)
+    .groupBy(puzzles.category);
 
   // Fetch user's completed puzzles if logged in
   let completedPuzzleIds: string[] = [];
+  let totalCompletions = 0;
   if (session?.user?.id) {
     const userCompletions = await dbExport
       .select({ puzzleId: puzzleCompletions.puzzleId })
@@ -43,15 +40,14 @@ export default async function PuzzlesPage() {
       .where(eq(puzzleCompletions.userId, session.user.id));
 
     completedPuzzleIds = [...new Set(userCompletions.map((c) => c.puzzleId))];
+    totalCompletions = userCompletions.length;
   }
 
-  // Calculate stats
-  const totalCompletions = session?.user?.id
-    ? await dbExport
-        .select()
-        .from(puzzleCompletions)
-        .where(eq(puzzleCompletions.userId, session.user.id))
-    : [];
+  // Get total puzzle count
+  const totalPuzzles = categoryStats.reduce((sum, cat) => sum + cat.count, 0);
+
+  // Get categories with their puzzle counts
+  const categories = getCategoriesWithCounts(categoryStats);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -74,78 +70,48 @@ export default async function PuzzlesPage() {
           )}
         </div>
 
-        <div className="grid gap-6">
-          {allPuzzles.map((puzzle) => {
-            const isCompleted = completedPuzzleIds.includes(puzzle.id);
-
-            return (
-              <Card
-                key={puzzle.id}
-                className={`transition-all hover:shadow-md ${
-                  isCompleted ? "ring-2 ring-green-500" : ""
-                }`}
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="flex items-center gap-2">
-                        {isCompleted && (
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        )}
-                        {puzzle.title}
+        {/* Categories Grid */}
+        <div className="grid gap-6 mb-8">
+          {categories.map((category) => (
+            <Card key={category.id} className="group transition-all duration-300 hover:shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+                  <div className="flex items-start sm:items-center gap-4 sm:gap-6">
+                    <div className={`p-4 rounded-lg ${category.bgColor} flex-shrink-0`}>
+                      <category.icon className={`h-8 w-8 ${category.color}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-2xl mb-2">
+                        <span className="break-words">{category.title}</span>
                       </CardTitle>
-                      <CardDescription className="mt-2">
-                        {puzzle.description}
+                      <CardDescription className="text-base mb-3 mr-2">
+                        {category.description}
                       </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <strong className="text-sm">Example:</strong>
-                      <div className="mt-2 grid md:grid-cols-2 gap-4 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">Input:</span>
-                          <code className="block mt-1 p-2 bg-muted rounded">
-                            {puzzle.example_input}
-                          </code>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Output:</span>
-                          <code className="block mt-1 p-2 bg-muted rounded">
-                            [Hidden until solved]
-                          </code>
-                        </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                        <span>{category.puzzleCount} puzzles</span>
+                        <Badge variant="secondary" className="w-fit">
+                          {category.difficulty}
+                        </Badge>
                       </div>
                     </div>
-
-                    <div className="flex justify-between items-center pt-4">
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        {isCompleted ? (
-                          <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                            <CheckCircle className="h-4 w-4" />
-                            Solved
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            Not attempted
-                          </span>
-                        )}
-                      </div>
-                      <Button asChild>
-                        <Link href={`/puzzles/${puzzle.id}`}>
-                          <Play className="h-4 w-4 mr-2" />
-                          {isCompleted ? "View Solution" : "Solve Puzzle"}
-                        </Link>
-                      </Button>
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  <div className="flex-shrink-0">
+                    <Button 
+                      asChild 
+                      size="lg"
+                      className="w-full sm:w-auto group-hover:bg-primary group-hover:text-primary-foreground"
+                    >
+                      <Link href={`/puzzles/categories/${category.id}`}>
+                        <span className="hidden sm:inline">Start {category.title}</span>
+                        <span className="sm:hidden">Start</span>
+                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {session && (
@@ -163,15 +129,15 @@ export default async function PuzzlesPage() {
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {allPuzzles.length - completedPuzzleIds.length}
+                  {totalPuzzles - completedPuzzleIds.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Remaining</div>
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {allPuzzles.length > 0
+                  {totalPuzzles > 0
                     ? Math.round(
-                        (completedPuzzleIds.length / allPuzzles.length) * 100
+                        (completedPuzzleIds.length / totalPuzzles) * 100
                       )
                     : 0}
                   %
@@ -182,7 +148,7 @@ export default async function PuzzlesPage() {
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {totalCompletions.length}
+                  {totalCompletions}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Total Attempts

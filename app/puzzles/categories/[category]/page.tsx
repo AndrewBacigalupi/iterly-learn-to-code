@@ -9,26 +9,16 @@ import {
 import { auth } from "@/lib/auth";
 import { dbExport } from "@/lib/db";
 import { puzzleCompletions, puzzles } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { getCategoryById } from "@/lib/categories";
+import { eq, sql } from "drizzle-orm";
 import { 
   ArrowLeft,
-  BookOpen,
   CheckCircle,
   Clock,
   Play
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-const categories = {
-  basics: {
-    title: "Basics",
-    description: "Fundamental programming concepts and simple algorithms",
-    icon: BookOpen,
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-950"
-  }
-};
 
 function getDifficultyColor(difficulty: string) {
   switch (difficulty) {
@@ -51,13 +41,30 @@ export default async function CategoryPuzzlesPage({
   const { category } = await params;
   const session = await auth();
   
-  const categoryData = categories[category as keyof typeof categories];
+  const categoryData = getCategoryById(category);
   if (!categoryData) {
     notFound();
   }
 
-  // Fetch all puzzles from database (same as original puzzles page)
-  const allPuzzles = await dbExport.select().from(puzzles).orderBy(puzzles.number);
+  // Get the puzzle count for this category
+  const categoryStats = await dbExport
+    .select({
+      count: sql<number>`count(*)`.as('count')
+    })
+    .from(puzzles)
+    .where(eq(puzzles.category, categoryData.title));
+
+  const puzzleCount = categoryStats[0]?.count || 0;
+  
+  // Update category data with actual puzzle count
+  categoryData.puzzleCount = puzzleCount;
+
+  // Fetch puzzles for this specific category
+  const allPuzzles = await dbExport
+    .select()
+    .from(puzzles)
+    .where(eq(puzzles.category, categoryData.title))
+    .orderBy(puzzles.number);
 
   // Fetch user's completed puzzles if logged in (same as original puzzles page)
   let completedPuzzleIds: string[] = [];
@@ -97,7 +104,7 @@ export default async function CategoryPuzzlesPage({
         
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
           <span>{allPuzzles.length} puzzles</span>
-          <span>All puzzles are beginner-friendly</span>
+          <Badge variant="secondary">{categoryData.difficulty}</Badge>
         </div>
 
         {!session && (

@@ -9,14 +9,6 @@
   },
   {
     "number": 2,
-    "id": "file-input",
-    "title": "File Input",
-    "description": "Learn how to access data from text files",
-    "icon": "Cable",
-    "color": "text-red-600"
-  },
-  {
-    "number": 3,
     "id": "variables",
     "title": "Variables and Data Types",
     "description": "Understand how to store and work with different types of data in your programs.",
@@ -24,12 +16,20 @@
     "color": "text-green-600"
   },
   {
-    "number": 4,
+    "number": 3,
     "id": "control-flow",
     "title": "Control Flow: Making Decisions",
     "description": "Learn how to make your programs respond to different conditions using if statements and loops.",
     "icon": "Target",
     "color": "text-purple-600"
+  },
+  {
+    "number": 4,
+    "id": "file-input",
+    "title": "File Input",
+    "description": "Learn how to access data from text files",
+    "icon": "Cable",
+    "color": "text-red-600"
   },
   {
     "number": 5,
