@@ -1,6 +1,6 @@
 // import "dotenv/config";
 // import { dbExport } from "./index";
-// import { problems, puzzles } from "./schema";
+// import { puzzles } from "./schema";
 
 // const problemsData = [
 //   {
