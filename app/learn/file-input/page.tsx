@@ -79,7 +79,7 @@ export default function LearnPage() {
                     you. Including files or classes in C++ means that you are bringing in outside 
                     code that will allow you to perform more complicated tasks without writing the code yourself. 
                     These are used all the time in development and in this case, you are "including" the standard way of 
-                    reading text file input in C++ into your program. It is most convenient to use the >> operator to bring the next
+                    reading text file input in C++ into your program. It is most convenient to use the "&gt;&gt;" operator to bring the next
                     piece of input from the file (excluding whitespace). Learn more about C++'s slightly more complicated
                     process for file input/output <a className="dark:hover:text-gray-600 hover:text-gray-300 underline text-gray-500 dark:text-gray-400"
                         href="https://www.geeksforgeeks.org/cpp/file-handling-c-classes/" >
