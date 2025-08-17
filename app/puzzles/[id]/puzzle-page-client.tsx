@@ -21,17 +21,6 @@ import Link from "next/link";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
 
-interface Puzzle {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: string;
-  tags: string[];
-  input: string;
-  expectedOutput: string;
-  hint?: string;
-  explanation?: string;
-}
 
 interface PuzzleStatus {
   solved: boolean;
@@ -297,7 +286,7 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
               <div>
                 <strong className="text-md">Example Input:</strong>
                 <code className="block mt-1 p-3 bg-muted rounded text-sm">
-                  {puzzle.input}
+                  {puzzle.example_input}
                 </code>
               </div>
 

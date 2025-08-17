@@ -9,6 +9,14 @@
   },
   {
     "number": 2,
+    "id": "file-input",
+    "title": "File Input",
+    "description": "Learn how to access data from text files",
+    "icon": "Cable",
+    "color": "text-red-600"
+  },
+  {
+    "number": 3,
     "id": "variables",
     "title": "Variables and Data Types",
     "description": "Understand how to store and work with different types of data in your programs.",
@@ -16,7 +24,7 @@
     "color": "text-green-600"
   },
   {
-    "number": 3,
+    "number": 4,
     "id": "control-flow",
     "title": "Control Flow: Making Decisions",
     "description": "Learn how to make your programs respond to different conditions using if statements and loops.",
@@ -24,7 +32,7 @@
     "color": "text-purple-600"
   },
   {
-    "number": 4,
+    "number": 5,
     "id": "functions",
     "title": "Functions: Reusable Code Blocks",
     "description": "Learn how to create and use functions to organize your code and make it reusable.",
@@ -32,7 +40,7 @@
     "color": "text-orange-600"
   },
   {
-    "number": 5,
+    "number": 6,
     "id": "problem-solving",
     "title": "Problem Solving Strategies",
     "description": "Develop a systematic approach to solving programming problems and debugging your code.",

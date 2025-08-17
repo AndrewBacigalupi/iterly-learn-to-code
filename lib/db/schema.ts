@@ -49,48 +49,13 @@ export const accounts = pgTable("accounts", {
 		}).onDelete("cascade"),
 ]);
 
-export const problemSubmissions = pgTable("problem_submissions", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	userId: uuid("user_id").notNull(),
-	problemId: uuid("problem_id").notNull(),
-	code: text().notNull(),
-	language: text().notNull(),
-	status: text().notNull(),
-	runtime: integer(),
-	memory: integer(),
-	submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "problem_submissions_user_id_users_id_fk"
-		}).onDelete("cascade"),
-	foreignKey({
-			columns: [table.problemId],
-			foreignColumns: [problems.id],
-			name: "problem_submissions_problem_id_problems_id_fk"
-		}).onDelete("cascade"),
-]);
-
-export const problems = pgTable("problems", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	title: text().notNull(),
-	description: text().notNull(),
-	difficulty: text().notNull(),
-	tags: text().array(),
-	functionName: text("function_name"),
-	testCases: jsonb("test_cases").notNull(),
-	starterCode: jsonb("starter_code"),
-	solution: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-});
 
 export const puzzleCompletions = pgTable("puzzle_completions", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	userId: uuid("user_id").notNull(),
 	puzzleId: uuid("puzzle_id").notNull(),
 	solution: text().notNull(),
+	title: text().notNull().default("Unknown Puzzle"),
 	completedAt: timestamp("completed_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
@@ -117,40 +82,6 @@ export const sessions = pgTable("sessions", {
 		}).onDelete("cascade"),
 ]);
 
-export const problemSubmissionsContrib = pgTable("problem_submissions_contrib", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	userId: uuid("user_id").notNull(),
-	title: text().notNull(),
-	description: text().notNull(),
-	difficulty: text().notNull(),
-	tags: text().array(),
-	functionName: text("function_name"),
-	testCases: jsonb("test_cases").notNull(),
-	starterCode: jsonb("starter_code"),
-	solution: text(),
-	status: text().default('pending').notNull(),
-	adminNotes: text("admin_notes"),
-	submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull(),
-	reviewedAt: timestamp("reviewed_at", { mode: 'string' }),
-	reviewedBy: uuid("reviewed_by"),
-	publishedProblemId: uuid("published_problem_id"),
-}, (table) => [
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "problem_submissions_contrib_user_id_users_id_fk"
-		}).onDelete("cascade"),
-	foreignKey({
-			columns: [table.reviewedBy],
-			foreignColumns: [users.id],
-			name: "problem_submissions_contrib_reviewed_by_users_id_fk"
-		}),
-	foreignKey({
-			columns: [table.publishedProblemId],
-			foreignColumns: [problems.id],
-			name: "problem_submissions_contrib_published_problem_id_problems_id_fk"
-		}),
-]);
 
 export const puzzles = pgTable("puzzles", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -174,12 +105,10 @@ export const puzzleSubmissions = pgTable("puzzle_submissions", {
 	title: text().notNull(),
 	description: text().notNull(),
 	difficulty: text().notNull(),
-	tags: text().array(),
-	example_input: text("example_input").notNull(),
 	answer: text("answer").notNull(),
 	hint: text(),
 	explanation: text(),
-  real_input: text("real_input").notNull(),
+  	real_input: text("real_input").notNull(),
 	status: text().default('pending').notNull(),
 	adminNotes: text("admin_notes"),
 	submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull(),

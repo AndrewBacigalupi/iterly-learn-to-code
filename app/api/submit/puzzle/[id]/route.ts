@@ -1,3 +1,4 @@
+"use-client"
 import { auth } from "@/lib/auth";
 import { dbExport } from "@/lib/db";
 import { puzzleSubmissions } from "@/lib/db/schema";
@@ -44,6 +45,53 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching puzzle submission:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Extract the ID from the URL path
+    const urlSegments = request.nextUrl.pathname.split("/");
+    const submissionId = urlSegments[urlSegments.length - 1];
+
+    if (!submissionId) {
+      return NextResponse.json({ error: "Missing submission ID" }, { status: 400 });
+    }
+
+    // Only allow deletion of pending or rejected submissions by the owner
+    const result = await dbExport
+      .delete(puzzleSubmissions)
+      .where(
+        and(
+          eq(puzzleSubmissions.id, submissionId),
+          eq(puzzleSubmissions.userId, session.user.id)
+        )
+      )
+      .returning();
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: "Submission not found or cannot be deleted" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Submission deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting puzzle submission:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

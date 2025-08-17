@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { dbExport } from "@/lib/db";
-import { puzzleSubmissions } from "@/lib/db/schema";
+import { puzzleSubmissions, puzzleCompletions } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
       title,
       description,
       difficulty,
-      input,
       answer,
       hint: hint || null,
       explanation: explanation || null,
@@ -60,6 +59,7 @@ export async function POST(request: NextRequest) {
       status: "pending",
     });
 
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error submitting puzzle:", error);

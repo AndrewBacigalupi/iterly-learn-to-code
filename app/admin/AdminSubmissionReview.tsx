@@ -27,31 +27,20 @@ import { toast } from "sonner";
 
 import type { PuzzleSubmission } from "@/lib/db/schema";
 
-interface ProblemSubmission {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: string;
-  tags: string[] | null;
-  functionName: string | null;
-  testCases: any; // JSONB field from database
-  solution: string | null;
-  submittedAt: Date;
-  status: string;
-}
-
 interface AdminSubmissionReviewProps {
-  puzzleSubmissions: PuzzleSubmission[];
-  problemSubmissions: ProblemSubmission[];
+  pendingSubmissions: PuzzleSubmission[];
+  approvedSubmissions: PuzzleSubmission[];
+  rejectedSubmissions: PuzzleSubmission[];
 }
 
-type SelectedSubmission = (PuzzleSubmission | ProblemSubmission) & {
-  type: "puzzle" | "problem";
+type SelectedSubmission = (PuzzleSubmission) & {
+  type: "puzzle";
 };
 
 export default function AdminSubmissionReview({
-  puzzleSubmissions,
-  problemSubmissions,
+  pendingSubmissions,
+  approvedSubmissions,
+  rejectedSubmissions,
 }: AdminSubmissionReviewProps) {
   const [selectedSubmission, setSelectedSubmission] = useState<SelectedSubmission | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
@@ -61,7 +50,7 @@ export default function AdminSubmissionReview({
   const handleReview = async (
     submissionId: string,
     action: "approve" | "reject",
-    type: "puzzle" | "problem"
+    type: "puzzle"
   ) => {
     setProcessing(true);
 
@@ -85,9 +74,9 @@ export default function AdminSubmissionReview({
       const result = await response.json();
 
       if (action === "approve") {
-        toast("Submission approved and published!");
+        toast("Submission approved! Status updated.");
       } else {
-        toast("Submission rejected with feedback.");
+        toast("Submission rejected. Feedback sent to submitter.");
       }
 
       // Reload the page to show updated data
@@ -102,7 +91,7 @@ export default function AdminSubmissionReview({
     }
   };
 
-  const openReviewDialog = (submission: PuzzleSubmission | ProblemSubmission, type: "puzzle" | "problem") => {
+  const openReviewDialog = (submission: PuzzleSubmission, type: "puzzle") => {
     setSelectedSubmission({ ...submission, type });
     setReviewDialogOpen(true);
     setAdminNotes("");
@@ -123,18 +112,21 @@ export default function AdminSubmissionReview({
 
   return (
     <div>
-      <Tabs defaultValue="puzzles" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="puzzles">
-            Puzzle Submissions ({puzzleSubmissions.length})
+      <Tabs defaultValue="pending" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="pending">
+            Pending ({pendingSubmissions.length})
           </TabsTrigger>
-          <TabsTrigger value="problems">
-            Problem Submissions ({problemSubmissions.length})
+          <TabsTrigger value="approved">
+            Approved ({approvedSubmissions.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected">
+            Rejected ({rejectedSubmissions.length})
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="puzzles" className="space-y-6">
-          {puzzleSubmissions.length === 0 ? (
+        <TabsContent value="pending" className="space-y-6">
+          {pendingSubmissions.length === 0 ? (
             <Card>
               <CardContent className="pt-6">
                 <p className="text-center text-muted-foreground">
@@ -143,7 +135,7 @@ export default function AdminSubmissionReview({
               </CardContent>
             </Card>
           ) : (
-            puzzleSubmissions.map((submission) => (
+            pendingSubmissions.map((submission) => (
               <Card key={submission.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -174,16 +166,22 @@ export default function AdminSubmissionReview({
                           <div className="space-y-4">
                             <div>
                               <strong>Description:</strong>
-                              <p className="mt-1">{submission.description}</p>
+                              <p className="mt-1 whitespace-pre-wrap">{submission.description}</p>
                             </div>
                             <div>
-                              <strong>Input:</strong>
-                              <code className="block mt-1 p-2 bg-muted rounded text-sm">
-                                {submission.example_input}
-                              </code>
+                              <strong className="mr-1">Difficulty:</strong>
+                              <Badge className={getDifficultyColor(submission.difficulty)}>
+                                {submission.difficulty}
+                              </Badge>
                             </div>
                             <div>
-                              <strong>Expected Output:</strong>
+                              <strong>Input Data:</strong>
+                              <pre className="block mt-1 p-2 bg-muted rounded text-sm overflow-x-auto">
+                                {submission.real_input}
+                              </pre>
+                            </div>
+                            <div>
+                              <strong>Answer:</strong>
                               <code className="block mt-1 p-2 bg-muted rounded text-sm">
                                 {submission.answer}
                               </code>
@@ -191,13 +189,13 @@ export default function AdminSubmissionReview({
                             {submission.hint && (
                               <div>
                                 <strong>Hint:</strong>
-                                <p className="mt-1">{submission.hint}</p>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.hint}</p>
                               </div>
                             )}
                             {submission.explanation && (
                               <div>
                                 <strong>Explanation:</strong>
-                                <p className="mt-1">{submission.explanation}</p>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.explanation}</p>
                               </div>
                             )}
                           </div>
@@ -215,36 +213,47 @@ export default function AdminSubmissionReview({
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                     {submission.description}
                   </p>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getDifficultyColor(submission.difficulty)}>
+                      {submission.difficulty}
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
             ))
           )}
         </TabsContent>
 
-        <TabsContent value="problems" className="space-y-6">
-          {problemSubmissions.length === 0 ? (
+        <TabsContent value="approved" className="space-y-6">
+          {approvedSubmissions.length === 0 ? (
             <Card>
               <CardContent className="pt-6">
                 <p className="text-center text-muted-foreground">
-                  No pending problem submissions
+                  No approved puzzle submissions
                 </p>
               </CardContent>
             </Card>
           ) : (
-            problemSubmissions.map((submission) => (
+            approvedSubmissions.map((submission) => (
               <Card key={submission.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {submission.title}
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                          Approved
+                        </Badge>
                       </CardTitle>
                       <CardDescription>
                         Submitted on{" "}
                         {new Date(submission.submittedAt).toLocaleDateString()}
+                        {submission.reviewedAt && (
+                          <> • Reviewed on {new Date(submission.reviewedAt).toLocaleDateString()}</>
+                        )}
                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
@@ -252,117 +261,181 @@ export default function AdminSubmissionReview({
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4 mr-1" />
-                            Preview
+                            View
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle>{submission.title}</DialogTitle>
                             <DialogDescription>
-                              Problem Preview
+                              Approved Puzzle Submission
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
                             <div>
                               <strong>Description:</strong>
-                              <p className="mt-1 whitespace-pre-wrap">
-                                {submission.description}
-                              </p>
+                              <p className="mt-1 whitespace-pre-wrap">{submission.description}</p>
                             </div>
                             <div>
-                              <strong>Function Name:</strong>
-                              <code className="ml-2">
-                                {submission.functionName || "Not specified"}
+                              <strong>Difficulty:</strong>
+                              <Badge className={getDifficultyColor(submission.difficulty)}>
+                                {submission.difficulty}
+                              </Badge>
+                            </div>
+                            <div>
+                              <strong>Input Data:</strong>
+                              <pre className="block mt-1 p-2 bg-muted rounded text-sm overflow-x-auto">
+                                {submission.real_input}
+                              </pre>
+                            </div>
+                            <div>
+                              <strong>Answer:</strong>
+                              <code className="block mt-1 p-2 bg-muted rounded text-sm">
+                                {submission.answer}
                               </code>
                             </div>
-                            <div>
-                              <strong>Test Cases:</strong>
-                              <div className="space-y-2 mt-2">
-                                {(
-                                  submission.testCases as Array<{
-                                    input: string;
-                                    expectedOutput: string;
-                                  }>
-                                )?.map(
-                                  (
-                                    testCase: {
-                                      input: string;
-                                      expectedOutput: string;
-                                    },
-                                    index: number
-                                  ) => (
-                                    <div
-                                      key={index}
-                                      className="p-2 border rounded"
-                                    >
-                                      <div className="text-sm font-medium">
-                                        Test Case {index + 1}
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-2 mt-1">
-                                        <div>
-                                          <span className="text-xs text-muted-foreground">
-                                            Input:
-                                          </span>
-                                          <code className="block text-xs p-1 bg-muted rounded">
-                                            {testCase.input}
-                                          </code>
-                                        </div>
-                                        <div>
-                                          <span className="text-xs text-muted-foreground">
-                                            Output:
-                                          </span>
-                                          <code className="block text-xs p-1 bg-muted rounded">
-                                            {testCase.expectedOutput}
-                                          </code>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                            {submission.solution && (
+                            {submission.hint && (
                               <div>
-                                <strong>Solution:</strong>
-                                <p className="mt-1 whitespace-pre-wrap">
-                                  {submission.solution}
-                                </p>
+                                <strong>Hint:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.hint}</p>
                               </div>
                             )}
-                            {submission.tags && submission.tags.length > 0 && (
+                            {submission.explanation && (
                               <div>
-                                <strong>Tags:</strong>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {submission.tags.map((tag) => (
-                                    <Badge
-                                      key={tag}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
+                                <strong>Explanation:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.explanation}</p>
+                              </div>
+                            )}
+                            {submission.adminNotes && (
+                              <div>
+                                <strong>Admin Notes:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.adminNotes}</p>
                               </div>
                             )}
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openReviewDialog(submission, "problem")}
-                      >
-                        <MessageSquare className="h-4 w-4 mr-1" />
-                        Review
-                      </Button>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                     {submission.description}
                   </p>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getDifficultyColor(submission.difficulty)}>
+                      {submission.difficulty}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="rejected" className="space-y-6">
+          {rejectedSubmissions.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-muted-foreground">
+                  No rejected puzzle submissions
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            rejectedSubmissions.map((submission) => (
+              <Card key={submission.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        {submission.title}
+                        <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                          Rejected
+                        </Badge>
+                      </CardTitle>
+                      <CardDescription>
+                        Submitted on{" "}
+                        {new Date(submission.submittedAt).toLocaleDateString()}
+                        {submission.reviewedAt && (
+                          <> • Reviewed on {new Date(submission.reviewedAt).toLocaleDateString()}</>
+                        )}
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>{submission.title}</DialogTitle>
+                            <DialogDescription>
+                              Rejected Puzzle Submission
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <strong>Description:</strong>
+                              <p className="mt-1 whitespace-pre-wrap">{submission.description}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <strong className="mr-1">Difficulty:</strong>
+                              <div >
+                                <Badge className={getDifficultyColor(submission.difficulty)}>
+                                  {submission.difficulty}
+                                </Badge>
+                              </div>
+                              
+                            </div>
+                            <div>
+                              <strong>Input Data:</strong>
+                              <pre className="block mt-1 p-2 bg-muted rounded text-sm overflow-x-auto">
+                                {submission.real_input}
+                              </pre>
+                            </div>
+                            <div>
+                              <strong>Answer:</strong>
+                              <code className="block mt-1 p-2 bg-muted rounded text-sm">
+                                {submission.answer}
+                              </code>
+                            </div>
+                            {submission.hint && (
+                              <div>
+                                <strong>Hint:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.hint}</p>
+                              </div>
+                            )}
+                            {submission.explanation && (
+                              <div>
+                                <strong>Explanation:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.explanation}</p>
+                              </div>
+                            )}
+                            {submission.adminNotes && (
+                              <div>
+                                <strong>Admin Notes:</strong>
+                                <p className="mt-1 whitespace-pre-wrap">{submission.adminNotes}</p>
+                              </div>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {submission.description}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getDifficultyColor(submission.difficulty)}>
+                      {submission.difficulty}
+                    </Badge>
+                  </div>
                 </CardContent>
               </Card>
             ))
@@ -375,19 +448,28 @@ export default function AdminSubmissionReview({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Review{" "}
-              {selectedSubmission?.type === "puzzle" ? "Puzzle" : "Problem"}
+              Review Puzzle Submission
             </DialogTitle>
-            <DialogDescription>{selectedSubmission?.title}</DialogDescription>
+            <DialogDescription>
+              {selectedSubmission?.title}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded p-3 mb-6">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                <strong>Note:</strong> This will only change the submission status. Approved submissions can be manually added to the puzzle library later if desired.
+              </p>
+            </div>
             <div>
-              <Label htmlFor="adminNotes">Admin Notes (optional)</Label>
+              <div className="mb-3">
+                <Label htmlFor="adminNotes">Admin Notes (optional)</Label>
+              </div>
+              
               <Textarea
                 id="adminNotes"
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="Add notes for the submitter..."
+                placeholder="Add notes for the submitter (required for rejections, optional for approvals)..."
                 rows={3}
               />
             </div>
@@ -429,7 +511,7 @@ export default function AdminSubmissionReview({
               disabled={processing}
             >
               <Check className="h-4 w-4 mr-1" />
-              Approve & Publish
+              Approve
             </Button>
           </DialogFooter>
         </DialogContent>

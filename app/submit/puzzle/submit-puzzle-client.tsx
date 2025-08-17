@@ -112,11 +112,11 @@ export function SubmitPuzzleClient({ session }: SubmitPuzzleClientProps) {
         },
         body: JSON.stringify({
           ...form,
+          title: form.title,
           real_input: form.input,
           resubmitId: resubmitId || undefined,
         }),
       });
-      console.log("ANDREW PRINTS: " + response.status)
       if (!response.ok) {
         const errorText = await response.text(); // capture the raw server message
         console.error("Server error:", errorText);

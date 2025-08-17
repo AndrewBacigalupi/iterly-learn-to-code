@@ -16,7 +16,8 @@ import {
   Target,
   Clock,
   CheckCircle,
-  Keyboard
+  Keyboard,
+  Cable
 } from "lucide-react";
 import Link from "next/link";
 import { getArticles, getArticleIcon } from "@/lib/articles";
@@ -80,6 +81,7 @@ export default function LearnPage() {
           <div className="grid gap-6">
             {articles.map((article) => {
               const IconComponent = getArticleIcon(article.icon);
+              
 
               return (
                 <Card

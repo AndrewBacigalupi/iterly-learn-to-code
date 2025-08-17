@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, Bug, Code, Github, Heart, Users } from "lucide-react";
+import { BookOpen, Bug, Code, Github, Heart, Users, Puzzle} from "lucide-react";
 
 export default function ContributePage() {
   return (
@@ -41,6 +41,16 @@ export default function ContributePage() {
                 >
                   <Bug className="h-5 w-5 mr-2" />
                   Report Issues
+                </a>
+              </Button>
+              <Button asChild size="lg">
+                <a
+                  href="/submit/puzzle"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Puzzle className="h-5 w-5 mr-2" />
+                  Submit a Puzzle Idea
                 </a>
               </Button>
             </div>

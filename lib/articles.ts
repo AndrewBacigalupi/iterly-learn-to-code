@@ -5,7 +5,9 @@ import {
   Brain, 
   Zap, 
   Target,
-  LucideIcon
+  LucideIcon, 
+  Cable, 
+  Keyboard
 } from "lucide-react";
 
 // Icon mapping
@@ -15,6 +17,8 @@ const iconMap: Record<string, LucideIcon> = {
   Brain,
   Zap,
   Target,
+  Keyboard,
+  Cable
 };
 
 export interface Article {
@@ -39,5 +43,5 @@ export function getArticleById(id: string): Article | undefined {
 }
 
 export function getArticleIcon(iconName: string): LucideIcon {
-  return iconMap[iconName] || BookOpen;
+  return iconMap[iconName];
 } 
