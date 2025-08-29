@@ -253,7 +253,7 @@ export default function Home() {
           <div {...fadeInUp} className="mb-4">
             <p className="text-xl">
               Our{" "}
-              <Link href="/learn/getting-started" className="underline">
+              <Link href="/learn/getting-started" className="underline hover:text-gray-500">
                 first article
               </Link>{" "}
               explains how to get set up and start solving puzzles. 

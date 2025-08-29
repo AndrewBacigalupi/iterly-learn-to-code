@@ -46,7 +46,6 @@ export default function ContributePage() {
               <Button asChild size="lg">
                 <a
                   href="/submit/puzzle"
-                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Puzzle className="h-5 w-5 mr-2" />

@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Puzzle } from "@/lib/db/schema";
 import Link from "next/link";
+import { categoryToSlug } from "@/lib/categories";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
 
@@ -244,7 +245,7 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
                 size="sm"
                 className="flex-shrink-0"
               >
-                <Link href={`/puzzles/categories/${category.toLowerCase()}`}>
+                <Link href={`/puzzles/categories/${categoryToSlug(category)}`}>
                   <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
                   <span className="hidden xs:inline">Back to</span>
                   <span className="ml-1">{category}</span>
@@ -268,7 +269,7 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
                   <span className="hidden xs:inline">Back to</span>
-                  <span className="ml-1">{category}</span>
+                  <span className="ml-1">{puzzle.category}</span>
                 </Button>
               </div>
             </div>

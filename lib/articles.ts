@@ -7,7 +7,8 @@ import {
   Target,
   LucideIcon, 
   Cable, 
-  Keyboard
+  Keyboard,
+  Binary
 } from "lucide-react";
 
 // Icon mapping
@@ -18,7 +19,8 @@ const iconMap: Record<string, LucideIcon> = {
   Zap,
   Target,
   Keyboard,
-  Cable
+  Cable,
+  Binary
 };
 
 export interface Article {

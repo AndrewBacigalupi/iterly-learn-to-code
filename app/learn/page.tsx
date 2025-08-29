@@ -88,8 +88,8 @@ export default function LearnPage() {
                   key={article.id}
                   className="h-36 group transition-all duration-300"
                 >
-                  <CardContent className="">
-                    <div className="flex items-center justify-between">
+                  <CardContent className="h-full">
+                    <div className="flex items-center justify-between h-full">
                       <div className="flex items-center gap-6">
                         <div className="p-4 rounded-lg">
                           <IconComponent
@@ -146,8 +146,8 @@ export default function LearnPage() {
               );
             })}
             </p>
-            <h2> Wanting to increase your words per minute on the keyboard? 
-              We recommend <a href="https://monkeytype.com/" className="underline hover:text-gray-500">MonkeyType</a></h2>
+            <h2>Looking to increase your words per minute on the keyboard? 
+              We recommend <a href="https://monkeytype.com/" className="italic text-yellow-400 hover:text-yellow-500 hover:underline">Monkey<span className="italic hover:underline hover:text-gray-600 text-gray-400">Type</span></a></h2>
           </div>
         </div>
       </section>

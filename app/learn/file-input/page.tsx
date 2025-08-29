@@ -37,7 +37,7 @@ export default function LearnPage() {
 
             <div className="ml-4">
                 <p className="text-xl leading-relaxed mb-4">
-                    The entire goal of computing, or software development, 
+                    The entire goal of computing and software development
                     can often be boiled down to taking some input, doing any necessary computing or 
                     processing, and producing some output, which is hopefully useful for whoever 
                     wants it. 
