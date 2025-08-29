@@ -1,4 +1,4 @@
-# 🚀 Learn to Scode
+# 🚀 Iterly: Learn to Code
 
 **A modern coding education platform built with Next.js, featuring interactive puzzles, coding problems, and real-time code execution.**
 
@@ -8,7 +8,7 @@ Perfect for computer science students, coding bootcamp participants, and anyone 
 
 ## 📚 Table of Contents
 
-- [🎯 What is Learn to Scode?](#-what-is-learn-to-scode)
+- [🎯 What is Iterly?](#-what-is-iterly)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📋 Prerequisites](#-prerequisites)
@@ -21,25 +21,19 @@ Perfect for computer science students, coding bootcamp participants, and anyone 
 
 ---
 
-## 🎯 What is Learn to Scode?
+## 🎯 What is Iterly?
 
-Learn to Scode is an interactive coding platform designed to help students learn programming through:
+Iterly is an interactive coding platform designed to help students learn programming through:
 
 - **🧩 Coding Puzzles**: Logic-based challenges that teach problem-solving
-- **💻 Programming Problems**: LeetCode-style algorithmic challenges
-- **🏃‍♂️ Real-time Execution**: Test your code instantly with multiple programming languages
 - **📊 Progress Tracking**: Monitor your learning journey with detailed statistics
 - **👥 Community Features**: Submit your own problems and puzzles for others to solve
-
----
 
 ## ✨ Features
 
 ### For Students
-- 🎮 **Interactive Learning**: Solve puzzles and problems with instant feedback
+- 🎮 **Interactive Learning**: Solve puzzles with instant feedback
 - 📈 **Progress Tracking**: See your improvement over time with detailed stats
-- 🏆 **Achievement System**: Track your coding streaks and favorite languages
-- 🔄 **Multiple Languages**: Support for Python, JavaScript, Java, C++, and more
 - 📱 **Responsive Design**: Learn on any device - desktop, tablet, or mobile
 
 ### For Contributors
@@ -72,7 +66,7 @@ Learn to Scode is an interactive coding platform designed to help students learn
 
 ### Development Tools
 - **[Docker](https://www.docker.com/)** - Containerization for easy database setup
-- **[pnpm](https://pnpm.io/)** - Fast, disk space efficient package manager
+- **[npm](https://www.npmjs.com/)/)** - Fast, disk space efficient package manager
 - **[ESLint](https://eslint.org/)** - Code linting and formatting
 
 ---
@@ -88,10 +82,10 @@ Before you start, make sure you have these installed on your computer:
    - Check installation: `node --version`
    - 📖 [Learn more about Node.js](https://nodejs.org/en/learn/)
 
-2. **pnpm (Package Manager)**
+2. **npm (Package Manager)**
    - Install: `npm install -g pnpm`
-   - Check installation: `pnpm --version`
-   - 📖 [Why pnpm?](https://pnpm.io/motivation)
+   - Check installation: `npm --version`
+   - 📖 [Why npm?](https://www.npmjs.com/))
 
 3. **Git (Version Control)**
    - Download from [git-scm.com](https://git-scm.com/)
@@ -121,13 +115,13 @@ Before you start, make sure you have these installed on your computer:
 
 ```bash
 # Using HTTPS
-git clone https://github.com/yourusername/learn-to-scode.git
+git clone https://github.com/yourusername/iterly-learn-to-code.git
 
 # Or using SSH (if you have SSH keys set up)
-git clone git@github.com:yourusername/learn-to-scode.git
+git clone git@github.com:yourusername/iterly-learn-to-code.git
 
 # Navigate to the project directory
-cd learn-to-scode
+cd iterly-learn-to-code
 ```
 
 > 📖 **New to Git?** Check out [GitHub's Git Tutorial](https://try.github.io/)
@@ -136,7 +130,7 @@ cd learn-to-scode
 
 ```bash
 # Install all project dependencies
-pnpm install
+npm install
 ```
 
 This will install all the packages listed in `package.json`. It might take a few minutes the first time.
@@ -154,7 +148,7 @@ chmod +x start-database.sh
 This script will:
 - 🐳 Create a Docker PostgreSQL container
 - 📊 Set up the database schema (tables, relationships)
-- 🌱 Add sample data (puzzles and problems to try)
+- 🌱 Add sample data (puzzles to try)
 - 📝 Create your `.env` file with database connection info
 
 > 📖 **New to Docker?** Read [Docker's Getting Started Guide](https://docs.docker.com/get-started/)
@@ -164,14 +158,14 @@ This script will:
 The database script creates a `.env` file with basic configuration. You may want to customize it:
 
 ```bash
-# Edit the .env file to add GitHub OAuth or Judge0 API credentials
+# Edit the .env file to add GitHub OAuth
 nano .env  # or use your preferred editor
 ```
 
 ### 5. Start the Development Server
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app! 🎉
@@ -201,25 +195,25 @@ If you need to manage the database manually:
 
 ```bash
 # Start the database container
-docker start learn-to-scode-db
+docker start iterly-learn-to-code-db
 
 # Stop the database container
-docker stop learn-to-scode-db
+docker stop iterly-learn-to-code-db
 
 # View database logs
-docker logs learn-to-scode-db
+docker logs iterly-learn-to-code-db
 
 # Connect to the database directly
-docker exec -it learn-to-scode-db psql -U postgres -d learn_to_scode
+docker exec -it iterly-learn-to-code-db psql -U postgres -d iterly-learn-to-code
 
 # Run migrations manually
-pnpm db:migrate
+npm db:migrate
 
 # Seed the database manually
-pnpm db:seed
+npm db:seed
 
 # Open database studio (visual interface)
-pnpm db:studio
+npm db:studio
 ```
 
 ### Database Schema Overview
@@ -227,9 +221,7 @@ pnpm db:studio
 Our database has several main tables:
 
 - **`users`** - User accounts and profiles
-- **`problems`** - Coding problems (like LeetCode)
 - **`puzzles`** - Logic puzzles and brain teasers
-- **`problemSubmissions`** - User solutions to problems
 - **`puzzleSubmissions`** - User solutions to puzzles
 - **`accounts`** - OAuth account connections (GitHub)
 - **`sessions`** - User login sessions
@@ -279,17 +271,17 @@ npx drizzle-kit migrate
 
 ```bash
 # Development
-pnpm dev              # Start development server
-pnpm build            # Build for production
-pnpm start            # Start production server
-pnpm lint             # Check code quality
+npm dev              # Start development server
+npm build            # Build for production
+npm start            # Start production server
+npm lint             # Check code quality
 
 # Database
-pnpm db:generate      # Generate migration files
-pnpm db:migrate       # Apply migrations to database
-pnpm db:push          # Push schema changes (development)
-pnpm db:studio        # Open database visual interface
-pnpm db:seed          # Add sample data
+npm db:generate      # Generate migration files
+npm db:migrate       # Apply migrations to database
+npm db:push          # Push schema changes (development)
+npm db:studio        # Open database visual interface
+npm db:seed          # Add sample data
 ```
 
 ### Environment Variables
@@ -309,9 +301,6 @@ NEXTAUTH_SECRET=your-secret-key-here-change-this-in-production
 GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 
-# Judge0 API (Optional - for code execution)
-# Get API key from: https://rapidapi.com/judge0-official/api/judge0-ce
-JUDGE0_API_KEY=your-rapidapi-key
 ```
 
 #### Why `.env` instead of `.env.local`?
@@ -359,7 +348,7 @@ We use `.env` instead of `.env.local` because:
 ### Project Structure
 
 ```
-learn-to-scode/
+iterly-learn-to-code/
 ├── app/                    # Next.js App Router pages
 │   ├── (auth)/            # Authentication pages
 │   ├── admin/             # Admin dashboard
@@ -453,7 +442,7 @@ We love contributions from students and developers of all skill levels!
 2. **✨ Feature Requests**: Have an idea? We'd love to hear it!
 3. **📝 Code Contributions**: Fix bugs or add features
 4. **📚 Documentation**: Help improve our guides and tutorials
-5. **🧩 Content**: Submit new coding problems or puzzles
+5. **🧩 Content**: Submit new coding puzzles
 
 ### Getting Started with Contributions
 
