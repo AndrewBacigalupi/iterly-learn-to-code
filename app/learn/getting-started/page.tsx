@@ -94,7 +94,7 @@ export default function LearnPage() {
           </p>
         </div>
 
-        <div className=" text-xl mb-8">
+        <div className=" leading-relaxed text-xl mb-8">
           <p>
             Almost no serious programmers use these IDEs, however, because they
             lack one important quality: file storage. If you reload the page,
