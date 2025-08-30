@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Learn to Scode",
+  title: "Iterly",
   description: "Learn programming through puzzles and problems",
 };
 

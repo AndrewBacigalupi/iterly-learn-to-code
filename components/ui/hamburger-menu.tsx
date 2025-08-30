@@ -6,10 +6,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 type MenuItem = {
@@ -21,8 +22,8 @@ type MenuItem = {
 const MenuItemComponent: React.FC<{
   item: MenuItem;
   depth?: number;
-  onItemClick?: () => void;
-}> = ({ item, depth = 0, onItemClick }) => {
+  onNavigate: (href: string) => void;
+}> = ({ item, depth = 0, onNavigate }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   if (item.submenu) {
@@ -50,7 +51,7 @@ const MenuItemComponent: React.FC<{
               key={subItem.title}
               item={subItem}
               depth={depth + 1}
-              onItemClick={onItemClick}
+              onNavigate={onNavigate}
             />
           ))}
         </CollapsibleContent>
@@ -59,30 +60,28 @@ const MenuItemComponent: React.FC<{
   }
 
   return (
-    <Button asChild variant="ghost" className={cn(
-      "block w-full text-left py-3 text-base font-medium transition-colors hover:text-primary cursor-pointer",
-      depth > 0 && "pl-4"
-    )}>
-      <Link
-        href={item.href || "#"}
-        onClick={(e) => {
-          console.log("Menu item clicked:", item.title, item.href);
-          onItemClick?.();
-        }}
-        className="cursor-pointer"
-      >
-        {item.title}
-      </Link>
-    </Button>
+    <button
+      type="button"
+      onClick={() => onNavigate(item.href || "#")}
+      className={cn(
+        "text-left py-3 text-base font-medium transition-colors hover:text-primary cursor-pointer w-full",
+        depth > 0 && "pl-4"
+      )}
+    >
+      {item.title}
+    </button>
   );
 };
 
 export function HamburgerMenu({ menuItems }: { menuItems: MenuItem[] }) {
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
 
-  const handleItemClick = () => {
-    console.log("Closing hamburger menu");
-    setOpen(false);
+  const navigate = (href: string) => {
+    setOpen(false); // close sheet immediately
+    if (href && href !== "#") {
+      router.push(href);
+    }
   };
 
   return (
@@ -101,7 +100,7 @@ export function HamburgerMenu({ menuItems }: { menuItems: MenuItem[] }) {
               <MenuItemComponent
                 key={item.title}
                 item={item}
-                onItemClick={handleItemClick}
+                onNavigate={navigate}
               />
             ))}
           </nav>

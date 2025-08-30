@@ -65,11 +65,13 @@ export default function LearnPage() {
                 <p className="text-xl leading-relaxed mb-4">
                     Now, this file opener process is different for each language.  
                 </p>
+                <h2 className="text-xl font-semibold mb-2 mt-4">Python</h2>
                 <p className="text-xl leading-relaxed mb-4">
                     For Python, 
                     the open() function can be used and it's quite simple to 
                     iterate over the lines in the file. Learn more about this process <a className="underline hover:text-gray-500" href="https://www.w3schools.com/python/python_file_open.asp">here.</a>
                 </p>
+                <h2 className="text-xl font-semibold mb-2 mt-4">C++</h2>
                 <p className="text-xl leading-relaxed mb-4">
                     For C++, you need to #include the ifstream class, which allows you to 
                     create an input file stream object that can move through the file for 
@@ -90,6 +92,7 @@ export default function LearnPage() {
                     </a> 
                     
                 </p>
+                <h2 className="text-xl font-semibold mb-2 mt-4">Java</h2>
                 <p className="text-xl leading-relaxed mb-4">
                     In Java, the file input process uses what are called Object Scanners, which are Java's
                     equivalent of an input stream. The Scanner, File, and FileNotFoundException classes must be 

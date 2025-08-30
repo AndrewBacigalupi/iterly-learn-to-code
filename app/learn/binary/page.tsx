@@ -60,13 +60,13 @@ export default function LearnPage() {
                 <p className="text-xl leading-relaxed mb-4">
                     An easy way to see the connection between decimal numbers and base-10 
                     is to sum each place value that is holding a 1 in the binary 
-                    number. If the 16s place is 1, or sometimes called “on” because 
+                    number. If the 16s place is 1 (sometimes called “on” because 
                     binary 1s and 0s represent transistors that either allow 
-                    electricity or stop it, then 16 is added to the total. To put 
-                    it all together: the binary number 11011 is converted to decimal: 
+                    electricity or stop it), then 16 is added to the total. To put 
+                    it all together, to convert the binary number 11011 to decimal: 
                     1 in the 1s place so add 1, 1 in the 2s place so add 2, 0 in the 
                     4s place, 1 in the 8s place so add 8, and 1 in the 16s place so 
-                    add 16. The number is then 1 + 2 + 8 + 16 = 27. Decimal 27 is 11011. 
+                    add 16. The number is then 1 + 2 + 8 + 16 = 27. Decimal 27 is binary 11011. 
 
                 </p>
                 <p className="text-xl leading-relaxed mb-4">
