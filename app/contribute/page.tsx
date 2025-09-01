@@ -196,7 +196,7 @@ export default function ContributePage() {
                 </ul>
                 <Button asChild variant="outline" size="sm">
                   <a
-                    href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/discussions"
+                    href="https://github.com/AndrewBacigalupi/iterly-learn-to-code/discussions/1"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

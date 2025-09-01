@@ -21,6 +21,7 @@ import Link from "next/link";
 import { categoryToSlug } from "@/lib/categories";
 // @ts-ignore - confetti not typed
 import confetti from "canvas-confetti";
+import ReactMarkdown from 'react-markdown';
 
 
 interface PuzzleStatus {
@@ -282,12 +283,12 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
             <CardHeader>
               <strong className="text-md">Puzzle Description</strong>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="mb-6">{puzzle.description}</p>
+            <CardContent className="space-y-8 ">
+              <div className="mb-6 prose"><ReactMarkdown>{puzzle.description}</ReactMarkdown></div>
               <div>
                 <strong className="text-md">Example Input:</strong>
-                <code className="block mt-1 p-3 bg-muted rounded text-sm">
-                  {puzzle.example_input}
+                <code className="block mt-1 p-3 bg-muted rounded text-med">
+                  <ReactMarkdown>{puzzle.example_input}</ReactMarkdown>
                 </code>
               </div>
 
@@ -399,33 +400,6 @@ export function PuzzlePageClient({ session, category }: PuzzlePageClientProps) {
           </Card>
         </div>
       </div>
-
-      {/* Navigation Buttons - Outside main content */}
-      {navigation && (
-        <div className="max-w-4xl mx-auto mt-8 flex items-center justify-between">
-          {navigation.previous ? (
-            <Button asChild variant="outline">
-              <Link href={`/puzzles/${navigation.previous.id}`}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Previous: {navigation.previous.title}
-              </Link>
-            </Button>
-          ) : (
-            <div></div>
-          )}
-
-          {navigation.next ? (
-            <Button asChild variant="outline">
-              <Link href={`/puzzles/${navigation.next.id}`}>
-                Next: {navigation.next.title}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-            </Button>
-          ) : (
-            <div></div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

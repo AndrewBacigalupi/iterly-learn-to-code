@@ -78,32 +78,29 @@ export default function LearnPage() {
       {/* Articles Grid */}
       <section className="py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6">
             {articles.map((article) => {
               const IconComponent = getArticleIcon(article.icon);
-              
 
               return (
                 <Card
                   key={article.id}
-                  className="h-36 group transition-all duration-300"
+                  className="h-full group transition-colors"
                 >
                   <CardContent className="h-full">
-                    <div className="flex items-center justify-between h-full">
-                      <div className="flex items-center gap-6">
-                        <div className="p-4 rounded-lg">
-                          <IconComponent
-                            className={`h-8 w-8 ${article.color}`}
-                          />
+                    <div className="w-full h-full flex flex-col sm:flex-row sm:items-center items-start justify-between gap-4">
+                      <div className="flex w-full sm:w-auto items-start sm:items-center gap-4">
+                        <div className="p-3 rounded-md bg-muted/30">
+                          <IconComponent className={`h-8 w-8 ${article.color}`} />
                         </div>
                         <div className="flex-1">
-                          <CardTitle className="text-2xl mb-2 flex items-center gap-2">
-                            <span className="text-muted-foreground font-mono text-lg">
+                          <CardTitle className="sm:text-2xl text-lg mb-1 flex items-center gap-2">
+                            <span className="text-muted-foreground font-mono text-base sm:text-lg">
                               {article.number}.
                             </span>
                             {article.title}
                           </CardTitle>
-                          <CardDescription className="text-base mb-3">
+                          <CardDescription className="text-sm sm:text-base">
                             {article.description}
                           </CardDescription>
                         </div>
@@ -111,7 +108,7 @@ export default function LearnPage() {
                       <Button
                         asChild
                         size="lg"
-                        className="group-hover:bg-primary group-hover:text-primary-foreground"
+                        className="w-full sm:w-auto sm:ml-auto group-hover:bg-primary group-hover:text-primary-foreground"
                       >
                         <Link href={`/learn/${article.id}`}>
                           Read Article
